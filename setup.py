@@ -4,6 +4,7 @@
 # pylint: disable=C0111,W0122
 
 # Standard library imports
+from __future__ import print_function
 import os
 
 # PyPI imports
@@ -12,13 +13,24 @@ from setuptools import setup, find_packages
 ###
 # Global variables
 ###
-# From PyPI pplot package
-PKG_DIR = os.path.abspath(os.path.dirname(__file__))
-VERSION_PY = os.path.join(PKG_DIR, 'sphinxcontrib/version.py')
-with open(VERSION_PY) as fobj:
-    __version__ = VERSION_INFO = ""
-    # Execute the code in version.py.
-    exec(compile(fobj.read(), VERSION_PY, 'exec'))
+VERSION_INFO = (1, 0, 0, 'final', 0)
+
+
+def _make_version(major, minor, micro, level, serial):
+    """Generate version string from tuple (almost entirely from coveragepy)."""
+    level_dict = {'alpha': 'a', 'beta': 'b', 'candidate': 'rc', 'final':''}
+    if level not in level_dict:
+        raise RuntimeError('Invalid release level')
+    version = '{0:d}.{1:d}'.format(major, minor)
+    if micro:
+        version += '.{0:d}'.format(micro)
+    if level != 'final':
+        version += "{0}{1:d}".format(level_dict[level], serial)
+    return version
+
+
+__version__ = _make_version(*VERSION_INFO)
+
 if VERSION_INFO[3] == 'alpha':
     DEVSTAT = "3 - Alpha"
 elif VERSION_INFO[3] in ['beta', 'candidate']:
