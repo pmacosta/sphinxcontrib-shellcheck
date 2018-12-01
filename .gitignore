@@ -1,3 +1,4 @@
+.hooks/repo-cfg.sh
 *.pyc
 dist/
 sphinxcontrib_shellcheck.egg-info/
