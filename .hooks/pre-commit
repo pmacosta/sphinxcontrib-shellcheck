@@ -1,0 +1,241 @@
+#!/bin/bash
+# shellcheck disable=SC1090,SC1091
+
+# The MIT License (MIT)
+#
+# Copyright (c) 2013-2018 Pablo Acosta-Serafini
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+# Find directory where script is
+# from http://stackoverflow.com/questions/59895/
+# can-a-bash-script-tell-what-directory-its-stored-in)
+# BASH_SOURCE[0] is the pathname of the currently executing function or script
+# -h True if file exists and is a symbolic link
+# cd -P does not follow symbolic links
+current_dir() {
+    local sdir="$1"
+    local udir=""
+    # Resolve ${sdir} until the file is no longer a symlink
+    while [ -h "${sdir}" ]; do
+        udir="$(cd -P "$(dirname "${sdir}")" && pwd)"
+        sdir="$(readlink "${sdir}")"
+        # If ${sdir} was a relative symlink, we need to resolve it
+        # relative to the path where the symlink file was located
+        [[ "${sdir}" != /* ]] && sdir="${udir}/${sdir}"
+    done
+    udir="$(cd -P "$(dirname "${sdir}")" && pwd)"
+    echo "${udir}"
+}
+
+
+# Options {{{
+print=0
+non_ascii_file_names=0
+trailing_white_space=0
+pep8=0
+email=0
+personal_repo=0
+code_standard=0
+pep257=0
+source "$(current_dir "${BASH_SOURCE[0]}")/repo-cfg.sh"
+if [ "${print}" == 1 ]; then
+    echo -e "\tGit pre-commit setup"
+    echo -e "\t\tprint=${print}"
+    echo -e "\t\tnon_ascii_file_names=${non_ascii_file_names}"
+    echo -e "\t\ttrailing_white_space=${trailing_white_space}"
+    echo -e "\t\tpep8=${pep8}"
+    echo -e "\t\tpep257=${pep257}"
+    echo -e "\t\temail=${email}"
+    echo -e "\t\tpersonal_repo=${personal_repo}"
+    echo -e "\t\tcode_standard=${code_standard}"
+fi
+# }}}
+# Redirect output to stderr {{{ STDOUT redirection
+exec 1>&2
+# }}}
+# Determine initial commit {{{
+if git rev-parse --verify HEAD >/dev/null 2>&1; then
+    #echo "pre-commit check against HEAD"
+    against=HEAD
+else
+    against=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+fi
+# }}}
+# Check for non-ASCII file names {{{
+if [ "${non_ascii_file_names}" == 1 ]; then
+    if [ "${print}" == 1 ]; then
+        echo -e "\tChecking for non-ASCII file names"
+    fi
+    # Cross platform projects tend to avoid non-ASCII filenames; prevent
+    # them from being added to the repository. We exploit the fact that the
+    # printable range starts at the space character and ends with tilde.
+    # If you want to allow non-ASCII filenames set this variable to true.
+    allownonascii=$(git config --bool hooks.allownonascii)
+    if [ "$allownonascii" != "true" ] &&
+        # Note that the use of brackets around a tr range is ok here,
+        # (it's even required, for portability to Solaris 10's
+        # /usr/bin/tr), since the square bracket bytes happen to fall
+        # in the designated range.
+        test "$(\
+            git diff --cached --name-only --diff-filter=A -z "${against}" | \
+            LC_ALL=C tr -d '[ -~]\0' | \
+            wc -c \
+        )" != 0
+    then
+        cat <<\EOF
+Error: attempt to add a non-ASCII file name.
+
+This can cause problems if you want to work with people on other platforms.
+
+To be portable it is advisable to rename the file.
+
+If you know what you are doing you can disable this check using:
+
+  git config hooks.allownonascii true
+EOF
+    exit 1
+    fi
+fi
+# }}}
+# Check for trailing whitespace {{{
+if [ "${trailing_white_space}" == 1 ]; then
+    if [ "${print}" == 1 ]; then
+        echo -e "\tChecking for trailing whitespace"
+    fi
+    # If there are whitespace errors, print the offending file names and fail.
+    diff_output=$(git diff-index --check --cached $against --)
+    if [ "${diff_output}" != "" ]; then
+        exec git diff-index --check --cached $against --
+        exit 1
+    fi
+fi
+# }}}
+# Check for Python PEP8 (code style) compliance {{{
+if [ "${pep8}" == 1 ]; then
+    if [ "${print}" == 1 ]; then
+        echo -e "\tValidating Python PEP8 compliance with Pylint"
+    fi
+    pkg_dir=$(git rev-parse --show-toplevel)
+    python_files=$(git diff --name-only --cached -- *.py)
+    pep8_output=""
+    # shellcheck disable=SC2068
+    for file in ${python_files[@]}; do
+        if [ "${file}" != "" ]; then
+            tfile="$(mktemp)"
+            file_output=""
+            pylint --rcfile="${pkg_dir}/.pylintrc" -r n "${file}" &> "${tfile}"
+            if [ "$?" != 0 ]; then
+                file_output=$(cat "${tfile}")
+                rm -rf "${tfile}"
+            fi
+            if [ "${file_output}" != "" ]; then
+                pep8_output=${pep8_output}"\n"${file_output}
+            fi
+        fi
+    done
+    if [ "${pep8_output}" != "" ]; then
+        echo -e "${pep8_output}"
+        exit 1
+    fi
+    #if [ "${python_files}" != "" ]; then
+    #   echo -e "All Python files are PEP8 compliant"
+    #fi
+fi
+# }}}
+# Check for Python PEP257 (docstring style) compliance {{{
+if [ "${pep257}" == 1 ]; then
+    if [ "${print}" == 1 ]; then
+        echo -e "\tValidating Python PEP257 compliance with pydocstyle"
+    fi
+    pkg_dir=$(git rev-parse --show-toplevel)
+    python_files=$(git diff --name-only --cached -- *.py)
+    pep257_output=""
+    # shellcheck disable=SC2068
+    for file in ${python_files[@]}; do
+        if [ "${file}" != "" ]; then
+            tfile="$(mktemp)"
+            file_output=""
+            pylint --config="${pkg_dir}/.pydocstyle" "${file}" &> "${tfile}"
+            if [ "$?" != 0 ]; then
+                file_output=$(cat "${tfile}")
+                rm -rf "${tfile}"
+            fi
+            if [ "${file_output}" != "" ]; then
+                pep257_output=${pep257_output}"\n"${file_output}
+            fi
+        fi
+    done
+    if [ "${pep257_output}" != "" ]; then
+        echo -e "${pep257_output}"
+        exit 1
+    fi
+    #if [ "${python_files}" != "" ]; then
+    #   echo -e "All Python files are PEP257 compliant"
+    #fi
+fi
+# }}}
+# Check for author/email congruence {{{
+if [ "${email}" == 1 ]; then
+    msg="(work repository)"
+    if [ "${personal_repo}" == 1 ]; then
+        msg="(personal repository)"
+    fi
+    if [ "${print}" == 1 ]; then
+        echo -e "\tValidating author name and email ${msg}"
+    fi
+    if [ "${personal_repo}" == 1 ]; then
+        if [ "${PERSONAL_NAME}" == "" ] || [ "$PERSONAL_EMAIL}" == "" ]; then
+            echo -e "Error: personal information not present"
+            exit 1
+        fi
+        history_name="${PERSONAL_NAME}"
+        history_email="${PERSONAL_EMAIL}"
+    else
+        if [ "${WORK_NAME}" == "" ] || [ "$WORKL_EMAIL}" == "" ]; then
+            echo -e "Error: personal information not present"
+            exit 1
+        fi
+        history_name="${WORK_NAME}"
+        history_email="${WORK_EMAIL}"
+    fi
+    current_name=$(git config --global user.name)
+    current_email=$(git config --global user.email)
+    if [ "${history_name}" != "${current_name}" ] || \
+        [ "${history_email}" != "${current_email}" ]; then
+        echo -e "Error: incongruent commit author information"
+        echo -e "    Current is ${current_name} <${current_email}>"
+        echo -e "    Reference is ${history_name} <${history_email}>"
+        exit 1
+    fi
+fi
+# }}}
+# Check for code "standard" compliance {{{
+if [ "${code_standard}" == 1 ]; then
+    if [ "${print}" == 1 ]; then
+        echo -e "\tChecking code standard compliance"
+    fi
+    files=$(git diff --name-only --cached)
+    pkg_dir=$(git rev-parse --show-toplevel)
+    if ! "${pkg_dir}/sbin/check_files_compliance.py" -qstp "${files}"; then
+        echo -e "Error: files do not comply with package code standard"
+        exit 1
+    fi
+fi
+# }}}
