@@ -1,7 +1,7 @@
 # shellcheck.py
 # Copyright (c) 2018 Pablo Acosta-Serafini
 # See LICENSE for details
-# pylint: disable=C0111,R0914
+# pylint: disable=C0111,E1129,R0902,R0903,R0914
 
 # Standard library import
 from __future__ import print_function
@@ -10,13 +10,12 @@ import json
 import os
 import platform
 import re
-import six
 import subprocess
 import sys
 import tempfile
 import textwrap
 import types
-import xml.etree.ElementTree as ET
+import six
 
 # PyPI imports
 import decorator
@@ -50,7 +49,7 @@ def _get_indent(line):
     return len(line) - len(line.lstrip())
 
 
-def _tostr(line):
+def _tostr(line):  # pragma: no cover
     if isinstance(line, str):
         return line
     if sys.hexversion > 0x03000000:
@@ -170,43 +169,47 @@ class LintShellBuilder(Builder):
     def add_error(self, line, col, code, desc):
         """Add shell error to list of errors."""
         info = [
-            self.source, line + self._line_offset, col + self._col_offset, code, desc
+            self.source,
+            line + self._line_offset,
+            col + self._col_offset,
+            code,
+            desc,
         ]
         if info not in self._nodes:
             self._nodes.append(info)
             self._output.append("Line {0}, column {1} [{2}]: {3}".format(*info[1:]))
 
     @abc.abstractmethod
-    def cmd(self, fname):
+    def cmd(self, fname):  # pragma: no cover
         """Return shell linter command."""
         return []
 
     @property
     @abc.abstractmethod
-    def dialects(self):
+    def dialects(self):  # pragma: no cover
         """Return shell dialects supported."""
         pass
 
-    def get_target_uri(self, docname, typ=None):  # noqa
-        # Abstract method that needs to be overridden, not germane to current builder
+    def get_target_uri(self, docname, typ=None):  # pragma: no cover
+        """Abstract method of base class, not germane to current builder."""
         return ""
 
-    def get_outdated_docs(self):  # noqa
-        # Abstract method that needs to be overridden, not germane to current builder
+    def get_outdated_docs(self):  # pragma: no cover
+        """Abstract method of base class, not germane to current builder."""
         return self.env.found_docs
 
     @abc.abstractmethod
-    def parse_linter_output(self, stdout):
+    def parse_linter_output(self, stdout):  # pragma: no cover
         """Extract linter error information from STDOUT."""
         return []
 
-    def prepare_writing(self, docnames):  # noqa
-        # Abstract method that needs to be overridden, not germane to current builder
+    def prepare_writing(self, docnames):  # pragma: no cover
+        """Abstract method of base class, not germane to current builder."""
         return
 
     @property
     @abc.abstractmethod
-    def prompt(self):
+    def prompt(self):  # pragma: no cover
         """Return prompt used to denote command line start."""
         pass
 
@@ -216,7 +219,7 @@ class LintShellBuilder(Builder):
         if not _which(exe):
             raise LintShellNotFound("Shell linter executable not found: " + exe)
         self._tabwidth = doctree.settings.tab_width
-        rc = 0
+        ret_code = 0
         self._header = None
         for node, indent in self._shell_nodes(doctree):
             errors = self._lint_block(node, indent)
@@ -224,8 +227,8 @@ class LintShellBuilder(Builder):
                 self._print_header()
                 for error in errors:
                     LOGGER.info(error)
-                rc = 1
-        self.app.statuscode = rc
+                ret_code = 1
+        self.app.statuscode = ret_code
 
 
 class ShellcheckBuilder(LintShellBuilder):
@@ -268,7 +271,8 @@ class ShellcheckBuilder(LintShellBuilder):
 class TmpFile(object):
     """Create and manage temporary file."""
 
-    def __init__(self, fpointer=None, *args, **kwargs):  # noqa
+    def __init__(self, *args, **kwargs):  # noqa
+        fpointer = kwargs.get("fpointer", None)
         if (
             fpointer
             and (not isinstance(fpointer, types.FunctionType))
