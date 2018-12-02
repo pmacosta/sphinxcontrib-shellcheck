@@ -1,3 +1,4 @@
+.pytest_cache/
 .hooks/repo-cfg.sh
 *.pyc
 dist/
