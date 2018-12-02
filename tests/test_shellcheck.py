@@ -21,7 +21,7 @@ def test_which():
     cwd = os.path.dirname(fname)
     bin_dir = os.path.join(os.path.dirname(cwd), "bin")
     # Put binary directory first in path to make sure scripts there are first ones found
-    os.environ['PATH'] = bin_dir + os.pathsep + os.environ['PATH']
+    os.environ["PATH"] = bin_dir + os.pathsep + os.environ["PATH"]
     assert shellcheck._which("make-pkg.sh") == os.path.join(bin_dir, "make-pkg.sh")
     assert shellcheck._which(os.path.join(fname)) == ""
-    assert shellcheck._which("_not_a_file_"+str(uuid.uuid4())) == ""
+    assert shellcheck._which("_not_a_file_" + str(uuid.uuid4())) == ""
