@@ -10,6 +10,7 @@ import json
 import os
 import platform
 import re
+import six
 import subprocess
 import sys
 import tempfile
@@ -76,7 +77,8 @@ class LintShellNotFound(sphinx.errors.SphinxError):  # noqa: D101
     category = __("LintShell failed")
 
 
-class LintShellBuilder(abc.ABC, Builder):
+@six.add_metaclass(abc.ABCMeta)
+class LintShellBuilder(Builder):
     """Validate shell code in documents."""
 
     name = ""

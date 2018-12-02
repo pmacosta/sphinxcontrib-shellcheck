@@ -52,7 +52,7 @@ setup(
     author_email='pmasdev@gmail.com',
     description='Sphinx extension to lint shell code blocks',
     long_description='Sphinx extension to lint shell code blocks',
-    install_requires=['sphinx'],
+    install_requires=['sphinx', 'six'],
     packages=find_packages(),
     zip_safe=False,
     platforms='any',
