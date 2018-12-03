@@ -1,5 +1,7 @@
+.tox/
 .pytest_cache/
 .hooks/repo-cfg.sh
 *.pyc
 dist/
+tests/support/_build/
 sphinxcontrib_shellcheck.egg-info/
