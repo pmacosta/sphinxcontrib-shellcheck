@@ -84,6 +84,7 @@ class LintShellBuilder(Builder):
 
     def __init__(self, app):  # noqa
         super(LintShellBuilder, self).__init__(app)
+        self._debug = False
         self._col_offset = 0
         self._header = None
         self._line_offset = 0
@@ -105,11 +106,23 @@ class LintShellBuilder(Builder):
         )
 
     def _get_linter_stdout(self, lines):
-        with TmpFile(lambda x: x.write(lines)) as fname:
+        if self._debug:
+            LOGGER.info("<<< lines (_get_linter_stdout)")
+            LOGGER.info(lines)
+            LOGGER.info(">>>")
+        with TmpFile(fpointer=lambda x: x.writelines(lines)) as fname:
+            if self._debug:
+                with open(fname, 'r') as fhandle:
+                    check_lines = fhandle.readlines()
+                LOGGER.info("Auto-generated shell file")
+                LOGGER.info(os.linesep.join(check_lines))
             obj = subprocess.Popen(
                 self.cmd(fname), stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
             stdout, _ = obj.communicate()
+            if self._debug:
+                LOGGER.info("STDOUT")
+                LOGGER.info(_tostr(stdout))
         return stdout
 
     def _lint_block(self, node, indent):
@@ -120,6 +133,10 @@ class LintShellBuilder(Builder):
         value = node.astext()
         code_lines = _tostr(value).split(os.linesep)
         lmin = max(len(code_line) for code_line in code_lines)
+        if self._debug:
+            LOGGER.info("<<< Node code (_lint_block)")
+            LOGGER.info(code_lines)
+            LOGGER.info(">>>")
         for code_line in code_lines:
             if code_line.strip().startswith(self.prompt) or cont_line:
                 cmd_line = True
@@ -133,6 +150,10 @@ class LintShellBuilder(Builder):
         self._line_offset = node.line
         self._col_offset = _get_indent(lines.split(os.linesep)[0]) + indent + 1
         lines = shebang + textwrap.dedent(lines)
+        if self._debug:
+            LOGGER.info("<<< lines (_lint_block)")
+            LOGGER.info(lines)
+            LOGGER.info(">>>")
         self._output = []
         self.parse_linter_output(self._get_linter_stdout(lines))
         return self._output
@@ -144,11 +165,16 @@ class LintShellBuilder(Builder):
 
     def _shell_nodes(self, doctree):
         regexp = re.compile("(.[^:]*)(?::docstring of (.*))*")
-        for node in doctree.traverse(siblings=True, ascend=True):
+        for node in doctree.traverse():
             if self._is_shell_node(node):
                 self.dialect = node.attributes.get("language").lower()
                 self.source, func_abs_name = regexp.match(node.source).groups()
                 self.source = os.path.abspath(self.source)
+                if self._debug:
+                    LOGGER.info("Analyzing file " + self.source)
+                    LOGGER.info("<<< Node code")
+                    LOGGER.info(_tostr(node.astext()))
+                    LOGGER.info(">>>")
                 if func_abs_name:
                     tokens = func_abs_name.split(".")
                     func_path, func_name = ".".join(tokens[:-1]), tokens[-1]
@@ -156,6 +182,8 @@ class LintShellBuilder(Builder):
                     node.line = func_obj.__code__.co_firstlineno + node.line + 1
                 self._read_source_file()
                 indent = self._get_block_indent(node)
+                if self._debug:
+                    LOGGER.info("Indent: " + str(indent))
                 yield node, indent
 
     def _read_source_file(self):
@@ -175,7 +203,11 @@ class LintShellBuilder(Builder):
             code,
             desc,
         ]
+        if self._debug:
+            LOGGER.info("info: " + str(info))
         if info not in self._nodes:
+            if self._debug:
+                LOGGER.info("Adding info")
             self._nodes.append(info)
             self._output.append("Line {0}, column {1} [{2}]: {3}".format(*info[1:]))
 
@@ -238,6 +270,7 @@ class ShellcheckBuilder(LintShellBuilder):
 
     def __init__(self, app):  # noqa
         super(ShellcheckBuilder, self).__init__(app)
+        self._debug = app.config.shellcheck_debug
         self._dialects = app.config.shellcheck_dialects
         self._exe = app.config.shellcheck_executable
         self._prompt = app.config.shellcheck_prompt
@@ -265,14 +298,23 @@ class ShellcheckBuilder(LintShellBuilder):
     def parse_linter_output(self, stdout):
         """Extract shellcheck error information from STDOUT."""
         for line, col, code, desc in _errors(stdout):
+            if self._debug:
+                LOGGER.info("<<< Error")
+                LOGGER.info("Line: " + str(line))
+                LOGGER.info("Column: " + str(col))
+                LOGGER.info("Code: " + str(code))
+                LOGGER.info("Description: " + desc)
+                LOGGER.info("<<<")
             self.add_error(line, col, code, desc)
 
 
-class TmpFile(object):
+class TmpFile(object):  # pragma: no cover
     """Create and manage temporary file."""
 
     def __init__(self, *args, **kwargs):  # noqa
         fpointer = kwargs.get("fpointer", None)
+        if fpointer:
+            del kwargs["fpointer"]
         if (
             fpointer
             and (not isinstance(fpointer, types.FunctionType))
@@ -305,7 +347,7 @@ class TmpFile(object):
 
 
 @decorator.contextmanager
-def ignored(*exceptions):
+def ignored(*exceptions):  # pragma: no cover
     """Ignore given exceptions."""
     try:
         yield
@@ -322,3 +364,4 @@ def setup(app):
     app.add_config_value("shellcheck_dialects", ("sh", "bash", "dash", "ksh"), "env")
     app.add_config_value("shellcheck_executable", "shellcheck", "env")
     app.add_config_value("shellcheck_prompt", "$", "env")
+    app.add_config_value("shellcheck_debug", False, "env")
