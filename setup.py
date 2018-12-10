@@ -56,12 +56,16 @@ if INSTALL_MODE_IS_TEST:
                 os.path.join(PWD, "MANIFEST.in"),
                 os.path.join(PWD, "README.rst"),
                 os.path.join(PWD, "tox.ini"),
+                os.path.join(PWD, ".pylintrc"),
             ],
         ),
         (
             os.path.join(SHARE_DIR, "bin"),
             [
+                os.path.join(PWD, "bin", "cprint.sh"),
+                os.path.join(PWD, "bin", "functions.sh"),
                 os.path.join(PWD, "bin", "make-pkg.sh"),
+                os.path.join(PWD, "bin", "print-env.sh"),
             ],
         ),
         (
@@ -79,6 +83,19 @@ if INSTALL_MODE_IS_TEST:
                 os.path.join(PWD, "tests", "support", "conf.py"),
                 os.path.join(PWD, "tests", "support", "index.rst"),
                 os.path.join(PWD, "tests", "support", "mymodule.py"),
+            ],
+        ),
+        (
+            os.path.join(SHARE_DIR, "data"),
+            [os.path.join(PWD, "data", "whitelist.en.pws")],
+        ),
+        (
+            os.path.join(SHARE_DIR, "pylint_plugins"),
+            [
+                os.path.join(PWD, "pylint_plugins", "aspell.py"),
+                os.path.join(PWD, "pylint_plugins", "check-spelling.sh"),
+                os.path.join(PWD, "pylint_plugins", "header.py"),
+                os.path.join(PWD, "pylint_plugins", "pylint_codes.py"),
             ],
         ),
     ]
@@ -99,7 +116,7 @@ setup(
     description="Sphinx extension to lint shell code blocks",
     long_description="Sphinx extension to lint shell code blocks",
     install_requires=["decorator", "docutils", "sphinx", "six"],
-    tests_require=["pytest", "coverage", "pytest-cov"],
+    tests_require=["pytest", "coverage", "pytest-cov", "pylint"],
     data_files=DATA_FILES,
     packages=find_packages(),
     zip_safe=False,

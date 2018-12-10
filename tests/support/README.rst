@@ -31,5 +31,6 @@ Now a list:
         ...
         $ cd myrepo
         $ export MYREPO_DIR=${PWD}
+        $ echo "${myvar}"
 
 3. Install the project's Git hooks and build the documentation.

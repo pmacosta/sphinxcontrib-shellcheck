@@ -1,7 +1,7 @@
 # shellcheck.py
 # Copyright (c) 2018 Pablo Acosta-Serafini
 # See LICENSE for details
-# pylint: disable=C0111,E1129,R0902,R0903,R0914
+# pylint: disable=C0111,E1129,R0205,R0902,R0903,R0914,W0107
 
 # Standard library import
 from __future__ import print_function
@@ -162,12 +162,6 @@ class LintShellBuilder(Builder):
         self.parse_linter_output(self._get_linter_stdout(lines))
         return self._output
 
-    def _print_header(self):
-        if (not self._header) or (self._header and (self._header != self.source)):
-            self._header = self.source
-            LOGGER.info(self.source)
-            self.write_entry(self.source)
-
     def _shell_nodes(self, doctree):
         regexp = re.compile("(.[^:]*)(?::docstring of (.*))*")
         for node in doctree.traverse():
@@ -258,11 +252,11 @@ class LintShellBuilder(Builder):
             raise LintShellNotFound("Shell linter executable not found: " + exe)
         self._tabwidth = doctree.settings.tab_width
         ret_code = 0
-        self._header = None
         for node, indent in self._shell_nodes(doctree):
             errors = self._lint_block(node, indent)
             if errors:
-                self._print_header()
+                LOGGER.info(self.source)
+                self.write_entry(self.source)
                 for error in errors:
                     LOGGER.info(error)
                     self.write_entry(error)

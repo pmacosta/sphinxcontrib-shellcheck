@@ -3,6 +3,7 @@
 # See LICENSE for details
 # pylint: disable=C0111
 
+
 def func1():
     """
     Test sphinxcontrib-shellcheck.
@@ -11,8 +12,7 @@ def func1():
 
     .. code-block:: bash
 
-        $ cd mydir
-        $ echo "HELLO"
+        $ cd mydir || exit 1
 
     """
     return 1
@@ -26,8 +26,8 @@ def func2():
 
     .. code-block:: bash
 
-        $ cd mydir || exit 1
         $ echo " WORLD!"
+        $ source myfile.sh
 
     """
     return 2

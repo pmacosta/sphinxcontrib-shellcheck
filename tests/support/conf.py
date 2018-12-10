@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+# conf.py
+# Copyright (c) 2018 Pablo Acosta-Serafini
+# See LICENSE for details
 # pylint: disable=C0103,C0111,C0325,E0611,F0401,R0913,R1710,W0212,W0611,W0613,W0622
 #
 # src documentation build configuration file, created by
@@ -17,6 +20,7 @@ import os
 import sys
 import sphinx.environment
 from docutils.utils import get_source_line
+
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 extensions = [
@@ -95,7 +99,7 @@ pygments_style = "sphinx"
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+html_theme = "default"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -220,7 +224,13 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ("index", "sphinxcontrib-shellcheck module", u"src Documentation", [u"Pablo Acosta-Serafini"], 1)
+    (
+        "index",
+        "sphinxcontrib-shellcheck module",
+        u"src Documentation",
+        [u"Pablo Acosta-Serafini"],
+        1,
+    )
 ]
 
 # If true, show URL addresses after external links.
@@ -238,7 +248,7 @@ texinfo_documents = [
         "sphinxcontrib-shellcheck",
         u"src Documentation",
         u"Pablo Acosta-Serafini",
-        "sphinxcontrib-shellchec module",
+        "sphinxcontrib-shellcheck module",
         "Lint shell code blocks",
         "Miscellaneous",
     )
