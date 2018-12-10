@@ -13,6 +13,7 @@ from setuptools import setup, find_packages
 ###
 # Global variables
 ###
+PKG_NAME = "shellcheck"
 VERSION_INFO = (1, 0, 0, "final", 0)
 
 
@@ -39,12 +40,14 @@ else:
     assert VERSION_INFO[3] == "final"
     DEVSTAT = "5 - Production/Stable"
 
+# Actual directory is os.join(sys.prefix, 'share', PKG_NAME)
+SHARE_DIR = os.path.join("share", PKG_NAME)
 
 ###
 # Processing
 ###
 setup(
-    name="sphinxcontrib-shellcheck",
+    name="sphinxcontrib-"+PKG_NAME,
     version=__version__,
     url="http://shellcheck.readthedocs.io",
     license="MIT",
@@ -53,6 +56,7 @@ setup(
     description="Sphinx extension to lint shell code blocks",
     long_description="Sphinx extension to lint shell code blocks",
     install_requires=["sphinx", "six"],
+    tests_require=["pytest", "coverage", "pytest-cov"],
     packages=find_packages(),
     zip_safe=False,
     platforms="any",

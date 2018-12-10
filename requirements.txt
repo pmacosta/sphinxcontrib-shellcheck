@@ -1,3 +1,5 @@
 sphinx
 six
+coverage
 pytest
+pytest-cov

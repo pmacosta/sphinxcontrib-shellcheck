@@ -6,6 +6,7 @@
 # Standard library import
 from __future__ import print_function
 import abc
+import codecs
 import json
 import os
 import platform
@@ -37,7 +38,7 @@ LOGGER = sphinx.util.logging.getLogger(__name__)
 # Functions
 ###
 def _errors(stdout):
-    for error in json.loads(stdout):
+    for error in json.loads(_tostr(stdout)):
         code = error["code"]
         desc = error["message"]
         line = error["line"]
@@ -93,7 +94,10 @@ class LintShellBuilder(Builder):
         self._srclines = None
         self._tabwidth = None
         self.dialect = ""
+        self.docname = ""
+        self.fname = os.path.join(self.outdir, "output.txt")
         self.source = None
+        open(self.fname, "w").close()
 
     def _get_block_indent(self, node):
         return _get_indent(self._srclines[node.line + 1])
@@ -112,7 +116,7 @@ class LintShellBuilder(Builder):
             LOGGER.info(">>>")
         with TmpFile(fpointer=lambda x: x.writelines(lines)) as fname:
             if self._debug:
-                with open(fname, 'r') as fhandle:
+                with open(fname, "r") as fhandle:
                     check_lines = fhandle.readlines()
                 LOGGER.info("Auto-generated shell file")
                 LOGGER.info(os.linesep.join(check_lines))
@@ -162,6 +166,7 @@ class LintShellBuilder(Builder):
         if (not self._header) or (self._header and (self._header != self.source)):
             self._header = self.source
             LOGGER.info(self.source)
+            self.write_entry(self.source)
 
     def _shell_nodes(self, doctree):
         regexp = re.compile("(.[^:]*)(?::docstring of (.*))*")
@@ -247,6 +252,7 @@ class LintShellBuilder(Builder):
 
     def write_doc(self, docname, doctree):
         """Check shell nodes."""
+        self.docname = docname
         exe = self.cmd("myfile.sh")[0]
         if not _which(exe):
             raise LintShellNotFound("Shell linter executable not found: " + exe)
@@ -259,8 +265,17 @@ class LintShellBuilder(Builder):
                 self._print_header()
                 for error in errors:
                     LOGGER.info(error)
+                    self.write_entry(error)
                 ret_code = 1
         self.app.statuscode = ret_code
+
+    def write_entry(self, error):
+        with codecs.open(self.fname, "a", "utf-8") as output:
+            output.write(
+                "{0}: {1}{2}".format(
+                    self.env.doc2path(self.docname, None), error, os.linesep
+                )
+            )
 
 
 class ShellcheckBuilder(LintShellBuilder):
