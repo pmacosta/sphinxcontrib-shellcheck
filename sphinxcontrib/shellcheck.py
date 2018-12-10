@@ -110,12 +110,12 @@ class LintShellBuilder(Builder):
         )
 
     def _get_linter_stdout(self, lines):
-        if self._debug:
+        if self._debug:  # pragma: no cover
             LOGGER.info("<<< lines (_get_linter_stdout)")
             LOGGER.info(lines)
             LOGGER.info(">>>")
         with TmpFile(fpointer=lambda x: x.writelines(lines)) as fname:
-            if self._debug:
+            if self._debug:  # pragma: no cover
                 with open(fname, "r") as fhandle:
                     check_lines = fhandle.readlines()
                 LOGGER.info("Auto-generated shell file")
@@ -124,7 +124,7 @@ class LintShellBuilder(Builder):
                 self.cmd(fname), stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
             stdout, _ = obj.communicate()
-            if self._debug:
+            if self._debug:  # pragma: no cover
                 LOGGER.info("STDOUT")
                 LOGGER.info(_tostr(stdout))
         return stdout
@@ -137,24 +137,24 @@ class LintShellBuilder(Builder):
         value = node.astext()
         code_lines = _tostr(value).split(os.linesep)
         lmin = max(len(code_line) for code_line in code_lines)
-        if self._debug:
+        if self._debug:  # pragma: no cover
             LOGGER.info("<<< Node code (_lint_block)")
             LOGGER.info(code_lines)
             LOGGER.info(">>>")
         for code_line in code_lines:
-            if code_line.strip().startswith(self.prompt) or cont_line:
-                cmd_line = True
+            cmd_line = code_line.strip().startswith(self.prompt)
+            if cmd_line or cont_line:
                 lines += code_line[1:] + os.linesep
                 lmin = min(lmin, _get_indent(code_line[1:]))
-            cont_line = (cont_line or cmd_line) and code_line.strip().endswith("\\")
-            if not (code_line or cont_line):
+                cont_line = code_line.strip().endswith("\\")
+            else:
                 cont_line, cmd_line = False, False
                 lines += (" " * lmin) + "# Output line" + os.linesep
         shebang = "#!" + _which(self.dialect) + os.linesep
         self._line_offset = node.line
         self._col_offset = _get_indent(lines.split(os.linesep)[0]) + indent + 1
         lines = shebang + textwrap.dedent(lines)
-        if self._debug:
+        if self._debug:  # pragma: no cover
             LOGGER.info("<<< lines (_lint_block)")
             LOGGER.info(lines)
             LOGGER.info(">>>")
@@ -175,7 +175,7 @@ class LintShellBuilder(Builder):
                 self.dialect = node.attributes.get("language").lower()
                 self.source, func_abs_name = regexp.match(node.source).groups()
                 self.source = os.path.abspath(self.source)
-                if self._debug:
+                if self._debug:  # pragma: no cover
                     LOGGER.info("Analyzing file " + self.source)
                     LOGGER.info("<<< Node code")
                     LOGGER.info(_tostr(node.astext()))
@@ -187,7 +187,7 @@ class LintShellBuilder(Builder):
                     node.line = func_obj.__code__.co_firstlineno + node.line + 1
                 self._read_source_file()
                 indent = self._get_block_indent(node)
-                if self._debug:
+                if self._debug:  # pragma: no cover
                     LOGGER.info("Indent: " + str(indent))
                 yield node, indent
 
@@ -208,10 +208,10 @@ class LintShellBuilder(Builder):
             code,
             desc,
         ]
-        if self._debug:
+        if self._debug:  # pragma: no cover
             LOGGER.info("info: " + str(info))
         if info not in self._nodes:
-            if self._debug:
+            if self._debug:  # pragma: no cover
                 LOGGER.info("Adding info")
             self._nodes.append(info)
             self._output.append("Line {0}, column {1} [{2}]: {3}".format(*info[1:]))
@@ -270,6 +270,7 @@ class LintShellBuilder(Builder):
         self.app.statuscode = ret_code
 
     def write_entry(self, error):
+        """Write error to file."""
         with codecs.open(self.fname, "a", "utf-8") as output:
             output.write(
                 "{0}: {1}{2}".format(
@@ -313,7 +314,7 @@ class ShellcheckBuilder(LintShellBuilder):
     def parse_linter_output(self, stdout):
         """Extract shellcheck error information from STDOUT."""
         for line, col, code, desc in _errors(stdout):
-            if self._debug:
+            if self._debug:  # pragma: no cover
                 LOGGER.info("<<< Error")
                 LOGGER.info("Line: " + str(line))
                 LOGGER.info("Column: " + str(col))

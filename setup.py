@@ -59,6 +59,12 @@ if INSTALL_MODE_IS_TEST:
             ],
         ),
         (
+            os.path.join(SHARE_DIR, "bin"),
+            [
+                os.path.join(PWD, "bin", "make-pkg.sh"),
+            ],
+        ),
+        (
             os.path.join(SHARE_DIR, "tests"),
             [
                 os.path.join(PWD, "tests", "test_shellcheck.py"),

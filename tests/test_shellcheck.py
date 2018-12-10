@@ -24,7 +24,7 @@ def run_sphinx():
     dir1 = os.path.join(sdir, "_build", "doctrees")
     dir2 = os.path.join(sdir, "_build", "shellcheck")
     exe = shellcheck._which("sphinx-build")
-    sphinx_argv = [
+    argv = [
         exe,
         "--no-color",
         "-Q",
@@ -37,8 +37,8 @@ def run_sphinx():
         sdir,
         dir2,
     ]
-    sphinx_argv[0] = re.sub(r"(-script\.pyw?|\.exe)?$", "", sphinx_argv[0])
-    sphinx.cmd.build.main(sphinx_argv[1:])
+    argv[0] = re.sub(r"(-script\.pyw?|\.exe)?$", "", argv[0])
+    sphinx.cmd.build.main(argv[1:])
     fname = os.path.join(dir2, "output.txt")
     with open(fname, "r") as fobj:
         lines = fobj.readlines()
@@ -62,4 +62,4 @@ def test_which():
 
 def test_shellcheck():
     """Test main sphinx extension."""
-    run_sphinx()
+    print(run_sphinx())

@@ -17,7 +17,8 @@ msg=$(strcat \
     "[run]\n" \
     "branch = True\n" \
     "data_file = ${share_dir}/.coverage_${env_name}\n" \
-    "include = ${source_dir}/shellcheck.py" \
+    "include = ${source_dir}/shellcheck.py\n" \
+    "omit = ${source_dir}/websupport/*" \
 )
 
 mkdir -p "$(dirname "${fname}")"

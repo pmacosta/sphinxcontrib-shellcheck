@@ -21,7 +21,8 @@ recursive-include data *
 #include docs/__init__.py
 #recursive-include docs *.rst
 #recursive-include docs/support *.py
-include tests/pytest.ini
+include bin/make-pkg.sh
+#include tests/pytest.ini
 recursive-include tests *.py
 recursive-include tests *.sh
 recursive-include tests/support *.rst
