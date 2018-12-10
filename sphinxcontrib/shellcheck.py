@@ -16,12 +16,12 @@ import sys
 import tempfile
 import textwrap
 import types
-import six
 
 # PyPI imports
 import decorator
 import docutils.nodes
 import docutils.utils.error_reporting
+import six
 import sphinx.errors
 import sphinx.util.logging
 from sphinx.builders import Builder

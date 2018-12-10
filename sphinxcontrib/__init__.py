@@ -3,4 +3,4 @@
 # See LICENSE for details
 # pylint: disable=C0111
 
-__import__('pkg_resources').declare_namespace(__name__)
+__import__("pkg_resources").declare_namespace(__name__)

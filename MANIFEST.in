@@ -1,0 +1,28 @@
+# MANIFEST.in
+# Copyright (c) 2018 Pablo Acosta-Serafini
+# See LICENSE for details
+include AUTHORS.rst
+include CHANGELOG.rst
+include LICENSE
+# include Makefile
+include MANIFEST.in
+include README.rst
+include setup.py
+# include TODO.rst
+include tox.ini
+# include .travis.yml
+include .pylintrc
+recursive-include pylint_plugins *.py
+recursive-include pylint_plugins *.sh
+recursive-include data *
+#include docs/make.bat
+#include docs/Makefile
+#include docs/conf.py
+#include docs/__init__.py
+#recursive-include docs *.rst
+#recursive-include docs/support *.py
+include tests/pytest.ini
+recursive-include tests *.py
+recursive-include tests *.sh
+recursive-include tests/support *.rst
+recursive-include tests/support *.py

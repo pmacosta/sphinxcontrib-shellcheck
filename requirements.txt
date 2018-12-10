@@ -1,5 +1,7 @@
+decorator
+docutils
 sphinx
 six
-coverage
 pytest
+coverage
 pytest-cov

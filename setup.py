@@ -13,8 +13,10 @@ from setuptools import setup, find_packages
 ###
 # Global variables
 ###
-PKG_NAME = "shellcheck"
+PKG_NAME = "sphinxcontrib-shellcheck"
 VERSION_INFO = (1, 0, 0, "final", 0)
+INSTALL_MODE_IS_TEST = os.environ.get("SHELLCHECK_TEST_ENV", "")
+print("SHELLCHECK_TEST_ENV = " + INSTALL_MODE_IS_TEST)
 
 
 def _make_version(major, minor, micro, level, serial):
@@ -41,13 +43,48 @@ else:
     DEVSTAT = "5 - Production/Stable"
 
 # Actual directory is os.join(sys.prefix, 'share', PKG_NAME)
+PWD = os.path.dirname(os.path.abspath(__file__))
 SHARE_DIR = os.path.join("share", PKG_NAME)
+if INSTALL_MODE_IS_TEST:
+    DATA_FILES = [
+        (
+            SHARE_DIR,
+            [
+                os.path.join(PWD, "AUTHORS.rst"),
+                os.path.join(PWD, "CHANGELOG.rst"),
+                os.path.join(PWD, "LICENSE"),
+                os.path.join(PWD, "MANIFEST.in"),
+                os.path.join(PWD, "README.rst"),
+                os.path.join(PWD, "tox.ini"),
+            ],
+        ),
+        (
+            os.path.join(SHARE_DIR, "tests"),
+            [
+                os.path.join(PWD, "tests", "test_shellcheck.py"),
+                os.path.join(PWD, "tests", "make-coveragerc.sh"),
+            ],
+        ),
+        (
+            os.path.join(SHARE_DIR, "tests", "support"),
+            [
+                os.path.join(PWD, "tests", "support", "README.rst"),
+                os.path.join(PWD, "tests", "support", "api.rst"),
+                os.path.join(PWD, "tests", "support", "conf.py"),
+                os.path.join(PWD, "tests", "support", "index.rst"),
+                os.path.join(PWD, "tests", "support", "mymodule.py"),
+            ],
+        ),
+    ]
+else:
+    DATA_FILES = []
+
 
 ###
 # Processing
 ###
 setup(
-    name="sphinxcontrib-"+PKG_NAME,
+    name=PKG_NAME,
     version=__version__,
     url="http://shellcheck.readthedocs.io",
     license="MIT",
@@ -55,8 +92,9 @@ setup(
     author_email="pmasdev@gmail.com",
     description="Sphinx extension to lint shell code blocks",
     long_description="Sphinx extension to lint shell code blocks",
-    install_requires=["sphinx", "six"],
+    install_requires=["decorator", "docutils", "sphinx", "six"],
     tests_require=["pytest", "coverage", "pytest-cov"],
+    data_files=DATA_FILES,
     packages=find_packages(),
     zip_safe=False,
     platforms="any",
