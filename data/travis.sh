@@ -3,7 +3,6 @@
 # travis.sh
 # Copyright (c) 2018 Pablo Acosta-Serafini
 # See LICENSE for details
-
 #<<<
 set -e
 tmp_dir=$(mktemp -d)
