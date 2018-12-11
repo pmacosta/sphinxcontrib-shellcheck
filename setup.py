@@ -16,7 +16,7 @@ from setuptools import setup, find_packages
 PKG_NAME = "sphinxcontrib-shellcheck"
 VERSION_INFO = (1, 0, 0, "final", 0)
 INSTALL_MODE_IS_TEST = os.environ.get("SHELLCHECK_TEST_ENV", "")
-print("SHELLCHECK_TEST_ENV = " + INSTALL_MODE_IS_TEST)
+VERSION_QUERY = os.environ.get("SHELLCHECK_CI_ENV", "")
 
 
 def _make_version(major, minor, micro, level, serial):
@@ -62,17 +62,19 @@ if INSTALL_MODE_IS_TEST:
         (
             os.path.join(SHARE_DIR, "bin"),
             [
+                os.path.join(PWD, "bin", "check_files_compliance.py"),
                 os.path.join(PWD, "bin", "cprint.sh"),
                 os.path.join(PWD, "bin", "functions.sh"),
+                os.path.join(PWD, "bin", "make-coveragerc.sh"),
                 os.path.join(PWD, "bin", "make-pkg.sh"),
                 os.path.join(PWD, "bin", "print-env.sh"),
+                os.path.join(PWD, "bin", "zip-artifacts.sh"),
             ],
         ),
         (
             os.path.join(SHARE_DIR, "tests"),
             [
                 os.path.join(PWD, "tests", "test_shellcheck.py"),
-                os.path.join(PWD, "tests", "make-coveragerc.sh"),
             ],
         ),
         (
@@ -106,30 +108,31 @@ else:
 ###
 # Processing
 ###
-setup(
-    name=PKG_NAME,
-    version=__version__,
-    url="http://shellcheck.readthedocs.io",
-    license="MIT",
-    author="Pablo Acosta-Serafini",
-    author_email="pmasdev@gmail.com",
-    description="Sphinx extension to lint shell code blocks",
-    long_description="Sphinx extension to lint shell code blocks",
-    install_requires=["decorator", "docutils", "sphinx", "six"],
-    tests_require=["pytest", "coverage", "pytest-cov", "pylint"],
-    data_files=DATA_FILES,
-    packages=find_packages(),
-    zip_safe=False,
-    platforms="any",
-    namespace_packages=["sphinxcontrib"],
-    classifiers=[
-        "Programming Language :: Python",
-        "Development Status :: " + DEVSTAT,
-        "Natural Language :: English",
-        "Environment :: Web Environment",
-        "Intended Audience :: Developers",
-        "License :: MIT",
-        "Operating System :: OS Independent",
-        "Topic :: Software Development :: Libraries :: Python Modules",
-    ],
-)
+if not VERSION_QUERY:
+    setup(
+        name=PKG_NAME,
+        version=__version__,
+        url="http://shellcheck.readthedocs.io",
+        license="MIT",
+        author="Pablo Acosta-Serafini",
+        author_email="pmasdev@gmail.com",
+        description="Sphinx extension to lint shell code blocks",
+        long_description="Sphinx extension to lint shell code blocks",
+        install_requires=["decorator", "docutils", "sphinx", "six"],
+        tests_require=["pytest", "coverage", "pytest-cov", "pylint"],
+        data_files=DATA_FILES,
+        packages=find_packages(),
+        zip_safe=False,
+        platforms="any",
+        namespace_packages=["sphinxcontrib"],
+        classifiers=[
+            "Programming Language :: Python",
+            "Development Status :: " + DEVSTAT,
+            "Natural Language :: English",
+            "Environment :: Web Environment",
+            "Intended Audience :: Developers",
+            "License :: MIT",
+            "Operating System :: OS Independent",
+            "Topic :: Software Development :: Libraries :: Python Modules",
+        ],
+    )

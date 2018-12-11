@@ -1,8 +1,10 @@
+coverage
 decorator
 docutils
-sphinx
 six
-pytest
-coverage
-pytest-cov
+sphinx
 pylint
+pytest
+pytest-cov
+sqlalchemy
+whoosh

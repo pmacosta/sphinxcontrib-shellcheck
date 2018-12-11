@@ -29,7 +29,7 @@ before_install:
   - export PYTHONCMD=python
   - export PYTESTCMD=pytest
   - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then
-        export PIPCMD=${PYTHONCMD} -W 'ignore:a true SSLContext object' -m pip
+        export PIPCMD=${PYTHONCMD} -W 'ignore:a true SSLContext object' -m pip;
         export INTERP=py"${JNAME//./}";
         export PKG_NAME=$(echo ${TRAVIS_REPO_SLUG} | sed -E "s|.*/(.*)|\1|g");
         wget https://repo.continuum.io/archive/Anaconda2-2.4.0-MacOSX-x86_64.sh;
@@ -43,7 +43,7 @@ before_install:
         ${PIPCMD} install --disable-pip-version-check --upgrade pip setuptools wheel;
     fi
   - if [ "${TRAVIS_OS_NAME}" == "linux" ]; then
-        export PIPCMD=pip
+        export PIPCMD=pip;
         export INTERP=py"${TRAVIS_PYTHON_VERSION//./}";
         export PKG_NAME=$(echo ${TRAVIS_REPO_SLUG} | sed -r "s|.*/(.*)|\1|g");
         export PYTHON_SITE_PACKAGES=$(${PIPCMD} show pip | grep "Location*" | sed -r "s/^.*Location\W (.*)/\1/g");
