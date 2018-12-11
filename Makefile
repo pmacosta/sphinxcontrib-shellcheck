@@ -63,7 +63,7 @@ upload: lint distro
 
 wheel: lint
 	@echo "Creating wheel distribution"
-	@SHELLCHECK_TEST_ENV="" $(PKG_DIR)/bin/make_wheels.sh
+	@SHELLCHECK_TEST_ENV="" $(PKG_DIR)/bin/make-wheels.sh
 	@rm -rf $(PKG_DIR)/build
 	@rm -rf $(PKG_DIR)/sphinxcontrib_shellcheck.egg-info
 	@rm -rf $(PKG_DIR)/.eggs

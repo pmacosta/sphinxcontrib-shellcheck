@@ -13,6 +13,7 @@ cwd=${PWD}
 cpath="${PATH}"
 finish() {
     cp -rf "${pkg_dir}/MANIFEST.in.test" "${pkg_dir}/MANIFEST.in"
+    sed -i -e "s/MANIFEST.in.test/MANIFEST.in/g" "${pkg_dir}/MANIFEST.in"
     export PATH="${cpath}"
     cd "${cwd}" || exit 1
 }
