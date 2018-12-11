@@ -233,7 +233,7 @@ if [ "${code_standard}" == 1 ]; then
     fi
     files=$(git diff --name-only --cached)
     pkg_dir=$(git rev-parse --show-toplevel)
-    if ! "${pkg_dir}/sbin/check_files_compliance.py" -qstp "${files}"; then
+    if ! "${pkg_dir}/bin/check_files_compliance.py" -qstp "${files}"; then
         echo -e "Error: files do not comply with package code standard"
         exit 1
     fi

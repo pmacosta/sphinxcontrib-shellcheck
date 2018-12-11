@@ -1,4 +1,8 @@
 #!/bin/bash
+# make-coveragerc.sh
+# Copyright (c) 2013-2018 Pablo Acosta-Serafini
+# See LICENSE for details
+
 
 strcat() {
   local IFS=""

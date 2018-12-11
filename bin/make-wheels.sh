@@ -1,11 +1,11 @@
 #!/bin/bash
-# shellcheck disable=SC1090,SC1091
-# make_wheels.sh
+# make-wheels.sh
 # Copyright (c) 2013-2018 Pablo Acosta-Serafini
 # See LICENSE for details
 
 set -e
 
+# shellcheck disable=SC1090,SC1091
 source "$(dirname "${BASH_SOURCE[0]}")/functions.sh"
 pkg_dir=$(dirname "$(current_dir "${BASH_SOURCE[0]}")")
 
