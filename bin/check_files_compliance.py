@@ -38,6 +38,7 @@ def pkg_files(sdir, mdir, files, extensions):
     # Defines files to be excluded from check
     efiles = [
         os.path.join(mdir, "LICENSE"),
+        os.path.join(mdir, "bin", "dropbox_uploader.sh"),
         os.path.join(mdir, "data", "whitelist.en.pws"),
     ]
     # Processing
