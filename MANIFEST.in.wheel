@@ -1,4 +1,4 @@
-# MANIFEST.in
+# MANIFEST.in.wheel
 # Copyright (c) 2018 Pablo Acosta-Serafini
 # See LICENSE for details
 include AUTHORS.rst
@@ -8,12 +8,3 @@ include MANIFEST.in
 include README.rst
 include setup.py
 recursive-include sphinxcontrib *.py
-# Test
-include .pylintrc
-include .pydocstyle
-include tox.ini
-recursive-include bin *
-recursive-include data *
-recursive-include pylint_plugins *
-recursive-include tests *
-recursive-include tests/support *

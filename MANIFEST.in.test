@@ -1,4 +1,4 @@
-# MANIFEST.in
+# MANIFEST.in.test
 # Copyright (c) 2018 Pablo Acosta-Serafini
 # See LICENSE for details
 include AUTHORS.rst
