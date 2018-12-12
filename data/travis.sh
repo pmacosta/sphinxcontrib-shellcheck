@@ -3,7 +3,7 @@
 # travis.sh
 # Copyright (c) 2018 Pablo Acosta-Serafini
 # See LICENSE for details
-#<<<
+# <<< EXCLUDE
 set -e
 tmp_dir=$(mktemp -d)
 env_name="travis_test"
@@ -48,25 +48,27 @@ which python
 echo "Cloning directory"
 git clone --recursive https://pmacosta@bitbucket.org/pmacosta/sphinxcontrib-shellcheck.git "${tmp_dir}"
 echo "Start of CI output"
-#>>>
+# >>> EXCLUDE
 
-#[VERBATIM]os:
-#[VERBATIM]  - linux
-#[VERBATIM]  # - osx
+# <<< VERBATIM
+#os:
+#  - linux
+#  # - osx
 
-#[VERBATIM]sudo: required
+#sudo: required
 
-#[VERBATIM]dist: trusty
+#dist: trusty
 
-#[VERBATIM]language: python
+#language: python
 
-#[VERBATIM]python:
-#[VERBATIM]  - "2.7"
-#[VERBATIM]  - "3.5"
-#[VERBATIM]  - "3.6"
-#[VERBATIM]  - "3.7"
+#python:
+#  - "2.7"
+#  - "3.5"
+#  - "3.6"
+#  - "3.7"
 
-#[VERBATIM]before_install:
+#before_install:
+# >>> VERBATIM
 env
 export PYTHONCMD=python
 export PYTESTCMD=pytest
@@ -130,13 +132,15 @@ echo "PYLINT_PLUGINS_DIR=${PYLINT_PLUGINS_DIR}"
 # Install tools and dependencies of package dependencies
 ###
 if [ "${TRAVIS_OS_NAME}" == "linux" ]; then
-    #sudo apt-get update;
+    sudo apt-get update;
     if ! apt list --installed 2> /dev/null | grep -q -E "^aspell" >& /dev/null; then
         sudo apt-get install -qq -y aspell;
     fi
 fi
 
-#[VERBATIM]install:
+# <<< VERBATIM
+#install:
+# >>> VERBATIM
 ###
 # Report version numbers for all compiled packages installed
 ###
@@ -150,7 +154,9 @@ travis_wait ${PIPCMD} install -r"${REQUIREMENTS_FILE}"
 ${PIPCMD} install codecov
 ${PIPCMD} freeze
 
-#[VERBATIM]before_script:
+# <<< VERBATIM
+#before_script:
+# >>> VERBATIM
 ###
 # Create directories for reports and artifacts
 ###
@@ -158,7 +164,9 @@ mkdir -p "${RESULTS_DIR}"/testresults
 mkdir -p "${RESULTS_DIR}"/codecoverage
 mkdir -p "${RESULTS_DIR}"/artifacts
 
-#[VERBATIM]script:
+# <<< VERBATIM
+#script:
+# >>> VERBATIM
 ###
 # Install package
 ###
@@ -215,12 +223,14 @@ if [ -f "${SBIN_DIR}"/build_docs.py ]; then
     "${SBIN_DIR}"/build_docs.py -r -t -d "${SOURCE_DIR}";
 fi
 
-#[VERBATIM]notifications:
-#[VERBATIM]  email:
-#[VERBATIM]    on_success: change
-#[VERBATIM]    on_failure: always
+# <<< VERBATIM
+#notifications:
+#  email:
+#    on_success: change
+#    on_failure: always
 
-#[VERBATIM]after_success:
+#after_success:
+# >>> VERBATIM
 if [ "${CODECOV_TOKEN}" != "" ]; then
     cd "${REPO_DIR}" || exit 1;
     cp "${RESULTS_DIR}"/codecoverage/coverage.xml "${REPO_DIR}"/.;
@@ -231,7 +241,9 @@ if [ "${CODECOV_TOKEN}" != "" ]; then
     codecov --token="${CODECOV_TOKEN}" --file="${REPO_DIR}"/coverage.xml;
 fi
 
-#[VERBATIM]after_failure:
+# <<< VERBATIM
+#after_failure:
+# >>> VERBATIM
 "${SBIN_DIR}"/zip-artifacts.sh "${INTERP}"
 if [ -f "${AFILE}" ]; then
     "${REPO_DIR}"/bin/dropbox_uploader.sh upload "${AFILE}" .;
