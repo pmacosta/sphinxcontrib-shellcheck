@@ -87,8 +87,8 @@ def make_dir(fname):
 
 def preppend_lines(lines):
     """Add initial character, comment or hyphen, if necessary."""
-    sh_open = re.compile(r"^\s*(if|while|for)\s+.*")
-    sh_close = re.compile(r"^\s*(fi|done)\s*")
+    sh_open = re.compile(r"^\s*(case|for|if|select|while|until)\s+.*")
+    sh_close = re.compile(r"^\s*(esac|done|fi)\s*")
     kwre = re.compile(r"^\s*\w+:.*")
     core = re.compile(r"^\s*#.*")
     dare = re.compile(r"^\s*-.*")
