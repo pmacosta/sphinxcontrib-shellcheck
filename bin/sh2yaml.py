@@ -38,17 +38,23 @@ def block_lines(lines, open_mark, close_mark, keep=False, proc_in_block=None):
                 yield line
 
 
-def clear_verbatim(lines):
+def clear_verbatim(lines, comment_marker):
     """Remove initial comment marker from lines."""
-    line_mark = re.compile(r"(\s*)#(.*)")
+    line_mark = re.compile(r"(\s*)" + comment_marker + r"(.*)")
 
     def proc_in_block(item):
         match = line_mark.match(item)
         return "".join(match.groups()) if match else item
 
-    open_mark = re.compile(r"^\s*#\s*<<<\s*VERBATIM\s*", flags=re.IGNORECASE)
-    close_mark = re.compile(r"^\s*#\s*>>>\s*VERBATIM\s*", flags=re.IGNORECASE)
+    open_mark = re.compile(
+        r"^\s*" + comment_marker + r"\s*<<<\s*VERBATIM\s*", flags=re.IGNORECASE
+    )
+    close_mark = re.compile(
+        r"^\s*" + comment_marker + r"\s*>>>\s*VERBATIM\s*", flags=re.IGNORECASE
+    )
     for line in block_lines(lines, open_mark, close_mark, True, proc_in_block):
+        if (comment_marker != "#") and line.lstrip().startswith("#"):
+            line = comment_marker + line
         yield line
 
 
@@ -63,13 +69,23 @@ def main(argv):
             raise argparse.ArgumentTypeError("Path {0} cannot be created".format(opath))
     with open(ifname, "r") as obj:
         ilines = [iline.rstrip() for iline in obj.readlines()]
+    _, ext = os.path.splitext(ifname)
+    comment_marker = "#" if ext.lower() == ".sh" else "REM "
     olines = os.linesep.join(
         rename_header(
             remove_shebang(
                 remove_shell_linting(
-                    preppend_lines(clear_verbatim(remove_exclude_block(ilines)))
-                )
+                    preppend_lines(
+                        clear_verbatim(
+                            remove_exclude_block(ilines, comment_marker), comment_marker
+                        ),
+                        comment_marker,
+                    ),
+                    comment_marker,
+                ),
+                comment_marker,
             ),
+            comment_marker,
             ifname,
             ofname,
         )
@@ -85,46 +101,59 @@ def make_dir(fname):
         os.makedirs(file_path)
 
 
-def preppend_lines(lines):
+def preppend_lines(lines, comment_marker):
     """Add initial character, comment or hyphen, if necessary."""
     sh_open = re.compile(r"^\s*(case|for|if|select|while|until)\s+.*")
     sh_close = re.compile(r"^\s*(esac|done|fi)\s*")
-    kwre = re.compile(r"^\s*\w+:.*")
-    core = re.compile(r"^\s*#.*")
+    kwre = re.compile(r"^\s*(\w+):.*")
+    core = re.compile(r"^\s*" + comment_marker + r".*")
     dare = re.compile(r"^\s*-.*")
     header_done = False
     level = 0
     for line in lines:
-        is_keyword = bool(kwre.match(line))
+        match = kwre.match(line)
+        is_keyword = bool(match) if comment_marker == "#" else (match and (match.groups()[0].lower() != "ps"))
         is_comment = bool(core.match(line))
-        plus = bool(sh_open.match(line))
-        minus = bool(sh_close.match(line))
+        plus = bool(sh_open.match(line)) if comment_marker == "#" else line.count("(")
+        minus = bool(sh_close.match(line)) if comment_marker == "#" else line.count(")")
         starts_with_dash = bool(dare.match(line))
         header_done = header_done or is_keyword
-        if (not line.strip()) or ((not header_done) and is_comment) or starts_with_dash:
+        if (not header_done) and is_comment:
+            if comment_marker != "#":
+                line = line.replace(comment_marker, "# ")
+        elif (not line.strip()) or starts_with_dash:
             pass  # Yield line as is
         else:
-            if is_keyword or (is_comment and line.startswith("  #")):
+            if is_keyword or (is_comment and line.startswith("  " + comment_marker)):
                 pass  # Yield line as is
             elif is_comment:
-                line = "  " + line
+                line = "  " + (
+                    line if comment_marker == "#" else line[len(comment_marker) :]
+                )
             else:
                 line = "  - " + line if not level else "    " + line
-                level = level + (1 if plus else 0) - (1 if minus else 0)
+                if comment_marker == "#":
+                    level = level + (1 if plus else 0) - (1 if minus else 0)
+                else:
+                    level += plus - minus
         yield line
 
 
-def remove_exclude_block(lines, open_mark="#<<<", close_mark="#>>>"):
+def remove_exclude_block(lines, comment_marker):
     """Remove blocks between given marker lines."""
-    open_mark = re.compile(r"^\s*#\s*<<<\s*EXCLUDE\s*", flags=re.IGNORECASE)
-    close_mark = re.compile(r"^\s*#\s*>>>\s*EXCLUDE\s*", flags=re.IGNORECASE)
+    open_mark = re.compile(
+        r"^\s*" + comment_marker + r"\s*<<<\s*EXCLUDE\s*", flags=re.IGNORECASE
+    )
+    close_mark = re.compile(
+        r"^\s*" + comment_marker + r"\s*>>>\s*EXCLUDE\s*", flags=re.IGNORECASE
+    )
     for line in block_lines(lines, open_mark, close_mark, keep=False):
         yield line
 
 
-def remove_shebang(lines):
+def remove_shebang(lines, comment_marker):
     """Remove shell shebang."""
-    regexp = re.compile(r"^\s*#!.*/bash")
+    regexp = re.compile(r"^\s*" + comment_marker + r"!.*/bash")
     for num, line in enumerate(lines):
         match = regexp.match(line)
         if (not num) and bool(match):
@@ -133,24 +162,27 @@ def remove_shebang(lines):
             yield line
 
 
-def remove_shell_linting(lines):
+def remove_shell_linting(lines, comment_marker):
     """Remove shell linter code disabling lines."""
-    regexp = re.compile(r"^\s*#\s*shellcheck\s*disable\s*=\s*.*")
+    regexp = re.compile(r"^\s*" + comment_marker + r"\s*shellcheck\s*disable\s*=\s*.*")
     for line in lines:
         match = regexp.match(line)
         if not bool(match):
             yield line
 
 
-def rename_header(lines, ifname, ofname):
+def rename_header(lines, comment_marker, ifname, ofname):
     """Print appropriate file name in header."""
     ifname = os.path.basename(ifname).replace(r".", r"\.")
     ofname = os.path.basename(ofname)
-    regexp = re.compile(r"^(\s*#\s*)" + ifname + r"\s*")
+    regexp = re.compile(r"^(\s*" + comment_marker + r"\s*)" + ifname + r"\s*")
     for line in lines:
         match = regexp.match(line)
         if bool(match):
-            line = match.groups()[0] + ofname
+            preppend = match.groups()[0]
+            if comment_marker != "#":
+                preppend = (" " * (len(preppend.lstrip()) - len(preppend))) + "# "
+            line = preppend + ofname
         yield line
 
 
@@ -176,7 +208,13 @@ def valid_existing_file(value):
     """Check file exists."""
     if not os.path.exists(value):
         raise argparse.ArgumentTypeError("File {0} does not exist".format(value))
-    return os.path.abspath(value)
+    value = os.path.abspath(value)
+    _, ext = os.path.splitext(value)
+    if ext.lower() not in (".sh", ".bat"):
+        raise argparse.ArgumentTypeError(
+            "Unsupported shell file extension: {0}".format(ext)
+        )
+    return value
 
 
 if __name__ == "__main__":
