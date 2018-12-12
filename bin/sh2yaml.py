@@ -103,6 +103,7 @@ def make_dir(fname):
 
 def preppend_lines(lines, comment_marker):
     """Add initial character, comment or hyphen, if necessary."""
+    # pylint: disable=R0914
     sh_open = re.compile(r"^\s*(case|for|if|select|while|until)\s+.*")
     sh_close = re.compile(r"^\s*(esac|done|fi)\s*")
     kwre = re.compile(r"^\s*(\w+):.*")
@@ -112,7 +113,11 @@ def preppend_lines(lines, comment_marker):
     level = 0
     for line in lines:
         match = kwre.match(line)
-        is_keyword = bool(match) if comment_marker == "#" else (match and (match.groups()[0].lower() != "ps"))
+        is_keyword = (
+            bool(match)
+            if comment_marker == "#"
+            else (match and (match.groups()[0].lower() != "ps"))
+        )
         is_comment = bool(core.match(line))
         plus = bool(sh_open.match(line)) if comment_marker == "#" else line.count("(")
         minus = bool(sh_close.match(line)) if comment_marker == "#" else line.count(")")
