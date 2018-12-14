@@ -54,7 +54,12 @@ email=0
 personal_repo=0
 code_standard=0
 pep257=0
-source "$(current_dir "${BASH_SOURCE[0]}")/repo-cfg.sh"
+cfg_fname="$(current_dir "${BASH_SOURCE[0]}")/repo-cfg.sh"
+if [ -f "${cfg_fname}" ]; then
+    source "$(current_dir "${BASH_SOURCE[0]}")/repo-cfg.sh"
+else
+    echo -e "\tConfiguration file not found, using defaults"
+fi
 if [ "${print}" == 1 ]; then
     echo -e "\tGit pre-commit setup"
     echo -e "\t\tprint=${print}"
@@ -201,14 +206,14 @@ if [ "${email}" == 1 ]; then
         echo -e "\tValidating author name and email ${msg}"
     fi
     if [ "${personal_repo}" == 1 ]; then
-        if [ "${PERSONAL_NAME}" == "" ] || [ "$PERSONAL_EMAIL}" == "" ]; then
+        if [ "${PERSONAL_NAME}" == "" ] || [ "${PERSONAL_EMAIL}" == "" ]; then
             echo -e "Error: personal information not present"
             exit 1
         fi
         history_name="${PERSONAL_NAME}"
         history_email="${PERSONAL_EMAIL}"
     else
-        if [ "${WORK_NAME}" == "" ] || [ "$WORKL_EMAIL}" == "" ]; then
+        if [ "${WORK_NAME}" == "" ] || [ "${WORK_EMAIL}" == "" ]; then
             echo -e "Error: personal information not present"
             exit 1
         fi
