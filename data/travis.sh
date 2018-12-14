@@ -97,8 +97,6 @@ fi
 # Set up environment variables
 ###
 export REPO_DIR=${TRAVIS_BUILD_DIR}
-export VIRTUALENV_DIR="$(dirname "$(dirname "$(dirname "${PYTHON_SITE_PACKAGES}")")")"
-export BIN_DIR=${VIRTUALENV_DIR}/bin
 export EXTRA_DIR=$(python -c "from __future__ import print_function; import sys; print(sys.prefix)")/share/${PKG_NAME}
 export SBIN_DIR=${EXTRA_DIR}/bin
 export RESULTS_DIR=${REPO_DIR}/results
@@ -116,8 +114,6 @@ echo "INTERP=${INTERP}"
 echo "PKG_NAME=${PKG_NAME}"
 echo "PYTHON_SITE_PACKAGES=${PYTHON_SITE_PACKAGES}"
 echo "REPO_DIR=${REPO_DIR}"
-echo "VIRTUALENV_DIR=${VIRTUALENV_DIR}"
-echo "BIN_DIR=${BIN_DIR}"
 echo "EXTRA_DIR=${EXTRA_DIR}"
 echo "SBIN_DIR=${SBIN_DIR}"
 echo "RESULTS_DIR=${RESULTS_DIR}"
