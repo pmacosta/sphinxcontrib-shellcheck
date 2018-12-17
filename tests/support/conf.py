@@ -2,7 +2,8 @@
 # conf.py
 # Copyright (c) 2018 Pablo Acosta-Serafini
 # See LICENSE for details
-# pylint: disable=C0103,C0111,C0325,E0611,F0401,R0913,R1710,W0212,W0611,W0613,W0622
+# pylint: disable=C0103,C0111,C0325,E0611,F0401,R0913,R1710,R1714
+# pylint: disable=W0212,W0611,W0613,W0622
 #
 # src documentation build configuration file, created by
 # sphinx-quickstart on Thu Oct 24 06:41:33 2013.

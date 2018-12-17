@@ -2,7 +2,7 @@
 # check_files_compliance.py
 # Copyright (c) 2018 Pablo Acosta-Serafini
 # See LICENSE for details
-# pylint: disable=C0103,C0111,C0413,R0903,R0912,R0914,W0622
+# pylint: disable=C0103,C0111,C0413,R0205,R0903,R0912,R0914,W0622
 
 # Standard library imports
 from __future__ import print_function
