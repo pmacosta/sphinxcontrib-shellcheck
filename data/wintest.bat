@@ -1,34 +1,30 @@
+@ECHO OFF
 REM wintest.bat
 REM Copyright (c) 2018 Pablo Acosta-Serafini
 REM See LICENSE for details
 REM <<< EXCLUDE
+SET CWD=%CD%
 CMD /c powershell.exe -Command "[guid]::NewGuid().ToString()" > uuid.txt
 SET /p UUID=<uuid.txt
 DEL uuid.txt
 SET TMP_DIR=%Temp%\Test_%UUID%
 SET ENV_DIR=%Temp%\appveyor_env
-ECHO "Build directory=%TMP_DIR%"
+ECHO Build directory=%TMP_DIR%
 MKDIR %TMP_DIR%
-ECHO "Going to build directory"
+ECHO Going to build directory
 CD %TMP_DIR%
-ECHO "Setting environment variables"
+ECHO Setting environment variables
 SET PYTHON_MAJOR=2
 SET INTERP=py37
 SET PYVER=3.7
-ECHO "Creating virtual environment"
+ECHO Creating virtual environment
 python -m venv %ENV_DIR%
-%ENV_DIR%\Scripts\activate.bat
-ECHO "Cloning directory"
-git clone --recursive https://pmacosta@bitbucket.org/pmacosta/sphinxcontrib-shellcheck.git %TMP_DIR%
-IF "%~1" equ ":main" (
-  SHIFT /1
-  GOTO main
-)
-CMD /d /c "%~f0" :main %*
-DEL %TMP_DIR%
-EXIT /b
-:main
-echo "Start of CI output"
+CALL %ENV_DIR%\Scripts\activate.bat
+ECHO Cloning repository
+REM git clone --recursive https://pmacosta@bitbucket.org/pmacosta/sphinxcontrib-shellcheck.git
+XCOPY C:\Users\pacosta\sphinxcontrib-shellcheck %TMP_DIR%\sphinxcontrib-shellcheck /E
+CD sphinxcontrib-shellcheck
+echo Start of CI output
 REM >>> EXCLUDE
 REM <<< VERBATIM
 REM install:
@@ -36,7 +32,7 @@ REM ###
 REM # Set up environment variables
 REM ###
 REM >>> VERBATIM
-SET
+REM SET
 SET PYTHONCMD=python
 SET PYTESTCMD=pytest
 SET SHELLCHECK_TEST_ENV=1
@@ -54,28 +50,30 @@ SET SBIN_DIR=%EXTRA_DIR%\bin
 SET RESULTS_DIR=%REPO_DIR%\results
 SET SOURCE_DIR=%PYTHON_SITE_PACKAGES%\%PKG_NAME_ALT%
 SET TRACER_DIR=%EXTRA_DIR%\docs\support
+ECHO TETO
+ECHO %PYTHONPATH%
 SET PYTHONPATH=%PYTHONPATH%;%PYTHON_SITE_PACKAGES%;%PYTHON_SITE_PACKAGES%\%PKG_NAME_ALT%;%EXTRA_DIR%;%EXTRA_DIR%\tests;%EXTRA_DIR%\docs;%EXTRA_DIR%\docs\support
 SET COV_FILE=%SOURCE_DIR%\.coveragerc_ci_%INTERP%
 SET REQUIREMENTS_FILE=%REPO_DIR%\requirements.txt
 SET CITMP=%REPO_DIR%\CITMP
 IF NOT EXIST "%CITMP%" MKDIR %CITMP%
 SET PYLINT_PLUGINS_DIR=%EXTRA_DIR%\pylint_plugins
-ECHO "PYTHONCMD=%PYTHONCMD%"
-ECHO "PIPCMD=%PIPCMD%"
-ECHO "PYTESTCMD=%PYTESTCMD%"
-ECHO "INTERP=%INTERP%"
-ECHO "PKG_NAME=%PKG_NAME%"
-ECHO "PYTHON_SITE_PACKAGES=%PYTHON_SITE_PACKAGES%"
-ECHO "REPO_DIR=%REPO_DIR%"
-ECHO "EXTRA_DIR=%EXTRA_DIR%"
-ECHO "SBIN_DIR=%SBIN_DIR%"
-ECHO "RESULTS_DIR=%RESULTS_DIR%"
-ECHO "SOURCE_DIR=%SOURCE_DIR%"
-ECHO "TRACER_DIR=%TRACER_DIR%"
-ECHO "PYTHONPATH=%PYTHONPATH%"
-ECHO "COV_FILE=%COV_FILE%"
-ECHO "REQUIREMENTS_FILE=%REQUIREMENTS_FILE%"
-ECHO "PYLINT_PLUGINS_DIR=%PYLINT_PLUGINS_DIR%"
+ECHO PYTHONCMD=%PYTHONCMD%
+ECHO PIPCMD=%PIPCMD%
+ECHO PYTESTCMD=%PYTESTCMD%
+ECHO INTERP=%INTERP%
+ECHO PKG_NAME=%PKG_NAME%
+ECHO PYTHON_SITE_PACKAGES=%PYTHON_SITE_PACKAGES%
+ECHO REPO_DIR=%REPO_DIR%
+ECHO EXTRA_DIR=%EXTRA_DIR%
+ECHO SBIN_DIR=%SBIN_DIR%
+ECHO RESULTS_DIR=%RESULTS_DIR%
+ECHO SOURCE_DIR=%SOURCE_DIR%3
+ECHO TRACER_DIR=%TRACER_DIR%
+ECHO PYTHONPATH=%PYTHONPATH%
+ECHO COV_FILE=%COV_FILE%
+ECHO REQUIREMENTS_FILE=%REQUIREMENTS_FILE%
+ECHO PYLINT_PLUGINS_DIR=%PYLINT_PLUGINS_DIR%
 REM ###
 REM # Install package dependencies
 REM ###
@@ -104,7 +102,7 @@ SET SHELLCHECK_CI_ENV=1
 %PYTHONCMD% -c "import os, sys; sys.path.append(os.path.realpath('.'));import setup; print(setup.__version__)" > version.txt
 SET SHELLCHECK_CI_ENV=
 SET /p PKG_VERSION=<version.txt
-ECHO "PKG_VERSION=%PKG_VERSION%"
+ECHO PKG_VERSION=%PKG_VERSION%
 CD %PYTHON_SITE_PACKAGES%
 %PIPCMD% install --upgrade %REPO_DIR%\dist\%PKG_NAME%-%PKG_VERSION%.zip
 
@@ -125,14 +123,17 @@ REM ###
 REM >>> VERBATIM
 %PYTHONCMD% -c "from __future__ import print_function; import multiprocessing; print(multiprocessing.cpu_count())" > num_cpus.txt
 SET /p NUM_CPUS=<num_cpus.txt
-ECHO "NUM_CPUS=%NUM_CPUS%"
+ECHO NUM_CPUS=%NUM_CPUS%
 REM # Omitted tests are not Windows-specific and are handled by Travis-CI
 %PYTHONCMD% %SBIN_DIR%\check_files_compliance.py -tps -d %SOURCE_DIR% -m %EXTRA_DIR%
-REM # pylint 1.6.x appears to have a bug in Python 3.6 that is only going to be fixed with Pylint 2.0
-pylint --rcfile=%EXTRA_DIR%\.pylintrc -f colorized -r no %SOURCE_DIR%
-pylint --rcfile=%EXTRA_DIR%\.pylintrc -f colorized -r no %SBIN_DIR%
-pylint --rcfile=%EXTRA_DIR%\.pylintrc -f colorized -r no %EXTRA_DIR%\tests
-pylint --rcfile=%EXTRA_DIR%\.pylintrc -f colorized -r no %EXTRA_DIR%\docs\support
+CD %SOURCE_DIR%
+for %%i in (*.py) do pylint --rcfile=%EXTRA_DIR%\.pylintrc --ignore=websupport -f text --ignore=websupport -r no %%i
+CD %SBIN_DIR%
+for /r %%i in (*.py) do pylint --rcfile=%EXTRA_DIR%\.pylintrc -f text --ignore=websupport -r no %%i
+CD %EXTRA_DIR%\tests
+for /r %%i in (*.py) do pylint --rcfile=%EXTRA_DIR%\.pylintrc -f text --ignore=websupport -r no %%i
+REM ###
+CD %EXTRA_DIR%\tests
 SET DODOCTEST=1
 %PYTESTCMD% -n %NUM_CPUS% --collect-only --doctest-glob="*.rst" %EXTRA_DIR%\docs > doctest.log 2>&1 || SET DODOCTEST=0
 IF %DODOCTEST%==1 %PYTESTCMD% --doctest-glob="*.rst" %EXTRA_DIR%\docs
@@ -153,5 +154,8 @@ REM >>> VERBATIM
 7z a %EXTRA_DIR%\artifacts_%INTERP%.zip %EXTRA_DIR%\artifacts\*.*
 appveyor PushArtifact %EXTRA_DIR%\artifacts_%INTERP%.zip
 REM <<< EXCLUDE
-EXIT /b
+deactivate
+CD %CWD%
+RMDIR /Q /S %ENV_DIR%
+RMDIR /Q /S %TMP_DIR%
 REM >>> EXCLUDE
