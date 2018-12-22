@@ -107,6 +107,17 @@ CD %PYTHON_SITE_PACKAGES%
 %PIPCMD% install --upgrade %REPO_DIR%\dist\%PKG_NAME%-%PKG_VERSION%.zip
 
 REM # Write coverage configuration file
+ECHO # .coveragerc_CI to control coverage.py during Appveyor runs" > %COV_FILE%
+ECHO [report] >> %COV_FILE%
+ECHO show_missing = True >> %COV_FILE%
+ECHO [run] >> %COV_FILE%
+ECHO branch = True >> %COV_FILE%
+ECHO data_file = %EXTRA_DIR%\.coverage_%INTERP% >> %COV_FILE%
+ECHO include = %SOURCE_DIR%\shellcheck.py >> %COV_FILE%
+ECHO omit = %SOURCE_DIR%\websupport\* >> %COV_FILE%
+ECHO [xml] >> %COV_FILE%
+ECHO output = %RESULTS_DIR%\codecoverage\coverage.xml >> %COV_FILE%
+
 REM ###
 %PYTHONCMD% %SBIN_DIR%\coveragerc_manager.py 'ci' 1 %INTERP% %PYTHON_SITE_PACKAGES%
 TYPE %COV_FILE%
