@@ -3,6 +3,7 @@
 # See LICENSE for details
 
 PKG_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+PYLINT_CMD := pylint --rcfile=$(PKG_DIR)/.pylintrc -f colorized -r no
 
 asort:
 	@echo "Sorting Aspell whitelist"
@@ -41,10 +42,15 @@ FORCE:
 
 lint:
 	@echo "Running Pylint on package files"
-	@pylint --rcfile=$(PKG_DIR)/.pylintrc -f colorized -r no $(PKG_DIR)/*.py
-	@pylint --rcfile=$(PKG_DIR)/.pylintrc -f colorized -r no $(PKG_DIR)/sphinxcontrib/*.py
-	@pylint --rcfile=$(PKG_DIR)/.pylintrc -f colorized -r no $(PKG_DIR)/tests/*.py
-	@pylint --rcfile=$(PKG_DIR)/.pylintrc -f colorized -r no $(PKG_DIR)/tests/support/*.py
+	@$(PYLINT_CMD) $(PKG_DIR)/*.py
+	@$(PYLINT_CMD) $(PKG_DIR)/sphinxcontrib/*.py
+	@$(PYLINT_CMD) $(PKG_DIR)/tests/*.py
+	@$(PYLINT_CMD) $(PKG_DIR)/tests/support/*.py
+	black \
+		$(PKG_DIR) \
+		$(PKG_DIR)/sphinxcontrib \
+		$(PKG_DIR)/tests \
+		$(PKG_DIR)/tests/support
 
 sdist:
 	@echo "Creating source distribution"
