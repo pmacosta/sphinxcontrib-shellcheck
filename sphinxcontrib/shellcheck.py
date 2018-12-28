@@ -20,7 +20,6 @@ import types
 # PyPI imports
 import decorator
 import docutils.nodes
-import docutils.utils.error_reporting
 import six
 import sphinx.errors
 import sphinx.util.logging
@@ -84,6 +83,7 @@ class LintShellBuilder(Builder):
         self.fname = os.path.join(self.outdir, "output.txt")
         self.source = None
         open(self.fname, "w").close()
+
 
     def _get_block_indent(self, node):
         return _get_indent(self._srclines[node.line + 1])
@@ -274,6 +274,20 @@ class ShellcheckBuilder(LintShellBuilder):
         self._dialects = app.config.shellcheck_dialects
         self._exe = app.config.shellcheck_executable
         self._prompt = app.config.shellcheck_prompt
+        # Validate configuration options
+        try:
+            for item in self._dialects:
+                assert item in ("sh", "bash", "dash", "ksh")
+        except:
+            raise TypeError("Invalid dialect")
+        if ((not isinstance(self._exe, str)) or
+            (isinstance(self._exe, str) and (not self._exe.strip()))):
+            raise TypeError("Invalid shellcheck executable")
+        if ((not isinstance(self._prompt, str)) or
+                (isinstance(self._prompt, str) and len(self._prompt) != 1)):
+            raise TypeError("Invalid shellcheck prompt")
+        if not isinstance(self._debug, bool):
+            raise TypeError("Invalid shellcheck debug flag")
 
     @property
     def dialects(self):
