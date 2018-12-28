@@ -22,8 +22,9 @@ python -m venv %ENV_DIR%
 CALL %ENV_DIR%\Scripts\activate.bat
 ECHO Cloning repository
 REM git clone --recursive https://pmacosta@bitbucket.org/pmacosta/sphinxcontrib-shellcheck.git
-XCOPY C:\Users\pacosta\sphinxcontrib-shellcheck %TMP_DIR%\sphinxcontrib-shellcheck /E
+XCOPY C:\Users\%USERNAME%\sphinxcontrib-shellcheck %TMP_DIR%\sphinxcontrib-shellcheck /E
 CD sphinxcontrib-shellcheck
+SET PATH=C:\Program Files\7-Zip;C:\Users\%USERNAME%\bin\curl\bin;%PATH%
 echo Start of CI output
 REM >>> EXCLUDE
 REM <<< VERBATIM
@@ -45,12 +46,11 @@ SET /p PYTHON_SITE_PACKAGES=<python_site_packages_dir.txt
 SET REPO_DIR=%CD%
 %PYTHONCMD% -c "from __future__ import print_function; import sys; print(sys.prefix)" > extra_dir.txt
 SET /p EXTRA_DIR_BASE=<extra_dir.txt
-SET EXTRA_DIR=%EXTRA_DIR_BASE%/share/%PKG_NAME%
+SET EXTRA_DIR=%EXTRA_DIR_BASE%\share\%PKG_NAME%
 SET SBIN_DIR=%EXTRA_DIR%\bin
 SET RESULTS_DIR=%REPO_DIR%\results
 SET SOURCE_DIR=%PYTHON_SITE_PACKAGES%\%PKG_NAME_ALT%
 SET TRACER_DIR=%EXTRA_DIR%\docs\support
-ECHO TETO
 ECHO %PYTHONPATH%
 SET PYTHONPATH=%PYTHONPATH%;%PYTHON_SITE_PACKAGES%;%PYTHON_SITE_PACKAGES%\%PKG_NAME_ALT%;%EXTRA_DIR%;%EXTRA_DIR%\tests;%EXTRA_DIR%\docs;%EXTRA_DIR%\docs\support
 SET COV_FILE=%SOURCE_DIR%\.coveragerc_ci_%INTERP%
@@ -68,7 +68,7 @@ ECHO REPO_DIR=%REPO_DIR%
 ECHO EXTRA_DIR=%EXTRA_DIR%
 ECHO SBIN_DIR=%SBIN_DIR%
 ECHO RESULTS_DIR=%RESULTS_DIR%
-ECHO SOURCE_DIR=%SOURCE_DIR%3
+ECHO SOURCE_DIR=%SOURCE_DIR%
 ECHO TRACER_DIR=%TRACER_DIR%
 ECHO PYTHONPATH=%PYTHONPATH%
 ECHO COV_FILE=%COV_FILE%
@@ -81,6 +81,13 @@ CD %REPO_DIR%
 %PIPCMD% install -r%REQUIREMENTS_FILE%
 %PIPCMD% install codecov
 %PIPCMD% freeze
+REM ###
+REM # Install shellcheck and bash binaries
+REM ###
+curl --output shellcheck-stable.zip https://storage.googleapis.com/shellcheck/shellcheck-stable.zip
+7z -y e shellcheck-stable.zip
+MOVE shellcheck-stable.exe shellcheck.exe
+SET PATH=%REPO_DIR%;%PATH%
 REM ###
 REM # Create directories for reports and artifacts
 REM ###
@@ -107,7 +114,7 @@ CD %PYTHON_SITE_PACKAGES%
 %PIPCMD% install --upgrade %REPO_DIR%\dist\%PKG_NAME%-%PKG_VERSION%.zip
 
 REM # Write coverage configuration file
-ECHO # .coveragerc_CI to control coverage.py during Appveyor runs" > %COV_FILE%
+ECHO # .coveragerc_CI to control coverage.py during Appveyor runs > %COV_FILE%
 ECHO [report] >> %COV_FILE%
 ECHO show_missing = True >> %COV_FILE%
 ECHO [run] >> %COV_FILE%
@@ -132,9 +139,6 @@ REM ###
 REM # Run tests
 REM ###
 REM >>> VERBATIM
-%PYTHONCMD% -c "from __future__ import print_function; import multiprocessing; print(multiprocessing.cpu_count())" > num_cpus.txt
-SET /p NUM_CPUS=<num_cpus.txt
-ECHO NUM_CPUS=%NUM_CPUS%
 REM # Omitted tests are not Windows-specific and are handled by Travis-CI
 %PYTHONCMD% %SBIN_DIR%\check_files_compliance.py -tps -d %SOURCE_DIR% -m %EXTRA_DIR%
 CD %SOURCE_DIR%
@@ -146,15 +150,15 @@ for /r %%i in (*.py) do pylint --rcfile=%EXTRA_DIR%\.pylintrc -f text --ignore=w
 REM ###
 CD %EXTRA_DIR%\tests
 SET DODOCTEST=1
-%PYTESTCMD% -n %NUM_CPUS% --collect-only --doctest-glob="*.rst" %EXTRA_DIR%\docs > doctest.log 2>&1 || SET DODOCTEST=0
+%PYTESTCMD% --collect-only --doctest-glob="*.rst" %EXTRA_DIR%\docs > doctest.log 2>&1 || SET DODOCTEST=0
 IF %DODOCTEST%==1 %PYTESTCMD% --doctest-glob="*.rst" %EXTRA_DIR%\docs
 SET DODOCTEST=1
-%PYTESTCMD% -n %NUM_CPUS% --collect-only --doctest-modules %SOURCE_DIR% > doctest.log 2>&1 || SET DODOCTEST=0
-IF %DODOCTEST%==1 %PYTESTCMD% -n %NUM_CPUS% --doctest-modules %SOURCE_DIR%
+%PYTESTCMD% --collect-only --doctest-modules %SOURCE_DIR% > doctest.log 2>&1 || SET DODOCTEST=0
+IF %DODOCTEST%==1 %PYTESTCMD% --doctest-modules %SOURCE_DIR%
 REM # Coverage tests runs all the unit tests, no need to run the non-coverage
 REM # tests since the report is not being used
 REM # - pytest -s -vv --junitxml=%RESULTS_DIR%\testresults\pytest.xml
-%PYTESTCMD% -n %NUM_CPUS% --cov-config %COV_FILE% --cov %SOURCE_DIR% --cov-report term
+%PYTESTCMD% --cov-config %COV_FILE% --cov %SOURCE_DIR% --cov-report term
 REM # Re-building exceptions auto-documentation takes a long time in Appveyor.
 REM # They have (and should be) spot-checked every now and then
 REM # - python %SBIN_DIR%\build_docs.py -r -t -d %SOURCE_DIR%

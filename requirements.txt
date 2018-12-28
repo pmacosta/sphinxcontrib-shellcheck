@@ -6,5 +6,6 @@ sphinx
 pylint
 pytest
 pytest-cov
+pytest-xdist
 sqlalchemy
 whoosh

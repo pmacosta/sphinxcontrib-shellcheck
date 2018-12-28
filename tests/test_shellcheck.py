@@ -7,13 +7,10 @@
 from __future__ import print_function
 import os
 import re
-import uuid
+import shutil
 
 # PyPI imports
 import sphinx.cmd.build
-
-# Intra-package imports
-import sphinxcontrib.shellcheck as shellcheck
 
 
 ###
@@ -31,7 +28,7 @@ def run_sphinx(extra_argv=None):
     sdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "support")
     dir1 = os.path.join(sdir, "_build", "doctrees")
     dir2 = os.path.join(sdir, "_build", "shellcheck")
-    exe = shellcheck._which("sphinx-build")
+    exe = shutil.which("sphinx-build")
     argv = (
         [exe]
         + extra_argv
@@ -59,18 +56,6 @@ def run_sphinx(extra_argv=None):
 
 # Test functions
 ###
-def test_which():
-    """Test _which function."""
-    fname = os.path.abspath(__file__)
-    cwd = os.path.dirname(fname)
-    bin_dir = os.path.join(os.path.dirname(cwd), "bin")
-    # Put binary directory first in path to make sure scripts there are first ones found
-    os.environ["PATH"] = bin_dir + os.pathsep + os.environ["PATH"]
-    assert shellcheck._which("make-pkg.sh") == os.path.join(bin_dir, "make-pkg.sh")
-    assert shellcheck._which(os.path.join(fname)) == ""
-    assert shellcheck._which("_not_a_file_" + str(uuid.uuid4())) == ""
-
-
 def test_shellcheck_error():
     """Test main sphinx extension."""
     ret = run_sphinx(["-D", 'shellcheck_executable="not_an_exe"'])
@@ -82,7 +67,8 @@ def test_shellcheck():
     ret_code, act_lines = run_sphinx()
     assert ret_code == 0
     act_lines = [act_line.rstrip() for act_line in act_lines]
-    ref_lines = [
+    # For version 0.4.4
+    ref_lines_1 = [
         "README.rst: " + os.path.join(SDIR, "README.rst"),
         "README.rst: Line 32, column 11 [2164]: Use cd ... || exit in case cd fails.",
         "README.rst: Line 34, column 17 [2154]: myvar is referenced but not assigned.",
@@ -92,4 +78,15 @@ def test_shellcheck():
             "myfile.sh was not specified as input (see shellcheck -x)."
         ),
     ]
-    assert ref_lines == act_lines
+    # For version 0.6
+    ref_lines_2 = [
+        "README.rst: " + os.path.join(SDIR, "README.rst"),
+        "README.rst: Line 32, column 11 [2164]: Use 'cd ... || exit' or 'cd ... || return' in case cd fails.",
+        "README.rst: Line 34, column 17 [2154]: myvar is referenced but not assigned.",
+        "api.rst: " + os.path.join(SDIR, "mymodule.py"),
+        (
+            "api.rst: Line 30, column 18 [1091]: Not following: "
+            "myfile.sh was not specified as input (see shellcheck -x)."
+        ),
+    ]
+    assert any([(ref_lines_1 == act_lines), (ref_lines_2 == act_lines)])

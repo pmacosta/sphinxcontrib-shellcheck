@@ -11,6 +11,7 @@ import json
 import os
 import platform
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -58,18 +59,6 @@ def _tostr(line):  # pragma: no cover
     return line.encode()
 
 
-def _which(name):
-    """Search PATH for executable files with the given name."""
-    # Inspired by https://twistedmatrix.com/trac/browser/tags/releases/
-    # twisted-8.2.0/twisted/python/procutils.py
-    # pylint: disable=W0141
-    for pdir in os.environ.get("PATH", "").split(os.pathsep):
-        fname = os.path.join(pdir, name)
-        if os.path.isfile(fname) and os.access(fname, os.X_OK):
-            return fname
-    return ""
-
-
 ###
 # Classes
 ###
@@ -114,12 +103,12 @@ class LintShellBuilder(Builder):
             LOGGER.info("<<< lines (_get_linter_stdout)")
             LOGGER.info(lines)
             LOGGER.info(">>>")
-        with TmpFile(fpointer=lambda x: x.writelines(lines)) as fname:
+        with TmpFile(fpointer=lambda x: x.write(lines.encode('ascii'))) as fname:
             if self._debug:  # pragma: no cover
                 with open(fname, "r") as fhandle:
                     check_lines = fhandle.readlines()
                 LOGGER.info("Auto-generated shell file")
-                LOGGER.info(os.linesep.join(check_lines))
+                LOGGER.info(''.join(check_lines))
             obj = subprocess.Popen(
                 self.cmd(fname), stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
@@ -135,7 +124,7 @@ class LintShellBuilder(Builder):
         lines = ""
         cont_line, cmd_line = False, False
         value = node.astext()
-        code_lines = _tostr(value).split(os.linesep)
+        code_lines = _tostr(value).split("\n")
         lmin = max(len(code_line) for code_line in code_lines)
         if self._debug:  # pragma: no cover
             LOGGER.info("<<< Node code (_lint_block)")
@@ -144,15 +133,15 @@ class LintShellBuilder(Builder):
         for code_line in code_lines:
             cmd_line = code_line.strip().startswith(self.prompt)
             if cmd_line or cont_line:
-                lines += code_line[1:] + os.linesep
+                lines += code_line[1:] + "\n"
                 lmin = min(lmin, _get_indent(code_line[1:]))
                 cont_line = code_line.strip().endswith("\\")
             else:
                 cont_line, cmd_line = False, False
-                lines += (" " * lmin) + "# Output line" + os.linesep
-        shebang = "#!" + _which(self.dialect) + os.linesep
+                lines += (" " * lmin) + "# Output line\n"
+        shebang = "#!/bin/bash\n"
         self._line_offset = node.line
-        self._col_offset = _get_indent(lines.split(os.linesep)[0]) + indent + 1
+        self._col_offset = _get_indent(lines.split("\n")[0]) + indent + 1
         lines = shebang + textwrap.dedent(lines)
         if self._debug:  # pragma: no cover
             LOGGER.info("<<< lines (_lint_block)")
@@ -163,12 +152,16 @@ class LintShellBuilder(Builder):
         return self._output
 
     def _shell_nodes(self, doctree):
-        regexp = re.compile("(.[^:]*)(?::docstring of (.*))*")
+        regexp = re.compile("(.*):docstring of (.*)")
         for node in doctree.traverse():
             if self._is_shell_node(node):
                 self.dialect = node.attributes.get("language").lower()
-                self.source, func_abs_name = regexp.match(node.source).groups()
-                self.source = os.path.abspath(self.source)
+                self.source, func_abs_name = (
+                    regexp.match(node.source).groups()
+                    if ':docstring of ' in node.source else
+                    (node.source, None)
+                )
+                self.source = os.path.abspath(self.source.strip())
                 if self._debug:  # pragma: no cover
                     LOGGER.info("Analyzing file " + self.source)
                     LOGGER.info("<<< Node code")
@@ -248,7 +241,7 @@ class LintShellBuilder(Builder):
         """Check shell nodes."""
         self.docname = docname
         exe = self.cmd("myfile.sh")[0]
-        if not _which(exe):
+        if not shutil.which(exe):
             raise LintShellNotFound("Shell linter executable not found: " + exe)
         self._tabwidth = doctree.settings.tab_width
         ret_code = 0
@@ -346,7 +339,7 @@ class TmpFile(object):  # pragma: no cover
             fname = fname.replace(os.sep, "/")
         self._fname = fname
         if self._fpointer:
-            with open(self._fname, "w") as fobj:
+            with open(self._fname, "wb") as fobj:
                 self._fpointer(fobj, *self._args, **self._kwargs)
         return self._fname
 
