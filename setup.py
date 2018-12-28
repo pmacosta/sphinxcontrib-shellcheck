@@ -73,9 +73,7 @@ if INSTALL_MODE_IS_TEST:
         ),
         (
             os.path.join(SHARE_DIR, "tests"),
-            [
-                os.path.join(PWD, "tests", "test_shellcheck.py"),
-            ],
+            [os.path.join(PWD, "tests", "test_shellcheck.py")],
         ),
         (
             os.path.join(SHARE_DIR, "tests", "support"),
@@ -93,7 +91,7 @@ if INSTALL_MODE_IS_TEST:
                 os.path.join(PWD, "data", "travis.sh"),
                 os.path.join(PWD, "data", "whitelist.en.pws"),
                 os.path.join(PWD, "data", "wintest.bat"),
-            ]
+            ],
         ),
         (
             os.path.join(SHARE_DIR, "pylint_plugins"),

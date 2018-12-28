@@ -81,7 +81,10 @@ def test_shellcheck():
     # For version 0.6
     ref_lines_2 = [
         "README.rst: " + os.path.join(SDIR, "README.rst"),
-        "README.rst: Line 32, column 11 [2164]: Use 'cd ... || exit' or 'cd ... || return' in case cd fails.",
+        (
+            "README.rst: Line 32, column 11 [2164]: "
+            "Use 'cd ... || exit' or 'cd ... || return' in case cd fails."
+        ),
         "README.rst: Line 34, column 17 [2154]: myvar is referenced but not assigned.",
         "api.rst: " + os.path.join(SDIR, "mymodule.py"),
         (
