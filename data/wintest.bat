@@ -1,8 +1,8 @@
-@ECHO OFF
 REM wintest.bat
 REM Copyright (c) 2018 Pablo Acosta-Serafini
 REM See LICENSE for details
 REM <<< EXCLUDE
+@ECHO OFF
 SET CWD=%CD%
 CMD /c powershell.exe -Command "[guid]::NewGuid().ToString()" > uuid.txt
 SET /p UUID=<uuid.txt
@@ -33,7 +33,7 @@ REM ###
 REM # Set up environment variables
 REM ###
 REM >>> VERBATIM
-REM SET
+SET
 SET PYTHONCMD=python
 SET PYTESTCMD=pytest
 SET SHELLCHECK_TEST_ENV=1
@@ -112,7 +112,6 @@ SET /p PKG_VERSION=<version.txt
 ECHO PKG_VERSION=%PKG_VERSION%
 CD %PYTHON_SITE_PACKAGES%
 %PIPCMD% install --upgrade %REPO_DIR%\dist\%PKG_NAME%-%PKG_VERSION%.zip
-
 REM # Write coverage configuration file
 ECHO # .coveragerc_CI to control coverage.py during Appveyor runs > %COV_FILE%
 ECHO [report] >> %COV_FILE%
@@ -124,7 +123,6 @@ ECHO include = %SOURCE_DIR%\shellcheck.py >> %COV_FILE%
 ECHO omit = %SOURCE_DIR%\websupport\* >> %COV_FILE%
 ECHO [xml] >> %COV_FILE%
 ECHO output = %RESULTS_DIR%\codecoverage\coverage.xml >> %COV_FILE%
-
 REM ###
 %PYTHONCMD% %SBIN_DIR%\coveragerc_manager.py 'ci' 1 %INTERP% %PYTHON_SITE_PACKAGES%
 TYPE %COV_FILE%
@@ -139,14 +137,13 @@ REM ###
 REM # Run tests
 REM ###
 REM >>> VERBATIM
-REM # Omitted tests are not Windows-specific and are handled by Travis-CI
 %PYTHONCMD% %SBIN_DIR%\check_files_compliance.py -tps -d %SOURCE_DIR% -m %EXTRA_DIR%
 CD %SOURCE_DIR%
 for %%i in (*.py) do pylint --rcfile=%EXTRA_DIR%\.pylintrc --ignore=websupport -f text --ignore=websupport -r no %%i
 CD %SBIN_DIR%
-for /r %%i in (*.py) do pylint --rcfile=%EXTRA_DIR%\.pylintrc -f text --ignore=websupport -r no %%i
+for /r %%i in (*.py) do pylint --rcfile=%EXTRA_DIR%\.pylintrc -f text -r no %%i
 CD %EXTRA_DIR%\tests
-for /r %%i in (*.py) do pylint --rcfile=%EXTRA_DIR%\.pylintrc -f text --ignore=websupport -r no %%i
+for /r %%i in (*.py) do pylint --rcfile=%EXTRA_DIR%\.pylintrc -f text -r no %%i
 REM ###
 CD %EXTRA_DIR%\tests
 SET DODOCTEST=1
@@ -155,13 +152,7 @@ IF %DODOCTEST%==1 %PYTESTCMD% --doctest-glob="*.rst" %EXTRA_DIR%\docs
 SET DODOCTEST=1
 %PYTESTCMD% --collect-only --doctest-modules %SOURCE_DIR% > doctest.log 2>&1 || SET DODOCTEST=0
 IF %DODOCTEST%==1 %PYTESTCMD% --doctest-modules %SOURCE_DIR%
-REM # Coverage tests runs all the unit tests, no need to run the non-coverage
-REM # tests since the report is not being used
-REM # - pytest -s -vv --junitxml=%RESULTS_DIR%\testresults\pytest.xml
 %PYTESTCMD% --cov-config %COV_FILE% --cov %SOURCE_DIR% --cov-report term
-REM # Re-building exceptions auto-documentation takes a long time in Appveyor.
-REM # They have (and should be) spot-checked every now and then
-REM # - python %SBIN_DIR%\build_docs.py -r -t -d %SOURCE_DIR%
 
 REM <<< VERBATIM
 REM on_failure:

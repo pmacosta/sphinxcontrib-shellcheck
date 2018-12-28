@@ -1,8 +1,0 @@
-# .coveragerc_tox to control coverage.py during Tox runs
-[report]
-show_missing = True
-[run]
-branch = True
-data_file = /home/pacosta/python/pmisc/.tox/py27/lib/python2.7/site-packages/pmisc/.coverage_py27-pkg
-include = /home/pacosta/python/pmisc/.tox/py27/lib/python2.7/site-packages/sphinxcontrib-shellcheck/__init__.py
-          /home/pacosta/python/pmisc/.tox/py27/lib/python2.7/site-packages/sphinxcontrib-shellcheck/shellcheck.py
