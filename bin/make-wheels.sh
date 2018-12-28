@@ -25,7 +25,7 @@ bin_dir=${pkg_dir}/bin
 echo "pkg_dir: ${pkg_dir}"
 echo "bin_dir: ${bin_dir}"
 cd "${pkg_dir}" || exit 1
-vers=(2.7 3.5 3.6 3.7)
+vers=(3.5 3.6 3.7)
 for ver in "${vers[@]}"; do
     export PATH=${HOME}/python/python${ver}/bin:${PATH}
     "${bin_dir}/cprint.sh" line cyan "Building Python ${ver} wheel"

@@ -40,7 +40,7 @@ echo "Setting environment variables"
 export TRAVIS_REPO_SLUG="pmacosta/sphinxcontrib-shellcheck"
 export TRAVIS_BUILD_DIR="${tmp_dir}"
 export TRAVIS_OS_NAME="linux"
-export TRAVIS_PYTHON_VERSION="2.7"
+export TRAVIS_PYTHON_VERSION="3.7"
 echo "Creating virtual environment"
 mkvirtualenv -p "${HOME}"/python/python"${TRAVIS_PYTHON_VERSION}"/bin/python "${env_name}" || true
 source "${WORKON_HOME}/${env_name}/bin/activate"
@@ -62,7 +62,6 @@ echo "Start of CI output"
 #language: python
 
 #python:
-#  - "2.7"
 #  - "3.5"
 #  - "3.6"
 #  - "3.7"

@@ -13,7 +13,6 @@ import platform
 import re
 import shutil
 import subprocess
-import sys
 import tempfile
 import textwrap
 import types
@@ -54,9 +53,7 @@ def _get_indent(line):
 def _tostr(line):  # pragma: no cover
     if isinstance(line, str):
         return line
-    if sys.hexversion > 0x03000000:
-        return line.decode()
-    return line.encode()
+    return line.decode()
 
 
 ###
@@ -103,12 +100,12 @@ class LintShellBuilder(Builder):
             LOGGER.info("<<< lines (_get_linter_stdout)")
             LOGGER.info(lines)
             LOGGER.info(">>>")
-        with TmpFile(fpointer=lambda x: x.write(lines.encode('ascii'))) as fname:
+        with TmpFile(fpointer=lambda x: x.write(lines.encode("ascii"))) as fname:
             if self._debug:  # pragma: no cover
                 with open(fname, "r") as fhandle:
                     check_lines = fhandle.readlines()
                 LOGGER.info("Auto-generated shell file")
-                LOGGER.info(''.join(check_lines))
+                LOGGER.info("".join(check_lines))
             obj = subprocess.Popen(
                 self.cmd(fname), stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
@@ -158,8 +155,8 @@ class LintShellBuilder(Builder):
                 self.dialect = node.attributes.get("language").lower()
                 self.source, func_abs_name = (
                     regexp.match(node.source).groups()
-                    if ':docstring of ' in node.source else
-                    (node.source, None)
+                    if ":docstring of " in node.source
+                    else (node.source, None)
                 )
                 self.source = os.path.abspath(self.source.strip())
                 if self._debug:  # pragma: no cover
