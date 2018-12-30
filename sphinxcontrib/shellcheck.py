@@ -58,6 +58,10 @@ def _tostr(line):  # pragma: no cover
 ###
 # Classes
 ###
+class InvalidShellcheckBuilderConfig(sphinx.errors.SphinxError):  # noqa: D101
+    category = __("ShellcheckBuilder failed")
+
+
 class LintShellNotFound(sphinx.errors.SphinxError):  # noqa: D101
     category = __("LintShell failed")
 
@@ -279,15 +283,15 @@ class ShellcheckBuilder(LintShellBuilder):
             for item in self._dialects:
                 assert item in ("sh", "bash", "dash", "ksh")
         except:
-            raise TypeError("Invalid dialect")
+            raise InvalidShellcheckBuilderConfig("Invalid dialect")
         if ((not isinstance(self._exe, str)) or
             (isinstance(self._exe, str) and (not self._exe.strip()))):
-            raise TypeError("Invalid shellcheck executable")
+            raise InvalidShellcheckBuilderConfig("Invalid shellcheck executable")
         if ((not isinstance(self._prompt, str)) or
                 (isinstance(self._prompt, str) and len(self._prompt) != 1)):
-            raise TypeError("Invalid shellcheck prompt")
+            raise InvalidShellcheckBuilderConfig("Invalid shellcheck prompt")
         if not isinstance(self._debug, bool):
-            raise TypeError("Invalid shellcheck debug flag")
+            raise InvalidShellcheckBuilderConfig("Invalid shellcheck debug flag")
 
     @property
     def dialects(self):

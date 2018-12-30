@@ -58,8 +58,13 @@ def run_sphinx(extra_argv=None):
 ###
 def test_shellcheck_error():
     """Test main sphinx extension."""
-    ret = run_sphinx(["-D", 'shellcheck_executable="not_an_exe"'])
-    assert ret == (2, [])
+    def validate(opt):
+        ret = run_sphinx(["-D", opt])
+        assert ret == (2, [])
+    validate('shellcheck_dialexts="xonsh"')
+    validate('shellcheck_executable="not_an_exe"')
+    validate('shellcheck_prompt="###"')
+    validate('shellcheck_debug=5')
 
 
 def test_shellcheck():
