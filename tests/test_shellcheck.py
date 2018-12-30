@@ -7,11 +7,12 @@
 from __future__ import print_function
 import os
 import re
-import shutil
 
 # PyPI imports
 import sphinx.cmd.build
 
+# Intra-package imports
+from shellcheck import which
 
 ###
 # Global variables
@@ -28,14 +29,13 @@ def run_sphinx(extra_argv=None):
     sdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "support")
     dir1 = os.path.join(sdir, "_build", "doctrees")
     dir2 = os.path.join(sdir, "_build", "shellcheck")
-    exe = shutil.which("sphinx-build")
+    exe = which("sphinx-build")
     argv = (
         [exe]
         + extra_argv
         + [
             "--no-color",
             "-Q",
-            "-W",
             "-a",
             "-E",
             "-b",
@@ -49,8 +49,10 @@ def run_sphinx(extra_argv=None):
     argv[0] = re.sub(r"(-script\.pyw?|\.exe)?$", "", argv[0])
     ret_code = sphinx.cmd.build.main(argv[1:])
     fname = os.path.join(dir2, "output.txt")
-    with open(fname, "r") as fobj:
-        lines = fobj.readlines()
+    lines = []
+    if os.path.exists(fname):
+        with open(fname, "r") as fobj:
+            lines = fobj.readlines()
     return ret_code, lines
 
 
@@ -61,7 +63,7 @@ def test_shellcheck_error():
     def validate(opt):
         ret = run_sphinx(["-D", opt])
         assert ret == (2, [])
-    validate('shellcheck_dialexts="xonsh"')
+    validate('shellcheck_dialects=bash,xonsh')
     validate('shellcheck_executable="not_an_exe"')
     validate('shellcheck_prompt="###"')
     validate('shellcheck_debug=5')

@@ -1,7 +1,7 @@
 # shellcheck.py
 # Copyright (c) 2018 Pablo Acosta-Serafini
 # See LICENSE for details
-# pylint: disable=C0111,E1129,R0205,R0902,R0903,R0914,W0107
+# pylint: disable=C0103,C0111,E1129,R0205,R0902,R0903,R0912,R0914,W0107
 
 # Standard library import
 from __future__ import print_function
@@ -11,11 +11,79 @@ import json
 import os
 import platform
 import re
-import shutil
+import sys
 import subprocess
 import tempfile
 import textwrap
 import types
+
+# Literal copy from [...]/site-packages/pip/_vendor/compat.py
+try:
+    from shutil import which
+except ImportError:  # pragma: no cover
+    # Implementation from Python 3.3
+    def which(cmd, mode=os.F_OK | os.X_OK, path=None):
+        """Given a command, mode, and a PATH string, return the path which
+        conforms to the given mode on the PATH, or None if there is no such
+        file.
+
+        `mode` defaults to os.F_OK | os.X_OK. `path` defaults to the result
+        of os.environ.get("PATH"), or can be overridden with a custom search
+        path.
+
+        """
+        # pylint: disable=C0113,W0622
+        # Check that a given file can be accessed with the correct mode.
+        # Additionally check that `file` is not a directory, as on Windows
+        # directories pass the os.access check.
+        def _access_check(fn, mode):
+            return os.path.exists(fn) and os.access(fn, mode) and not os.path.isdir(fn)
+
+        # If we're given a path with a directory part, look it up directly rather
+        # than referring to PATH directories. This includes checking relative to the
+        # current directory, e.g. ./script
+        if os.path.dirname(cmd):
+            if _access_check(cmd, mode):
+                return cmd
+            return None
+
+        if path is None:
+            path = os.environ.get("PATH", os.defpath)
+        if not path:
+            return None
+        path = path.split(os.pathsep)
+
+        if sys.platform == "win32":
+            # The current directory takes precedence on Windows.
+            if not os.curdir in path:
+                path.insert(0, os.curdir)
+
+            # PATHEXT is necessary to check on Windows.
+            pathext = os.environ.get("PATHEXT", "").split(os.pathsep)
+            # See if the given file matches any of the expected path extensions.
+            # This will allow us to short circuit when given "python.exe".
+            # If it does match, only test that one, otherwise we have to try
+            # others.
+            if any(cmd.lower().endswith(ext.lower()) for ext in pathext):
+                files = [cmd]
+            else:
+                files = [cmd + ext for ext in pathext]
+        else:
+            # On other platforms you don't have things like PATHEXT to tell you
+            # what file suffixes are executable, so just pass on cmd as-is.
+            files = [cmd]
+
+        seen = set()
+        for dir in path:
+            normdir = os.path.normcase(dir)
+            if not normdir in seen:
+                seen.add(normdir)
+                for thefile in files:
+                    name = os.path.join(dir, thefile)
+                    if _access_check(name, mode):
+                        return name
+        return None
+
 
 # PyPI imports
 import decorator
@@ -52,7 +120,9 @@ def _get_indent(line):
 def _tostr(line):  # pragma: no cover
     if isinstance(line, str):
         return line
-    return line.decode()
+    if sys.hexversion > 0x03000000:
+        return line.decode()
+    return line.encode()
 
 
 ###
@@ -60,10 +130,6 @@ def _tostr(line):  # pragma: no cover
 ###
 class InvalidShellcheckBuilderConfig(sphinx.errors.SphinxError):  # noqa: D101
     category = __("ShellcheckBuilder failed")
-
-
-class LintShellNotFound(sphinx.errors.SphinxError):  # noqa: D101
-    category = __("LintShell failed")
 
 
 @six.add_metaclass(abc.ABCMeta)
@@ -87,7 +153,6 @@ class LintShellBuilder(Builder):
         self.fname = os.path.join(self.outdir, "output.txt")
         self.source = None
         open(self.fname, "w").close()
-
 
     def _get_block_indent(self, node):
         return _get_indent(self._srclines[node.line + 1])
@@ -241,9 +306,6 @@ class LintShellBuilder(Builder):
     def write_doc(self, docname, doctree):
         """Check shell nodes."""
         self.docname = docname
-        exe = self.cmd("myfile.sh")[0]
-        if not shutil.which(exe):
-            raise LintShellNotFound("Shell linter executable not found: " + exe)
         self._tabwidth = doctree.settings.tab_width
         ret_code = 0
         for node, indent in self._shell_nodes(doctree):
@@ -280,15 +342,21 @@ class ShellcheckBuilder(LintShellBuilder):
         self._prompt = app.config.shellcheck_prompt
         # Validate configuration options
         try:
+            print(self._dialects)
             for item in self._dialects:
+                print(repr(item))
                 assert item in ("sh", "bash", "dash", "ksh")
         except:
             raise InvalidShellcheckBuilderConfig("Invalid dialect")
-        if ((not isinstance(self._exe, str)) or
-            (isinstance(self._exe, str) and (not self._exe.strip()))):
+        if (not isinstance(self._exe, str)) or (
+            isinstance(self._exe, str) and (not self._exe.strip())
+        ):
             raise InvalidShellcheckBuilderConfig("Invalid shellcheck executable")
-        if ((not isinstance(self._prompt, str)) or
-                (isinstance(self._prompt, str) and len(self._prompt) != 1)):
+        if not which(self._exe):
+            raise InvalidShellcheckBuilderConfig("Shellcheck executable not found")
+        if (not isinstance(self._prompt, str)) or (
+            isinstance(self._prompt, str) and len(self._prompt) != 1
+        ):
             raise InvalidShellcheckBuilderConfig("Invalid shellcheck prompt")
         if not isinstance(self._debug, bool):
             raise InvalidShellcheckBuilderConfig("Invalid shellcheck debug flag")
@@ -373,13 +441,47 @@ def ignored(*exceptions):  # pragma: no cover
         pass
 
 
+def _get_debug(config):
+    return homogenize_type(config, "shellcheck_debug", bool, False)
+
+
+def _get_dialects(config):
+    return homogenize_type(
+        config, "shellcheck_dialects", tuple, ("sh", "bash", "dash", "ksh")
+    )
+
+
+def homogenize_type(config, attr_name, attr_type, attr_default):
+    # pylint: disable=C0123
+    is_str = lambda x: (type(x) == type("")) or (type(x) == type(u""))
+    exp = InvalidShellcheckBuilderConfig("Invalid {} type".format(attr_name))
+    if attr_name in config.overrides:
+        value = config.overrides[attr_name]
+        if value is None:
+            ret = attr_default
+        elif isinstance(value, attr_type):
+            ret = value
+        elif is_str(value) and (attr_type == bool):
+            value = _tostr(value).strip()
+            if value not in ("True", "False"):
+                raise exp
+            ret = value == "True"
+        elif is_str(value):
+            ret = tuple(item.strip() for item in _tostr(value).split(","))
+        else:
+            raise exp
+        config.overrides[attr_name] = ret
+        config.__dict__[attr_name] = ret
+    return attr_default
+
+
 ###
 # Registration
 ###
 def setup(app):
     """Register custom builder."""
     app.add_builder(ShellcheckBuilder)
-    app.add_config_value("shellcheck_dialects", ("sh", "bash", "dash", "ksh"), "env")
-    app.add_config_value("shellcheck_executable", "shellcheck", "env")
-    app.add_config_value("shellcheck_prompt", "$", "env")
-    app.add_config_value("shellcheck_debug", False, "env")
+    app.add_config_value("shellcheck_dialects", _get_dialects, "shellcheck")
+    app.add_config_value("shellcheck_executable", "shellcheck", "shellcheck")
+    app.add_config_value("shellcheck_prompt", "$", "shellcheck")
+    app.add_config_value("shellcheck_debug", _get_debug, "shellcheck")
