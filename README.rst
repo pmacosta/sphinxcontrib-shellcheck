@@ -107,12 +107,12 @@ Then with the extension installed:
    building [mo]: targets for 0 po files that are specified
    building [shellcheck]: 1 source files given on command line
    updating environment: 4 added, 0 changed, 0 removed
-   reading sources... [100%] index                                                                          
+   reading sources... [100%] index
    looking for now-outdated files... none found
    pickling environment... done
    checking consistency... done
    preparing documents... done
-   example.rst                                  
+   example.rst
    Line 11, column 11 [2164]: Use cd ... || exit in case cd fails.
    Line 13, column 17 [2154]: myvar is referenced but not assigned.
    build succeeded.
@@ -121,11 +121,11 @@ Then with the extension installed:
 Configuration variables
 #######################
 
-These are the configurable aspects of the extension:
+These are the configurable variables of the extension:
 
-* **shellcheck_dialects** (*list or tuple of strings*): shell dialects to be
-  linted. The default dialects are those supported by shellcheck, :code:`("sh",
-  "bash", "dash", "ksh")`, and only a subset of these is valid.
+* **shellcheck_dialects** (*list of strings*): shell dialects to be
+  linted. The default dialects are those supported by shellcheck, :code:`["sh",
+  "bash", "dash", "ksh"]`, and only a subset of these is valid.
 
 * **shellcheck_executable** (*string*): name of the shellcheck executable
   (potentially full path to it too). The default is :code:`"shellcheck"`.
@@ -133,10 +133,23 @@ These are the configurable aspects of the extension:
 * **shellcheck_prompt** (*string*): single character representing the terminal
   prompt. The default is :code:`$`.
 
-* **shellcheck_debug** (*boolean*): flag that indicates whether debug
-  information shall be printed via the Sphinx logger (True) or not (False). The
-  default is :code:`False`. This configuration option is only useful while
-  developing the extension.
+* **shellcheck_debug** (*integer*): flag that indicates whether debug
+  information shall be printed via the Sphinx logger (:code:`1`) or not
+  (:code:`0`). The default is :code:`0`. This configuration option is only
+  useful while developing the extension.
+
+These configuration variables can be overriden via the Sphinx configuration file
+``conf.py``, or via the ``-D`` option of the ``sphinx-build`` command. For
+example:
+
+.. code:: console
+
+   $ sphinx-build -b shellcheck \
+      -D shellcheck_dialects=bash,ksh \
+      -D shellcheck_executable=shellcheck-stable \
+      -D shellcheck_prompt=$ \
+      -D shellcheck_debug=1 \
+      . _build example.rst
 
 #######
 License
