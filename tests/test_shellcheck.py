@@ -12,7 +12,7 @@ import re
 import sphinx.cmd.build
 
 # Intra-package imports
-from shellcheck import homogenize_type, which
+from shellcheck import which
 
 ###
 # Global variables
@@ -58,57 +58,19 @@ def run_sphinx(extra_argv=None):
 
 
 ###
-# Helper classes
-###
-class Config(object):
-    """Mock Sphinx config class."""
-    def __init__(self):
-        self.overrides = {}
-
-
-###
 # Test functions
 ###
-def test_homogenize_type():
-    """Test core of conversion of command line arguments to proper data type."""
-    obj = Config()
-    attr_name = "myattr"
-    attr_type = str
-    attr_default = "hello"
-    assert homogenize_type(obj, attr_name, attr_type, attr_default) == attr_default
-    assert obj.overrides == {}
-    obj.overrides[attr_name] = None
-    assert homogenize_type(obj, attr_name, attr_type, attr_default) == attr_default
-    assert obj.overrides[attr_name] == attr_default
-    attr_value = "world"
-    obj.overrides[attr_name] = attr_value
-    assert homogenize_type(obj, attr_name, attr_type, attr_default) == attr_default
-    assert obj.overrides[attr_name] == attr_value
-    attr_type = bool
-    attr_value = "  True  "
-    obj.overrides[attr_name] = attr_value
-    assert homogenize_type(obj, attr_name, attr_type, attr_default) == attr_default
-    assert obj.overrides[attr_name]
-    attr_value = "  False  "
-    obj.overrides[attr_name] = attr_value
-    assert homogenize_type(obj, attr_name, attr_type, attr_default) == attr_default
-    assert not obj.overrides[attr_name]
-    attr_type = tuple
-    attr_value = "aa,bbb,ccc"
-    obj.overrides[attr_name] = attr_value
-    assert homogenize_type(obj, attr_name, attr_type, attr_default) == attr_default
-    assert obj.overrides[attr_name] == ("aa", "bbb", "ccc")
-
-
 def test_shellcheck_error():
     """Test main sphinx extension."""
+
     def validate(opt):
         ret = run_sphinx(["-D", opt])
         assert ret == (2, [])
-    validate('shellcheck_dialects=bash,xonsh')
+
+    validate("shellcheck_dialects=bash,xonsh")
     validate('shellcheck_executable="not_an_exe"')
     validate('shellcheck_prompt="###"')
-    validate('shellcheck_debug=5')
+    validate("shellcheck_debug=5")
 
 
 def test_shellcheck():

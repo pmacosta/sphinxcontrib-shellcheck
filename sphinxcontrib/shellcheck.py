@@ -1,7 +1,7 @@
 # shellcheck.py
 # Copyright (c) 2018 Pablo Acosta-Serafini
 # See LICENSE for details
-# pylint: disable=C0103,C0111,E1129,R0205,R0902,R0903,R0912,R0914,W0107
+# pylint: disable=C0103,C0111,E0602,E1129,R0205,R0902,R0903,R0912,R0914,W0107
 
 # Standard library import
 from __future__ import print_function
@@ -99,6 +99,12 @@ from sphinx.locale import __
 # Global variables
 ###
 LOGGER = sphinx.util.logging.getLogger(__name__)
+if sys.hexversion > 0x03000000:   # pragma: no cover
+    STRING_TYPES = (str,)
+    INTEGER_TYPES = (int,)
+else:  # pragma: no cover
+    STRING_TYPES = (basestring,)
+    INTEGER_TYPES = (int, long)
 
 
 ###
@@ -340,26 +346,19 @@ class ShellcheckBuilder(LintShellBuilder):
         self._dialects = app.config.shellcheck_dialects
         self._exe = app.config.shellcheck_executable
         self._prompt = app.config.shellcheck_prompt
-        # Validate configuration options
+        # Validate configuration options. Data type validation done by Sphinx
         try:
-            print(self._dialects)
-            for item in self._dialects:
-                print(repr(item))
-                assert item in ("sh", "bash", "dash", "ksh")
+            self._dialects = set(_tostr(item) for item in self._dialects)
+            assert all(item in ["sh", "bash", "dash", "ksh"] for item in self._dialects)
         except:
             raise InvalidShellcheckBuilderConfig("Invalid dialect")
-        if (not isinstance(self._exe, str)) or (
-            isinstance(self._exe, str) and (not self._exe.strip())
-        ):
-            raise InvalidShellcheckBuilderConfig("Invalid shellcheck executable")
         if not which(self._exe):
             raise InvalidShellcheckBuilderConfig("Shellcheck executable not found")
-        if (not isinstance(self._prompt, str)) or (
-            isinstance(self._prompt, str) and len(self._prompt) != 1
-        ):
+        if len(self._prompt) != 1:
             raise InvalidShellcheckBuilderConfig("Invalid shellcheck prompt")
-        if not isinstance(self._debug, bool):
+        if self._debug not in (0, 1):
             raise InvalidShellcheckBuilderConfig("Invalid shellcheck debug flag")
+        self._debug = self._debug == 1
 
     @property
     def dialects(self):
@@ -441,48 +440,13 @@ def ignored(*exceptions):  # pragma: no cover
         pass
 
 
-def _get_debug(config):
-    return homogenize_type(config, "shellcheck_debug", bool, False)
-
-
-def _get_dialects(config):
-    return homogenize_type(
-        config, "shellcheck_dialects", tuple, ("sh", "bash", "dash", "ksh")
-    )
-
-
-def homogenize_type(config, attr_name, attr_type, attr_default):
-    # pylint: disable=C0123
-    is_str = lambda x: (type(x) == type("")) or (type(x) == type(u""))
-    exp = InvalidShellcheckBuilderConfig("Invalid {} type".format(attr_name))
-    setattr(config, attr_name, (attr_default, "shellcheck", ()))
-    if attr_name in config.overrides:
-        value = config.overrides[attr_name]
-        if value is None:
-            ret = attr_default
-        elif isinstance(value, attr_type):
-            ret = value
-        elif is_str(value) and (attr_type == bool):
-            value = _tostr(value).strip()
-            if value not in ("True", "False"):
-                raise exp
-            ret = value == "True"
-        elif is_str(value):
-            ret = tuple(item.strip() for item in _tostr(value).split(","))
-        else:
-            raise exp
-        config.overrides[attr_name] = ret
-        config.__dict__[attr_name] = ret
-    return attr_default
-
-
 ###
 # Registration
 ###
 def setup(app):
     """Register custom builder."""
     app.add_builder(ShellcheckBuilder)
-    app.add_config_value("shellcheck_dialects", _get_dialects, "shellcheck")
-    app.add_config_value("shellcheck_executable", "shellcheck", "shellcheck")
-    app.add_config_value("shellcheck_prompt", "$", "shellcheck")
-    app.add_config_value("shellcheck_debug", _get_debug, "shellcheck")
+    app.add_config_value("shellcheck_dialects", ["sh", "bash", "dash", "ksh"], "env")
+    app.add_config_value("shellcheck_executable", "shellcheck", "env")
+    app.add_config_value("shellcheck_prompt", "$", "env")
+    app.add_config_value("shellcheck_debug", int(0), "env")
