@@ -455,6 +455,7 @@ def homogenize_type(config, attr_name, attr_type, attr_default):
     # pylint: disable=C0123
     is_str = lambda x: (type(x) == type("")) or (type(x) == type(u""))
     exp = InvalidShellcheckBuilderConfig("Invalid {} type".format(attr_name))
+    setattr(config, attr_name, (attr_default, "shellcheck", ()))
     if attr_name in config.overrides:
         value = config.overrides[attr_name]
         if value is None:
