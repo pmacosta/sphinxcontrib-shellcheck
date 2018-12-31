@@ -45,6 +45,7 @@ else:
 # Actual directory is os.join(sys.prefix, 'share', PKG_NAME)
 PWD = os.path.dirname(os.path.abspath(__file__))
 SHARE_DIR = os.path.join("share", PKG_NAME)
+TEST_REQS = ["coverage", "pylint", "pytest", "pytest-cov", "pytest-xdist"]
 if INSTALL_MODE_IS_TEST:
     DATA_FILES = [
         (
@@ -103,8 +104,10 @@ if INSTALL_MODE_IS_TEST:
             ],
         ),
     ]
+    EXTRA_REQS = TEST_REQS
 else:
     DATA_FILES = []
+    EXTRA_REQS = []
 
 
 ###
@@ -120,8 +123,8 @@ if not VERSION_QUERY:
         author_email="pmasdev@gmail.com",
         description="Sphinx extension to lint shell code blocks",
         long_description="Sphinx extension to lint shell code blocks",
-        install_requires=["decorator", "docutils", "sphinx", "six"],
-        tests_require=["pytest", "coverage", "pytest-cov", "pylint"],
+        install_requires=["decorator", "docutils", "sphinx", "six"]+EXTRA_REQS,
+        tests_require=TEST_REQS,
         data_files=DATA_FILES,
         packages=find_packages(),
         zip_safe=False,

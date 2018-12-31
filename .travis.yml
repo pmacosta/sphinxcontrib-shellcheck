@@ -54,7 +54,6 @@ before_install:
   - export TRACER_DIR=${EXTRA_DIR}/docs/support
   - export PYTHONPATH=${PYTHONPATH}:${PYTHON_SITE_PACKAGES}:${PYTHON_SITE_PACKAGES}/$(echo "${PKG_NAME}" | sed -r "s/(.*)-.*/\1/g"):${EXTRA_DIR}:${EXTRA_DIR}/tests:${EXTRA_DIR}/docs:${EXTRA_DIR}/docs/support
   - export COV_FILE=${SOURCE_DIR}/.coveragerc_ci_${INTERP}
-  - export REQUIREMENTS_FILE=${REPO_DIR}/requirements.txt
   - export AFILE=${EXTRA_DIR}/artifacts_${INTERP}.tar.gz
   - export PYLINT_PLUGINS_DIR=${EXTRA_DIR}/pylint_plugins
   - echo "PYTHONCMD=${PYTHONCMD}"
@@ -71,7 +70,6 @@ before_install:
   - echo "TRACER_DIR=${TRACER_DIR}"
   - echo "PYTHONPATH=${PYTHONPATH}"
   - echo "COV_FILE=${COV_FILE}"
-  - echo "REQUIREMENTS_FILE=${REQUIREMENTS_FILE}"
   - echo "AFILE=${AFILE}"
   - echo "PYLINT_PLUGINS_DIR=${PYLINT_PLUGINS_DIR}"
   ###
@@ -94,7 +92,6 @@ install:
   ###
   # Install package dependencies
   ###
-  - travis_wait ${PIPCMD} install -r"${REQUIREMENTS_FILE}"
   - ${PIPCMD} install codecov
   - ${PIPCMD} freeze
 
@@ -111,7 +108,7 @@ script:
   # Install package
   ###
   - cat "${REPO_DIR}"/MANIFEST.in
-  - ${PYTHONCMD} setup.py sdist
+  - travis_wait ${PYTHONCMD} setup.py sdist
   # Change directory away from repository, otherwise pip does not install package
   - cd "${REPO_DIR}" || exit 1
   - export PKG_VERSION=$(SHELLCHECK_CI_ENV=1 python -c "import os, sys; sys.path.append(os.path.realpath('.'));import setup; print(setup.__version__)")

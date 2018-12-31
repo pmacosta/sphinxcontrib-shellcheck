@@ -99,7 +99,7 @@ from sphinx.locale import __
 # Global variables
 ###
 LOGGER = sphinx.util.logging.getLogger(__name__)
-if sys.hexversion > 0x03000000:   # pragma: no cover
+if sys.hexversion > 0x03000000:  # pragma: no cover
     STRING_TYPES = (str,)
     INTEGER_TYPES = (int,)
 else:  # pragma: no cover
