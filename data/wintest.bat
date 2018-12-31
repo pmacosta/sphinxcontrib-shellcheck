@@ -4,6 +4,8 @@ REM See LICENSE for details
 REM <<< EXCLUDE
 @ECHO OFF
 SET CWD=%CD%
+python -c 'import re, subprocess; obj = subprocess.Popen(["git", "config", "--get", "remote.origin.url"], stdout=subprocess.PIPE); lines, _ = obj.communicate(); regexp = re.compile("git@.*:(.*)/.*"); print(regexp.match(lines).groups()[0])' > origin_name.txt
+SET /p ORIGIN_NAME=<origin_name.txt
 CMD /c powershell.exe -Command "[guid]::NewGuid().ToString()" > uuid.txt
 SET /p UUID=<uuid.txt
 DEL uuid.txt
@@ -21,7 +23,7 @@ ECHO Creating virtual environment
 python -m venv %ENV_DIR%
 CALL %ENV_DIR%\Scripts\activate.bat
 ECHO Cloning repository
-REM git clone --recursive https://pmacosta@bitbucket.org/pmacosta/sphinxcontrib-shellcheck.git
+REM git clone --recursive https://%ORIGIN_NAMR%@bitbucket.org/%ORIGIN_NAMR%/sphinxcontrib-shellcheck.git
 XCOPY C:\Users\%USERNAME%\sphinxcontrib-shellcheck %TMP_DIR%\sphinxcontrib-shellcheck /E
 CD %TMP_DIR%\sphinxcontrib-shellcheck
 SET PATH=C:\Program Files\7-Zip;C:\Users\%USERNAME%\bin\curl\bin;%PATH%

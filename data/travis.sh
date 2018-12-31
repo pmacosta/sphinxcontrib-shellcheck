@@ -5,6 +5,7 @@
 # See LICENSE for details
 # <<< EXCLUDE
 set -e
+origin_user=$(git config --get remote.origin.url | sed -r "s|git@.*:(.*)/.*|\1|g")
 tmp_dir=$(mktemp -d)
 env_name="travis_test"
 echo "Build directory: ${tmp_dir}"
@@ -37,7 +38,7 @@ trap finish EXIT ERR SIGINT
 echo "Going to build directory"
 cd "${tmp_dir}" || exit 1
 echo "Setting environment variables"
-export TRAVIS_REPO_SLUG="pmacosta/sphinxcontrib-shellcheck"
+export TRAVIS_REPO_SLUG="${origin_user}/sphinxcontrib-shellcheck"
 export TRAVIS_BUILD_DIR="${tmp_dir}"
 export TRAVIS_OS_NAME="linux"
 export TRAVIS_PYTHON_VERSION="2.7"
@@ -46,7 +47,8 @@ mkvirtualenv -p "${HOME}"/python/python"${TRAVIS_PYTHON_VERSION}"/bin/python "${
 source "${WORKON_HOME}/${env_name}/bin/activate"
 which python
 echo "Cloning directory"
-git clone --recursive https://pmacosta@bitbucket.org/pmacosta/sphinxcontrib-shellcheck.git "${tmp_dir}"
+git clone --recursive "git@bitbucket.org:${origin_user}/sphinxcontrib-shellcheck.git" "${tmp_dir}"
+# git clone --recursive https://${origin_user}@bitbucket.org/${origin_user}/sphinxcontrib-shellcheck.git "${tmp_dir}"
 echo "Start of CI output"
 # >>> EXCLUDE
 
