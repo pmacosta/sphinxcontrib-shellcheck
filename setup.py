@@ -123,7 +123,7 @@ if not VERSION_QUERY:
         author_email="pmasdev@gmail.com",
         description="Sphinx extension to lint shell code blocks",
         long_description="Sphinx extension to lint shell code blocks",
-        install_requires=["decorator", "docutils", "sphinx", "six"]+EXTRA_REQS,
+        install_requires=["decorator", "docutils", "sphinx", "six"] + EXTRA_REQS,
         tests_require=TEST_REQS,
         data_files=DATA_FILES,
         packages=find_packages(),
