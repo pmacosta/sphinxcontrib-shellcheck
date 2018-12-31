@@ -23,9 +23,9 @@ CALL %ENV_DIR%\Scripts\activate.bat
 ECHO Cloning repository
 REM git clone --recursive https://pmacosta@bitbucket.org/pmacosta/sphinxcontrib-shellcheck.git
 XCOPY C:\Users\%USERNAME%\sphinxcontrib-shellcheck %TMP_DIR%\sphinxcontrib-shellcheck /E
-CD sphinxcontrib-shellcheck
+CD %TMP_DIR%\sphinxcontrib-shellcheck
 SET PATH=C:\Program Files\7-Zip;C:\Users\%USERNAME%\bin\curl\bin;%PATH%
-echo Start of CI output
+ECHO Start of CI output
 REM >>> EXCLUDE
 REM <<< VERBATIM
 REM install:
@@ -38,9 +38,10 @@ SET PYTHONCMD=python
 SET PYTESTCMD=pytest
 SET SHELLCHECK_TEST_ENV=1
 SET PIPCMD=%PYTHONCMD% -m pip
-FOR %%i IN (%REPO_DIR%) DO @echo %%~ni> pkg_name.txt
+%PYTHONCMD% -c "import os; print(os.path.basename(os.getcwd()))" > pkg_name.txt
 SET /p PKG_NAME=<pkg_name.txt
-SET PKG_NAME_ALT=sphinxcontrib
+%PYTHONCMD% -c "import os; print(os.path.basename(os.getcwd()).split('-')[0])" > pkg_name_alt.txt
+SET /p PKG_NAME_ALT=<pkg_name_alt.txt
 %PYTHONCMD% -c "import os, pip; print(os.path.dirname(os.path.realpath(pip.__path__[0])))" > python_site_packages_dir.txt
 SET /p PYTHON_SITE_PACKAGES=<python_site_packages_dir.txt
 SET REPO_DIR=%CD%
@@ -62,6 +63,7 @@ ECHO PIPCMD=%PIPCMD%
 ECHO PYTESTCMD=%PYTESTCMD%
 ECHO INTERP=%INTERP%
 ECHO PKG_NAME=%PKG_NAME%
+ECHO PKG_NAME_ALT=%PKG_NAME_ALT%
 ECHO PYTHON_SITE_PACKAGES=%PYTHON_SITE_PACKAGES%
 ECHO REPO_DIR=%REPO_DIR%
 ECHO EXTRA_DIR=%EXTRA_DIR%
