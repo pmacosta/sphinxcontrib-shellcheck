@@ -30,6 +30,19 @@ SET PATH=C:\Program Files\7-Zip;C:\Users\%USERNAME%\bin\curl\bin;%PATH%
 ECHO Start of CI output
 REM >>> EXCLUDE
 REM <<< VERBATIM
+REM environment:
+REM   matrix:
+REM     - JOB: "2.7"
+REM       INTERP: "py27"
+REM       PYVER: "2.7"
+REM     - JOB: "3.5"
+REM       INTERP: "py35"
+REM       PYVER: "3.5"
+REM     - JOB: "3.6"
+REM       INTERP: "py36"
+REM       PYVER: "3.6"
+REM init:
+REM   - echo "PYVER=%PYVER%"
 REM install:
 REM ###
 REM # Set up environment variables

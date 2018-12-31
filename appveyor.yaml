@@ -1,6 +1,19 @@
 # wintest.bat
 # Copyright (c) 2018 Pablo Acosta-Serafini
 # See LICENSE for details
+environment:
+  matrix:
+    - JOB: "2.7"
+      INTERP: "py27"
+      PYVER: "2.7"
+    - JOB: "3.5"
+      INTERP: "py35"
+      PYVER: "3.5"
+    - JOB: "3.6"
+      INTERP: "py36"
+      PYVER: "3.6"
+init:
+  - echo "PYVER=%PYVER%"
 install:
   ###
   # Set up environment variables
