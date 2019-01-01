@@ -1,7 +1,7 @@
 # test_shellcheck.py
 # Copyright (c) 2018-2019 Pablo Acosta-Serafini
 # See LICENSE for details
-# pylint: disable=C0111,E0401,E0611,E1101,W0212
+# pylint: disable=C0111,E0401,E0611,E1101,R1702,W0212
 
 # Standard library import
 from __future__ import print_function
@@ -106,21 +106,40 @@ def test_shellcheck():
     flag = any([(ref_lines_1 == act_lines), (ref_lines_2 == act_lines)])
     if not flag:
         print("Actual")
+        print("Number of lines: {}".format(len(act_lines)))
         print(act_lines)
         print("Reference 1")
+        print("Number of lines: {}".format(len(ref_lines_1)))
         print(ref_lines_1)
         print(ref_lines_1 == act_lines)
-        print('---')
+        print("---")
         for line_1, line_2 in zip(ref_lines_2, act_lines):
             print(line_1)
             print(line_2)
-        print('---')
+        print("---")
         print("Reference 2")
+        print("Number of lines: {}".format(len(ref_lines_2)))
         print(ref_lines_2)
         print(ref_lines_2 == act_lines)
-        print('---')
+        print("---")
         for line_1, line_2 in zip(ref_lines_2, act_lines):
             print(repr(line_1))
             print(repr(line_2))
-        print('---')
+            if line_1 != line_2:
+                if len(line_1) != len(line_2):
+                    print(
+                        "Length difference: {0} vs. {1}".format(
+                            len(line_1), len(line_2)
+                        )
+                    )
+                else:
+                    for num, (char_1, char_2) in enumerate(zip(line_1, line_2)):
+                        if char_1 != char_2:
+                            print(
+                                "First difference at character {0}, {1} vs. {2}".format(
+                                    num, char_1, char_2
+                                )
+                            )
+
+        print("---")
     assert flag
