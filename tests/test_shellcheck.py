@@ -120,7 +120,7 @@ def test_shellcheck():
         print(ref_lines_2 == act_lines)
         print('---')
         for line_1, line_2 in zip(ref_lines_2, act_lines):
-            print(line_1)
-            print(line_2)
+            print(repr(line_1))
+            print(repr(line_2))
         print('---')
     assert flag
