@@ -28,7 +28,7 @@ before_install:
   - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then
         export PIPCMD=${PYTHONCMD} -W 'ignore:a true SSLContext object' -m pip;
         export INTERP=py"${TRAVIS_PYTHON_VERSION//./}";
-        export PKG_NAME=$(echo ${TRAVIS_REPO_SLUG} | sed -E "s|.*/(.*)|\1|g");
+        export PKG_NAME=$(echo "${TRAVIS_REPO_SLUG}" | sed -E "s|.*/(.*)|\1|g");
         wget https://repo.continuum.io/archive/Anaconda2-2.4.0-MacOSX-x86_64.sh;
         bash Anaconda2-2.4.0-MacOSX-x86_64.sh -b;
         export PATH=/Users/travis/anaconda2/bin/:${PATH};
@@ -42,7 +42,7 @@ before_install:
   - if [ "${TRAVIS_OS_NAME}" == "linux" ]; then
         export PIPCMD=pip;
         export INTERP=py"${TRAVIS_PYTHON_VERSION//./}";
-        export PKG_NAME=$(echo ${TRAVIS_REPO_SLUG} | sed -r "s|.*/(.*)|\1|g");
+        export PKG_NAME=$(echo "${TRAVIS_REPO_SLUG}" | sed -r "s|.*/(.*)|\1|g");
         export PYTHON_SITE_PACKAGES=$(${PIPCMD} show pip | grep "Location" | sed -r "s/^.*Location\W (.*)/\1/g");
     fi
   ###
@@ -137,28 +137,29 @@ script:
         fnames=();
         while IFS=  read -r -d $'\0'; do
             fnames+=("$REPLY");
-        done < <(find "${pylint_dir}" -name "*.py" -not -path "${pylint_dir}/websupport/*" -print0)
+        done < <(find "${pylint_dir}" -name "*.py" -not -path "${pylint_dir}/websupport/*" -print0);
         for fname in "${fnames[@]}"; do
+            echo "File: ${fname}";
             pylint --rcfile="${EXTRA_DIR}"/.pylintrc -f text -r no "${fname}";
         done
     done
   - if ${PYTESTCMD} --collect-only --doctest-glob="*.rst" "${EXTRA_DIR}"/docs &> /dev/null; then
-        "${SBIN_DIR}"/cprint.sh line cyan "Testing reStructuredText files";
+        ${SBIN_DIR}/cprint.sh line cyan "Testing reStructuredText files";
         ${PYTESTCMD} --doctest-glob="*.rst" "${EXTRA_DIR}"/docs;
     fi
   - if ${PYTESTCMD} --collect-only --doctest-modules "${SOURCE_DIR}" &> /dev/null; then
-        "${SBIN_DIR}"/cprint.sh line cyan "Testing docstrings";
+        ${SBIN_DIR}/cprint.sh line cyan "Testing docstrings";
         ${PYTESTCMD} --doctest-modules "${SOURCE_DIR}";
     fi
   # Coverage tests runs all the unit tests, no need to run the non-coverage
   # tests since the report is not being used
   # - ${SBIN_DIR}/cprint.sh line cyan "Testing code"
   # - ${PYTESTCMD} -s -vv --junitxml=${RESULTS_DIR}/testresults/pytest.xml
-  - ${SBIN_DIR}/cprint.sh line cyan "Testing coverage"
+  - "${SBIN_DIR}"/cprint.sh line cyan "Testing coverage"
   - ${PYTESTCMD} --cov-config "${COV_FILE}" --cov "${SOURCE_DIR}" --cov-report xml
   - if [ -f "${SBIN_DIR}"/build_docs.py ]; then
-        "${SBIN_DIR}"/cprint.sh line cyan "Testing documentation";
-        "${SBIN_DIR}"/build_docs.py -r -t -d "${SOURCE_DIR}";
+        ${SBIN_DIR}/cprint.sh line cyan "Testing documentation";
+        ${SBIN_DIR}/build_docs.py -r -t -d "${SOURCE_DIR}";
     fi
 
 notifications:
@@ -178,7 +179,7 @@ after_success:
     fi
 
 after_failure:
-  - ${SBIN_DIR}/zip-artifacts.sh "${INTERP}"
+  - "${SBIN_DIR}"/zip-artifacts.sh "${INTERP}"
   - if [ -f "${AFILE}" ]; then
         "${REPO_DIR}"/bin/dropbox_uploader.sh upload "${AFILE}" .;
     else

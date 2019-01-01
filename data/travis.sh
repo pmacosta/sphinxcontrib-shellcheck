@@ -1,8 +1,11 @@
 #!/bin/bash
-# shellcheck disable=SC1090,SC1091,SC1094,SC2155
+# shellcheck disable=SC1090,SC1091,SC1094,SC2086,SC2155
 # travis.sh
 # Copyright (c) 2018 Pablo Acosta-Serafini
 # See LICENSE for details
+# yamllint disable rule:document-start
+# yamllint disable rule:line-length
+
 # <<< EXCLUDE
 set -e
 origin_user=$(git config --get remote.origin.url | sed -r "s|git@.*:(.*)/.*|\1|g")
@@ -51,7 +54,6 @@ git clone --recursive "git@bitbucket.org:${origin_user}/sphinxcontrib-shellcheck
 # git clone --recursive https://${origin_user}@bitbucket.org/${origin_user}/sphinxcontrib-shellcheck.git "${tmp_dir}"
 echo "Start of CI output"
 # >>> EXCLUDE
-
 # <<< VERBATIM
 #os:
 #  - linux
@@ -78,7 +80,7 @@ export SHELLCHECK_TEST_ENV=1
 if [ "${TRAVIS_OS_NAME}" == "osx" ]; then
     export PIPCMD=${PYTHONCMD} -W 'ignore:a true SSLContext object' -m pip;
     export INTERP=py"${TRAVIS_PYTHON_VERSION//./}";
-    export PKG_NAME=$(echo ${TRAVIS_REPO_SLUG} | sed -E "s|.*/(.*)|\1|g");
+    export PKG_NAME=$(echo "${TRAVIS_REPO_SLUG}" | sed -E "s|.*/(.*)|\1|g");
     wget https://repo.continuum.io/archive/Anaconda2-2.4.0-MacOSX-x86_64.sh;
     bash Anaconda2-2.4.0-MacOSX-x86_64.sh -b;
     export PATH=/Users/travis/anaconda2/bin/:${PATH};
@@ -92,7 +94,7 @@ fi
 if [ "${TRAVIS_OS_NAME}" == "linux" ]; then
     export PIPCMD=pip;
     export INTERP=py"${TRAVIS_PYTHON_VERSION//./}";
-    export PKG_NAME=$(echo ${TRAVIS_REPO_SLUG} | sed -r "s|.*/(.*)|\1|g");
+    export PKG_NAME=$(echo "${TRAVIS_REPO_SLUG}" | sed -r "s|.*/(.*)|\1|g");
     export PYTHON_SITE_PACKAGES=$(${PIPCMD} show pip | grep "Location" | sed -r "s/^.*Location\W (.*)/\1/g");
 fi
 ###
@@ -176,7 +178,7 @@ ${PIPCMD} install "${REPO_DIR}/dist/${PKG_NAME}-${PKG_VERSION}.tar.gz"
 ###
 # Write coverage configuration file
 ###
-"${SBIN_DIR}"/make-coveragerc.sh 'ci' "${INTERP}" "${SOURCE_DIR}" "${EXTRA_DIR}"
+${SBIN_DIR}/make-coveragerc.sh 'ci' "${INTERP}" "${SOURCE_DIR}" "${EXTRA_DIR}"
 cat "${COV_FILE}"
 ###
 # Change to tests sub-directory to mimic Tox conditions
@@ -185,26 +187,26 @@ cd "${EXTRA_DIR}"/tests || exit 1
 ###
 # Run tests
 ###
-"${SBIN_DIR}"/cprint.sh line cyan "Testing project code compliance"
-"${SBIN_DIR}"/check_files_compliance.py -tps -d "${SOURCE_DIR}" -m "${EXTRA_DIR}"
-"${SBIN_DIR}"/cprint.sh line cyan "Testing Pylint compliance"
+${SBIN_DIR}/cprint.sh line cyan "Testing project code compliance"
+${SBIN_DIR}/check_files_compliance.py -tps -d "${SOURCE_DIR}" -m "${EXTRA_DIR}"
+${SBIN_DIR}/cprint.sh line cyan "Testing Pylint compliance"
 pylint_dirs=(${SOURCE_DIR} ${SBIN_DIR} ${EXTRA_DIR}/tests)
 for pylint_dir in "${pylint_dirs[@]}"; do
     fnames=();
     while IFS=  read -r -d $'\0'; do
         fnames+=("$REPLY");
-    done < <(find "${pylint_dir}" -name "*.py" -not -path "${pylint_dir}/websupport/*" -print0)
+    done < <(find "${pylint_dir}" -name "*.py" -not -path "${pylint_dir}/websupport/*" -print0);
     for fname in "${fnames[@]}"; do
         echo "File: ${fname}";
         pylint --rcfile="${EXTRA_DIR}"/.pylintrc -f text -r no "${fname}";
     done
 done
 if ${PYTESTCMD} --collect-only --doctest-glob="*.rst" "${EXTRA_DIR}"/docs &> /dev/null; then
-    "${SBIN_DIR}"/cprint.sh line cyan "Testing reStructuredText files";
+    ${SBIN_DIR}/cprint.sh line cyan "Testing reStructuredText files";
     ${PYTESTCMD} --doctest-glob="*.rst" "${EXTRA_DIR}"/docs;
 fi
 if ${PYTESTCMD} --collect-only --doctest-modules "${SOURCE_DIR}" &> /dev/null; then
-    "${SBIN_DIR}"/cprint.sh line cyan "Testing docstrings";
+    ${SBIN_DIR}/cprint.sh line cyan "Testing docstrings";
     ${PYTESTCMD} --doctest-modules "${SOURCE_DIR}";
 fi
 # Coverage tests runs all the unit tests, no need to run the non-coverage
@@ -214,8 +216,8 @@ fi
 "${SBIN_DIR}"/cprint.sh line cyan "Testing coverage"
 ${PYTESTCMD} --cov-config "${COV_FILE}" --cov "${SOURCE_DIR}" --cov-report xml
 if [ -f "${SBIN_DIR}"/build_docs.py ]; then
-    "${SBIN_DIR}"/cprint.sh line cyan "Testing documentation";
-    "${SBIN_DIR}"/build_docs.py -r -t -d "${SOURCE_DIR}";
+    ${SBIN_DIR}/cprint.sh line cyan "Testing documentation";
+    ${SBIN_DIR}/build_docs.py -r -t -d "${SOURCE_DIR}";
 fi
 
 # <<< VERBATIM
