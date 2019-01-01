@@ -93,6 +93,8 @@ build_script:
   - SET SHELLCHECK_CI_ENV=
   - SET /p PKG_VERSION=<version.txt
   - ECHO PKG_VERSION=%PKG_VERSION%
+  - 7z x %REPO_DIR%\dist\%PKG_NAME%-%PKG_VERSION%.zip %PKG_NAME%-%PKG_VERSION%\sphinxcontrib_shellcheck.egg-info\requires.txt
+  - TYPE requires.txt
   # Change directory away from repository, otherwise pip does not install package
   - CD %PYTHON_SITE_PACKAGES%
   - pip install --upgrade %REPO_DIR%\dist\%PKG_NAME%-%PKG_VERSION%.zip
