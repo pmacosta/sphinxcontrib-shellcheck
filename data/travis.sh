@@ -231,7 +231,7 @@ fi
 # <<< VERBATIM
 #after_failure:
 # >>> VERBATIM
-"${SBIN_DIR}"/zip-artifacts.sh "${INTERP}"
+${SBIN_DIR}/zip-artifacts.sh "${INTERP}"
 if [ -f "${AFILE}" ]; then
     ${REPO_DIR}/bin/dropbox_uploader.sh upload "${AFILE}" .;
 else
