@@ -127,9 +127,9 @@ def preppend_lines(lines, comment_marker):
             if line.strip() == comment_marker:
                 line = ""
             elif comment_marker != "#":
-                line = line[len(comment_marker):].rstrip()
+                line = line[len(comment_marker) :].rstrip()
                 if not line.startswith("#"):
-                    line = "# "+line
+                    line = "# " + line
         elif (not line.strip()) or starts_with_dash:
             pass  # Yield line as is
         else:
