@@ -92,7 +92,7 @@ REM ###
 REM # Install package dependencies
 REM ###
 CD %REPO_DIR%
-python -m pip install --upgrade pip
+python -m pip install --upgrade pip setuptools
 python -m pip install codecov
 python -m pip freeze
 REM ###
@@ -118,12 +118,15 @@ REM >>> VERBATIM
 TYPE %REPO_DIR%\MANIFEST.in
 python setup.py sdist --formats=zip
 TIMEOUT /t 5
-REM # Change directory away from repository, otherwise pip does not install package
+DIR
+DIR dist
+DIR %REPO_DIR%\dist
 SET SHELLCHECK_CI_ENV=1
 python -c "import os, sys; sys.path.append(os.path.realpath('.'));import setup; print(setup.__version__)" > version.txt
 SET SHELLCHECK_CI_ENV=
 SET /p PKG_VERSION=<version.txt
 ECHO PKG_VERSION=%PKG_VERSION%
+REM # Change directory away from repository, otherwise pip does not install package
 CD %PYTHON_SITE_PACKAGES%
 python -m pip install %REPO_DIR%\dist\%PKG_NAME%-%PKG_VERSION%.zip
 REM # Write coverage configuration file
@@ -170,8 +173,8 @@ pytest --cov-config %COV_FILE% --cov %SOURCE_DIR% --cov-report term
 REM <<< VERBATIM
 REM on_failure:
 REM >>> VERBATIM
-7z a %EXTRA_DIR%\artifacts_%INTERP%.zip %EXTRA_DIR%\artifacts\*.*
-appveyor PushArtifact %EXTRA_DIR%\artifacts_%INTERP%.zip
+7z a %RESULTS_DIR%\artifacts_%INTERP%.zip %RESULTS_DIR%\artifacts\*.*
+appveyor PushArtifact %RESULTS_DIR%\artifacts_%INTERP%.zip
 REM <<< EXCLUDE
 deactivate
 CD %CWD%
