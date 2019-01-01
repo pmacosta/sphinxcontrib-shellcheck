@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # sh2yaml.py
-# Copyright (c) 2018 Pablo Acosta-Serafini
+# Copyright (c) 2018-2019 Pablo Acosta-Serafini
 # See LICENSE for details
 # pylint: disable=C0103,C0111
 
@@ -103,7 +103,7 @@ def make_dir(fname):
 
 def preppend_lines(lines, comment_marker):
     """Add initial character, comment or hyphen, if necessary."""
-    # pylint: disable=R0914
+    # pylint: disable=R0912,R0914
     sh_open = re.compile(r"^\s*(case|for|if|select|while|until)\s+.*")
     sh_close = re.compile(r"^\s*(esac|done|fi)\s*")
     kwre = re.compile(r"^\s*(\w+):.*")
