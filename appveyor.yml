@@ -1,6 +1,8 @@
 # wintest.bat
 # Copyright (c) 2018 Pablo Acosta-Serafini
 # See LICENSE for details
+# yamllint disable rule:line-length
+
 environment:
   matrix:
     - JOB: "2.7"
@@ -12,8 +14,10 @@ environment:
     - JOB: "3.6"
       INTERP: "py36"
       PYVER: "3.6"
+
 init:
   - echo "PYVER=%PYVER%"
+
 install:
   ###
   # Set up environment variables
@@ -89,7 +93,6 @@ build_script:
   - CD %PYTHON_SITE_PACKAGES%
   - python -m pip install --upgrade %REPO_DIR%\dist\%PKG_NAME%-%PKG_VERSION%.zip
   # Write coverage configuration file
-  - ECHO # .coveragerc_CI to control coverage.py during Appveyor runs > %COV_FILE%
   - ECHO [report] >> %COV_FILE%
   - ECHO show_missing = True >> %COV_FILE%
   - ECHO [run] >> %COV_FILE%

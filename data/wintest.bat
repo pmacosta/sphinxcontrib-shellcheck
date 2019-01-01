@@ -30,6 +30,8 @@ SET PATH=C:\Program Files\7-Zip;C:\Users\%USERNAME%\bin\curl\bin;%PATH%
 ECHO Start of CI output
 REM >>> EXCLUDE
 REM <<< VERBATIM
+REM # yamllint disable rule:line-length
+
 REM environment:
 REM   matrix:
 REM     - JOB: "2.7"
@@ -41,8 +43,10 @@ REM       PYVER: "3.5"
 REM     - JOB: "3.6"
 REM       INTERP: "py36"
 REM       PYVER: "3.6"
+
 REM init:
 REM   - echo "PYVER=%PYVER%"
+
 REM install:
 REM ###
 REM # Set up environment variables
@@ -121,7 +125,6 @@ ECHO PKG_VERSION=%PKG_VERSION%
 CD %PYTHON_SITE_PACKAGES%
 python -m pip install --upgrade %REPO_DIR%\dist\%PKG_NAME%-%PKG_VERSION%.zip
 REM # Write coverage configuration file
-ECHO # .coveragerc_CI to control coverage.py during Appveyor runs > %COV_FILE%
 ECHO [report] >> %COV_FILE%
 ECHO show_missing = True >> %COV_FILE%
 ECHO [run] >> %COV_FILE%
