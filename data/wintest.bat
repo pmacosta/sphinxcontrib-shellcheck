@@ -97,7 +97,6 @@ REM # Install package dependencies
 REM ###
 CD %REPO_DIR%
 pip install codecov
-pip install --upgrade -rrequirements_appveyor.txt
 pip freeze
 REM ###
 REM # Install shellcheck and bash binaries
@@ -132,7 +131,7 @@ SET /p PKG_VERSION=<version.txt
 ECHO PKG_VERSION=%PKG_VERSION%
 REM # Change directory away from repository, otherwise pip does not install package
 CD %PYTHON_SITE_PACKAGES%
-pip install --upgrade %REPO_DIR%\dist\%PKG_NAME%-%PKG_VERSION%.zip
+pip install --no-cache-dir --upgrade %REPO_DIR%\dist\%PKG_NAME%-%PKG_VERSION%.zip
 REM # Write coverage configuration file
 ECHO [report] >> %COV_FILE%
 ECHO show_missing = True >> %COV_FILE%
