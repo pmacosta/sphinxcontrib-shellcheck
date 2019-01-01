@@ -1,5 +1,5 @@
 # shellcheck.py
-# Copyright (c) 2018 Pablo Acosta-Serafini
+# Copyright (c) 2018-2019 Pablo Acosta-Serafini
 # See LICENSE for details
 # pylint: disable=C0103,C0111,E0602,E1129,R0205,R0902,R0903,R0912,R0914,W0107
 
