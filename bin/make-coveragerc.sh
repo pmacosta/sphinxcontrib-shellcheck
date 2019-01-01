@@ -1,6 +1,6 @@
 #!/bin/bash
 # make-coveragerc.sh
-# Copyright (c) 2013-2018 Pablo Acosta-Serafini
+# Copyright (c) 2018-2019 Pablo Acosta-Serafini
 # See LICENSE for details
 
 function strcat () {
