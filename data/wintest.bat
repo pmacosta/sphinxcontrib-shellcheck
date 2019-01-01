@@ -44,6 +44,9 @@ REM       PYVER: "3.5"
 REM     - JOB: "3.6"
 REM       INTERP: "py36"
 REM       PYVER: "3.6"
+REM     - JOB: "3.7"
+REM       INTERP: "py37"
+REM       PYVER: "3.7"
 
 REM init:
 REM   - echo "PYVER=%PYVER%"
@@ -125,8 +128,6 @@ python -c "import os, sys; sys.path.append(os.path.realpath('.'));import setup; 
 SET SHELLCHECK_CI_ENV=
 SET /p PKG_VERSION=<version.txt
 ECHO PKG_VERSION=%PKG_VERSION%
-7z x %REPO_DIR%\dist\%PKG_NAME%-%PKG_VERSION%.zip %PKG_NAME%-%PKG_VERSION%\sphinxcontrib_shellcheck.egg-info\requires.txt
-TYPE requires.txt
 REM # Change directory away from repository, otherwise pip does not install package
 CD %PYTHON_SITE_PACKAGES%
 pip install --upgrade %REPO_DIR%\dist\%PKG_NAME%-%PKG_VERSION%.zip
