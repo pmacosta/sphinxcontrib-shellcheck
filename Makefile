@@ -4,7 +4,7 @@
 
 PKG_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 REPO_DIR ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-SOURCE_DIR ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+SOURCE_DIR ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))/sphinxcontrib
 EXTRA_DIR ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 PYLINT_CMD := pylint --rcfile=$(EXTRA_DIR)/.pylintrc -f colorized -r no
 
@@ -19,7 +19,7 @@ bdist:
 black:
 	black \
 		$(REPO_DIR) \
-		$(SOURCE_DIR)/sphinxcontrib/shellcheck.py \
+		$(SOURCE_DIR)/shellcheck.py \
 		$(EXTRA_DIR)/tests \
 		$(EXTRA_DIR)/tests/support
 
@@ -53,7 +53,7 @@ FORCE:
 lint:
 	@echo "Running Pylint on package files"
 	@$(PYLINT_CMD) $(REPO_DIR)/*.py
-	@$(PYLINT_CMD) $(SOURCE_DIR)/sphinxcontrib/shellcheck.py
+	@$(PYLINT_CMD) $(SOURCE_DIR)/shellcheck.py
 	@$(PYLINT_CMD) $(EXTRA_DIR)/tests/*.py
 	@$(PYLINT_CMD) $(EXTRA_DIR)/tests/support/*.py
 sdist:
