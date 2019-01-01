@@ -133,6 +133,8 @@ if [ "${TRAVIS_OS_NAME}" == "linux" ]; then
     if ! apt list --installed 2> /dev/null | grep -q -E "^aspell" >& /dev/null; then
         sudo apt-get install -qq -y aspell;
     fi
+fi
+if [ "${TRAVIS_OS_NAME}" == "linux" ]; then
     if ! apt list --installed 2> /dev/null | grep -q -E "^shellcheck" >& /dev/null; then
         sudo apt-get install -qq -y shellcheck;
     fi
