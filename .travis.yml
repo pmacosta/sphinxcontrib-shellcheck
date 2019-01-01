@@ -1,6 +1,8 @@
 # .travis.yml
 # Copyright (c) 2018 Pablo Acosta-Serafini
 # See LICENSE for details
+# yamllint disable rule:document-start
+# yamllint disable rule:line-length
 
 os:
   - linux
@@ -118,7 +120,7 @@ script:
   ###
   # Write coverage configuration file
   ###
-  - "${SBIN_DIR}"/make-coveragerc.sh 'ci' "${INTERP}" "${SOURCE_DIR}" "${EXTRA_DIR}"
+  - ${SBIN_DIR}/make-coveragerc.sh 'ci' "${INTERP}" "${SOURCE_DIR}" "${EXTRA_DIR}"
   - cat "${COV_FILE}"
   ###
   # Change to tests sub-directory to mimic Tox conditions
@@ -127,9 +129,9 @@ script:
   ###
   # Run tests
   ###
-  - "${SBIN_DIR}"/cprint.sh line cyan "Testing project code compliance"
-  - "${SBIN_DIR}"/check_files_compliance.py -tps -d "${SOURCE_DIR}" -m "${EXTRA_DIR}"
-  - "${SBIN_DIR}"/cprint.sh line cyan "Testing Pylint compliance"
+  - ${SBIN_DIR}/cprint.sh line cyan "Testing project code compliance"
+  - ${SBIN_DIR}/check_files_compliance.py -tps -d "${SOURCE_DIR}" -m "${EXTRA_DIR}"
+  - ${SBIN_DIR}/cprint.sh line cyan "Testing Pylint compliance"
   - pylint_dirs=(${SOURCE_DIR} ${SBIN_DIR} ${EXTRA_DIR}/tests)
   - for pylint_dir in "${pylint_dirs[@]}"; do
         fnames=();
@@ -137,7 +139,6 @@ script:
             fnames+=("$REPLY");
         done < <(find "${pylint_dir}" -name "*.py" -not -path "${pylint_dir}/websupport/*" -print0)
         for fname in "${fnames[@]}"; do
-            echo "File: ${fname}";
             pylint --rcfile="${EXTRA_DIR}"/.pylintrc -f text -r no "${fname}";
         done
     done
@@ -153,7 +154,7 @@ script:
   # tests since the report is not being used
   # - ${SBIN_DIR}/cprint.sh line cyan "Testing code"
   # - ${PYTESTCMD} -s -vv --junitxml=${RESULTS_DIR}/testresults/pytest.xml
-  - "${SBIN_DIR}"/cprint.sh line cyan "Testing coverage"
+  - ${SBIN_DIR}/cprint.sh line cyan "Testing coverage"
   - ${PYTESTCMD} --cov-config "${COV_FILE}" --cov "${SOURCE_DIR}" --cov-report xml
   - if [ -f "${SBIN_DIR}"/build_docs.py ]; then
         "${SBIN_DIR}"/cprint.sh line cyan "Testing documentation";
@@ -177,7 +178,7 @@ after_success:
     fi
 
 after_failure:
-  - "${SBIN_DIR}"/zip-artifacts.sh "${INTERP}"
+  - ${SBIN_DIR}/zip-artifacts.sh "${INTERP}"
   - if [ -f "${AFILE}" ]; then
         "${REPO_DIR}"/bin/dropbox_uploader.sh upload "${AFILE}" .;
     else
