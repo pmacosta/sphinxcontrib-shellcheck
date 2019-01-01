@@ -91,6 +91,7 @@ REM ###
 REM # Install package dependencies
 REM ###
 CD %REPO_DIR%
+python -m pip install --upgrade pip
 python -m pip install codecov
 python -m pip freeze
 REM ###
