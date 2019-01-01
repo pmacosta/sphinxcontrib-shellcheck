@@ -62,7 +62,6 @@ install:
   # Install package dependencies
   ###
   - CD %REPO_DIR%
-  - pip install --upgrade pip setuptools
   - pip install codecov
   - pip freeze
   ###
