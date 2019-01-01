@@ -1,9 +1,12 @@
 # Makefile
-# Copyright (c) 2018 Pablo Acosta-Serafini
+# Copyright (c) 2018-2019 Pablo Acosta-Serafini
 # See LICENSE for details
 
 PKG_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-PYLINT_CMD := pylint --rcfile=$(PKG_DIR)/.pylintrc -f colorized -r no
+REPO_DIR ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+SOURCE_DIR ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+EXTRA_DIR ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+PYLINT_CMD := pylint --rcfile=$(EXTRA_DIR)/.pylintrc -f colorized -r no
 
 asort:
 	@echo "Sorting Aspell whitelist"
@@ -12,6 +15,13 @@ asort:
 bdist:
 	@echo "Creating binary distribution"
 	@$(PKG_DIR)/bin/make-pkg.sh
+
+black:
+	black \
+		$(REPO_DIR) \
+		$(SOURCE_DIR)/sphinxcontrib/shellcheck.py \
+		$(EXTRA_DIR)/tests \
+		$(EXTRA_DIR)/tests/support
 
 clean: FORCE
 	@echo "Cleaning package"
@@ -42,16 +52,10 @@ FORCE:
 
 lint:
 	@echo "Running Pylint on package files"
-	@$(PYLINT_CMD) $(PKG_DIR)/*.py
-	@$(PYLINT_CMD) $(PKG_DIR)/sphinxcontrib/*.py
-	@$(PYLINT_CMD) $(PKG_DIR)/tests/*.py
-	@$(PYLINT_CMD) $(PKG_DIR)/tests/support/*.py
-	black \
-		$(PKG_DIR) \
-		$(PKG_DIR)/sphinxcontrib \
-		$(PKG_DIR)/tests \
-		$(PKG_DIR)/tests/support
-
+	@$(PYLINT_CMD) $(REPO_DIR)/*.py
+	@$(PYLINT_CMD) $(SOURCE_DIR)/sphinxcontrib/shellcheck.py
+	@$(PYLINT_CMD) $(EXTRA_DIR)/tests/*.py
+	@$(PYLINT_CMD) $(EXTRA_DIR)/tests/support/*.py
 sdist:
 	@echo "Creating source distribution"
 	@cd $(PKG_DIR) && python setup.py sdist --formats=gztar,zip

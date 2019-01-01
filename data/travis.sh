@@ -190,17 +190,7 @@ cd "${EXTRA_DIR}"/tests || exit 1
 ${SBIN_DIR}/cprint.sh line cyan "Testing project code compliance"
 ${SBIN_DIR}/check_files_compliance.py -tps -d "${SOURCE_DIR}" -m "${EXTRA_DIR}"
 ${SBIN_DIR}/cprint.sh line cyan "Testing Pylint compliance"
-pylint_dirs=(${SOURCE_DIR} ${SBIN_DIR} ${EXTRA_DIR}/tests)
-for pylint_dir in "${pylint_dirs[@]}"; do
-    fnames=();
-    while IFS=  read -r -d $'\0'; do
-        fnames+=("$REPLY");
-    done < <(find "${pylint_dir}" -name "*.py" -not -path "${pylint_dir}/websupport/*" -print0);
-    for fname in "${fnames[@]}"; do
-        echo "File: ${fname}";
-        pylint --rcfile="${EXTRA_DIR}"/.pylintrc -f text -r no "${fname}";
-    done
-done
+make lint REPO_DIR=${REPO_DIR} SOURCE_DIR=${SOURCE_DIR} EXTRA_DIR=${EXTRA_DIR}
 if ${PYTESTCMD} --collect-only --doctest-glob="*.rst" "${EXTRA_DIR}"/docs &> /dev/null; then
     ${SBIN_DIR}/cprint.sh line cyan "Testing reStructuredText files";
     ${PYTESTCMD} --doctest-glob="*.rst" "${EXTRA_DIR}"/docs;
