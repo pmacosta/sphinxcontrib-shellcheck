@@ -203,7 +203,7 @@ fi
 # tests since the report is not being used
 # - ${SBIN_DIR}/cprint.sh line cyan "Testing code"
 # - ${PYTESTCMD} -s -vv --junitxml=${RESULTS_DIR}/testresults/pytest.xml
-"${SBIN_DIR}"/cprint.sh line cyan "Testing coverage"
+${SBIN_DIR}/cprint.sh line cyan "Testing coverage"
 ${PYTESTCMD} --cov-config "${COV_FILE}" --cov "${SOURCE_DIR}" --cov-report xml
 if [ -f "${SBIN_DIR}"/build_docs.py ]; then
     ${SBIN_DIR}/cprint.sh line cyan "Testing documentation";
