@@ -78,8 +78,22 @@ def test_shellcheck():
     ret_code, act_lines = run_sphinx()
     assert ret_code == 0
     act_lines = [act_line.rstrip() for act_line in act_lines]
-    # For version 0.4.4
+    # For version 0.3.3
     ref_lines_1 = [
+        "README.rst: " + os.path.join(SDIR, "README.rst"),
+        (
+            "README.rst: Line 32, column 11 [2164]: "
+            "Use 'cd ... || exit' or 'cd ... || return' in case cd fails."
+        ),
+        "README.rst: Line 34, column 17 [2154]: myvar is referenced but not assigned.",
+        "api.rst: " + os.path.join(SDIR, "mymodule.py"),
+        (
+            "api.rst: Line 30, column 11 [1091]: Not following: "
+            "myfile.sh was not specified as input (see shellcheck -x)."
+        ),
+    ]
+    # For version 0.4.4
+    ref_lines_2 = [
         "README.rst: " + os.path.join(SDIR, "README.rst"),
         "README.rst: Line 32, column 11 [2164]: Use cd ... || exit in case cd fails.",
         "README.rst: Line 34, column 17 [2154]: myvar is referenced but not assigned.",
@@ -90,7 +104,7 @@ def test_shellcheck():
         ),
     ]
     # For version 0.6
-    ref_lines_2 = [
+    ref_lines_3 = [
         "README.rst: " + os.path.join(SDIR, "README.rst"),
         (
             "README.rst: Line 32, column 11 [2164]: "
@@ -103,43 +117,41 @@ def test_shellcheck():
             "myfile.sh was not specified as input (see shellcheck -x)."
         ),
     ]
-    flag = any([(ref_lines_1 == act_lines), (ref_lines_2 == act_lines)])
+    flag = any(
+        [
+            (ref_lines_1 == act_lines),
+            (ref_lines_2 == act_lines),
+            (ref_lines_3 == act_lines),
+        ]
+    )
     if not flag:
         print("Actual")
         print("Number of lines: {}".format(len(act_lines)))
         print(act_lines)
-        print("Reference 1")
-        print("Number of lines: {}".format(len(ref_lines_1)))
-        print(ref_lines_1)
-        print(ref_lines_1 == act_lines)
-        print("---")
-        for line_1, line_2 in zip(ref_lines_2, act_lines):
-            print(line_1)
-            print(line_2)
-        print("---")
-        print("Reference 2")
-        print("Number of lines: {}".format(len(ref_lines_2)))
-        print(ref_lines_2)
-        print(ref_lines_2 == act_lines)
-        print("---")
-        for line_1, line_2 in zip(ref_lines_2, act_lines):
-            print(repr(line_1))
-            print(repr(line_2))
-            if line_1 != line_2:
-                if len(line_1) != len(line_2):
-                    print(
-                        "Length difference: {0} vs. {1}".format(
-                            len(line_1), len(line_2)
-                        )
-                    )
-                else:
-                    for num, (char_1, char_2) in enumerate(zip(line_1, line_2)):
-                        if char_1 != char_2:
-                            print(
-                                "First difference at character {0}, {1} vs. {2}".format(
-                                    num, char_1, char_2
-                                )
+        for case, value in zip([1, 2, 3], [ref_lines_1, ref_lines_2, ref_lines_3]):
+            print("Reference {}".format(case))
+            print("Number of lines: {}".format(len(value)))
+            print(value)
+            print(value == act_lines)
+            print("---")
+            for line_1, line_2 in zip(value, act_lines):
+                print(repr(line_1))
+                print(repr(line_2))
+                if line_1 != line_2:
+                    if len(line_1) != len(line_2):
+                        print(
+                            "Length difference: {0} vs. {1}".format(
+                                len(line_1), len(line_2)
                             )
-
-        print("---")
+                        )
+                    else:
+                        for num, (char_1, char_2) in enumerate(zip(line_1, line_2)):
+                            if char_1 != char_2:
+                                print(
+                                    (
+                                        "First difference at character "
+                                        "{0}, {1} vs. {2}"
+                                    ).format(num, char_1, char_2)
+                                )
+            print("---")
     assert flag
