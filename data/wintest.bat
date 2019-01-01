@@ -96,8 +96,6 @@ REM ###
 REM # Install package dependencies
 REM ###
 CD %REPO_DIR%
-pip install codecov
-pip freeze
 REM ###
 REM # Install shellcheck and bash binaries
 REM ###
@@ -121,9 +119,6 @@ REM >>> VERBATIM
 TYPE %REPO_DIR%\MANIFEST.in
 python setup.py sdist --formats=zip
 TIMEOUT /t 5
-DIR
-DIR dist
-DIR %REPO_DIR%\dist
 SET SHELLCHECK_CI_ENV=1
 python -c "import os, sys; sys.path.append(os.path.realpath('.'));import setup; print(setup.__version__)" > version.txt
 SET SHELLCHECK_CI_ENV=
@@ -131,7 +126,8 @@ SET /p PKG_VERSION=<version.txt
 ECHO PKG_VERSION=%PKG_VERSION%
 REM # Change directory away from repository, otherwise pip does not install package
 CD %PYTHON_SITE_PACKAGES%
-pip install --no-cache-dir --upgrade %REPO_DIR%\dist\%PKG_NAME%-%PKG_VERSION%.zip
+pip install --no-cache-dir --upgrade codecov %REPO_DIR%\dist\%PKG_NAME%-%PKG_VERSION%.zip
+pip freeze
 REM # Write coverage configuration file
 ECHO [report] >> %COV_FILE%
 ECHO show_missing = True >> %COV_FILE%
