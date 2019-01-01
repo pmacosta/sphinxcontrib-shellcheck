@@ -124,17 +124,24 @@ def preppend_lines(lines, comment_marker):
         starts_with_dash = bool(dare.match(line))
         header_done = header_done or is_keyword
         if (not header_done) and is_comment:
-            if comment_marker != "#":
-                line = line.replace(comment_marker, "# ")
+            if line.strip() == comment_marker:
+                line = ""
+            elif comment_marker != "#":
+                line = line[len(comment_marker):].rstrip()
+                if not line.startswith("#"):
+                    line = "# "+line
         elif (not line.strip()) or starts_with_dash:
             pass  # Yield line as is
         else:
             if is_keyword or (is_comment and line.startswith("  " + comment_marker)):
                 pass  # Yield line as is
             elif is_comment:
-                line = "  " + (
-                    line if comment_marker == "#" else line[len(comment_marker) :]
-                )
+                if line.strip() == comment_marker:
+                    line = ""
+                else:
+                    line = "  " + (
+                        line if comment_marker == "#" else line[len(comment_marker) :]
+                    )
             else:
                 line = "  - " + line if not level else "    " + line
                 if comment_marker == "#":
