@@ -69,7 +69,6 @@ echo "Start of CI output"
 #  - "2.7"
 #  - "3.5"
 #  - "3.6"
-#  - "3.7"
 
 #before_install:
 # >>> VERBATIM
@@ -134,6 +133,9 @@ if [ "${TRAVIS_OS_NAME}" == "linux" ]; then
     if ! apt list --installed 2> /dev/null | grep -q -E "^aspell" >& /dev/null; then
         sudo apt-get install -qq -y aspell;
     fi
+    if ! apt list --installed 2> /dev/null | grep -q -E "^shellcheck" >& /dev/null; then
+        sudo apt-get install -qq -y shellcheck;
+    fi
 fi
 
 # <<< VERBATIM
@@ -181,16 +183,14 @@ ${PIPCMD} install "${REPO_DIR}/dist/${PKG_NAME}-${PKG_VERSION}.tar.gz"
 ${SBIN_DIR}/make-coveragerc.sh 'ci' "${INTERP}" "${SOURCE_DIR}" "${EXTRA_DIR}"
 cat "${COV_FILE}"
 ###
-# Change to tests sub-directory to mimic Tox conditions
-###
-cd "${EXTRA_DIR}"/tests || exit 1
-###
 # Run tests
 ###
 ${SBIN_DIR}/cprint.sh line cyan "Testing project code compliance"
 ${SBIN_DIR}/check_files_compliance.py -tps -d "${SOURCE_DIR}" -m "${EXTRA_DIR}"
 ${SBIN_DIR}/cprint.sh line cyan "Testing Pylint compliance"
+cd "${EXTRA_DIR}" || exit 1
 make lint REPO_DIR=${REPO_DIR} SOURCE_DIR=${SOURCE_DIR} EXTRA_DIR=${EXTRA_DIR}
+cd "${EXTRA_DIR}"/tests || exit 1
 if ${PYTESTCMD} --collect-only --doctest-glob="*.rst" "${EXTRA_DIR}"/docs &> /dev/null; then
     ${SBIN_DIR}/cprint.sh line cyan "Testing reStructuredText files";
     ${PYTESTCMD} --doctest-glob="*.rst" "${EXTRA_DIR}"/docs;
