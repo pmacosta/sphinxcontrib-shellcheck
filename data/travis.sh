@@ -233,7 +233,7 @@ fi
 # >>> VERBATIM
 "${SBIN_DIR}"/zip-artifacts.sh "${INTERP}"
 if [ -f "${AFILE}" ]; then
-    "${REPO_DIR}"/bin/dropbox_uploader.sh upload "${AFILE}" .;
+    ${REPO_DIR}/bin/dropbox_uploader.sh upload "${AFILE}" .;
 else
     echo "Artifacts could not be exported";
 fi
