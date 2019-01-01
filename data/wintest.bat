@@ -30,6 +30,7 @@ SET PATH=C:\Program Files\7-Zip;C:\Users\%USERNAME%\bin\curl\bin;%PATH%
 ECHO Start of CI output
 REM >>> EXCLUDE
 REM <<< VERBATIM
+REM # yamllint disable rule:document-start
 REM # yamllint disable rule:line-length
 
 REM environment:
@@ -104,9 +105,9 @@ SET PATH=%REPO_DIR%;%PATH%
 REM ###
 REM # Create directories for reports and artifacts
 REM ###
-IF NOT EXIST "%RESULTS_DIR%\\testresults" mkdir %RESULTS_DIR%\testresults
-IF NOT EXIST "%RESULTS_DIR%\\codecoverage" mkdir %RESULTS_DIR%\codecoverage
-IF NOT EXIST "%RESULTS_DIR%\\artifacts" mkdir %RESULTS_DIR%\artifacts
+IF NOT EXIST "%RESULTS_DIR%\testresults" mkdir %RESULTS_DIR%\testresults
+IF NOT EXIST "%RESULTS_DIR%\codecoverage" mkdir %RESULTS_DIR%\codecoverage
+IF NOT EXIST "%RESULTS_DIR%\artifacts" mkdir %RESULTS_DIR%\artifacts
 
 REM <<< VERBATIM
 REM build_script:
@@ -124,7 +125,7 @@ SET SHELLCHECK_CI_ENV=
 SET /p PKG_VERSION=<version.txt
 ECHO PKG_VERSION=%PKG_VERSION%
 CD %PYTHON_SITE_PACKAGES%
-python -m pip install --upgrade %REPO_DIR%\dist\%PKG_NAME%-%PKG_VERSION%.zip
+python -m pip install %REPO_DIR%\dist\%PKG_NAME%-%PKG_VERSION%.zip
 REM # Write coverage configuration file
 ECHO [report] >> %COV_FILE%
 ECHO show_missing = True >> %COV_FILE%

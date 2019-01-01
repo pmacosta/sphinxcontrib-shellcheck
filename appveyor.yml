@@ -1,6 +1,7 @@
 # wintest.bat
 # Copyright (c) 2018 Pablo Acosta-Serafini
 # See LICENSE for details
+# yamllint disable rule:document-start
 # yamllint disable rule:line-length
 
 environment:
@@ -74,9 +75,9 @@ install:
   ###
   # Create directories for reports and artifacts
   ###
-  - IF NOT EXIST "%RESULTS_DIR%\\testresults" mkdir %RESULTS_DIR%\testresults
-  - IF NOT EXIST "%RESULTS_DIR%\\codecoverage" mkdir %RESULTS_DIR%\codecoverage
-  - IF NOT EXIST "%RESULTS_DIR%\\artifacts" mkdir %RESULTS_DIR%\artifacts
+  - IF NOT EXIST "%RESULTS_DIR%\testresults" mkdir %RESULTS_DIR%\testresults
+  - IF NOT EXIST "%RESULTS_DIR%\codecoverage" mkdir %RESULTS_DIR%\codecoverage
+  - IF NOT EXIST "%RESULTS_DIR%\artifacts" mkdir %RESULTS_DIR%\artifacts
 
 build_script:
   ###
@@ -92,7 +93,7 @@ build_script:
   - SET /p PKG_VERSION=<version.txt
   - ECHO PKG_VERSION=%PKG_VERSION%
   - CD %PYTHON_SITE_PACKAGES%
-  - python -m pip install --upgrade %REPO_DIR%\dist\%PKG_NAME%-%PKG_VERSION%.zip
+  - python -m pip install %REPO_DIR%\dist\%PKG_NAME%-%PKG_VERSION%.zip
   # Write coverage configuration file
   - ECHO [report] >> %COV_FILE%
   - ECHO show_missing = True >> %COV_FILE%
