@@ -1,5 +1,5 @@
 # setup.py
-# Copyright (c) 2018 Pablo Acosta-Serafini
+# Copyright (c) 2018-2019 Pablo Acosta-Serafini
 # See LICENSE for details
 # pylint: disable=C0111,W0122
 
@@ -45,7 +45,7 @@ else:
 # Actual directory is os.join(sys.prefix, 'share', PKG_NAME)
 PWD = os.path.dirname(os.path.abspath(__file__))
 SHARE_DIR = os.path.join("share", PKG_NAME)
-TEST_REQS = ["coverage", "pylint", "pytest", "pytest-cov", "pytest-xdist"]
+TEST_REQS = ["coverage", "pylint", "pytest", "pytest-cov"]
 if INSTALL_MODE_IS_TEST:
     DATA_FILES = [
         (
