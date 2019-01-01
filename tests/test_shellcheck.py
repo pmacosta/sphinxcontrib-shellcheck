@@ -103,4 +103,12 @@ def test_shellcheck():
             "myfile.sh was not specified as input (see shellcheck -x)."
         ),
     ]
-    assert any([(ref_lines_1 == act_lines), (ref_lines_2 == act_lines)])
+    flag = any([(ref_lines_1 == act_lines), (ref_lines_2 == act_lines)])
+    if not flag:
+        print("Reference 1")
+        print(ref_lines_1)
+        print("Reference 2")
+        print(ref_lines_2)
+        print("Actual")
+        print(act_lines)
+    assert flag
