@@ -1,0 +1,9 @@
+decorator
+docutils
+sphinx
+six
+coverage
+pylint
+pytest
+pytest-cov
+pytest-xdist

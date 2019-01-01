@@ -4,7 +4,7 @@ REM See LICENSE for details
 REM <<< EXCLUDE
 @ECHO OFF
 SET CWD=%CD%
-python -c 'import re, subprocess; obj = subprocess.Popen(["git", "config", "--get", "remote.origin.url"], stdout=subprocess.PIPE); lines, _ = obj.communicate(); regexp = re.compile("git@.*:(.*)/.*"); print(regexp.match(lines).groups()[0])' > origin_name.txt
+python -c "import re, subprocess; lines, _ = subprocess.Popen(['git', 'config', '--get', 'remote.origin.url'], stdout=subprocess.PIPE).communicate(); print(re.compile('.*@.*/(.*)/.*').match(lines.strip().decode()).groups()[0])" > origin_name.txt
 SET /p ORIGIN_NAME=<origin_name.txt
 CMD /c powershell.exe -Command "[guid]::NewGuid().ToString()" > uuid.txt
 SET /p UUID=<uuid.txt
@@ -22,6 +22,7 @@ SET PYVER=3.7
 ECHO Creating virtual environment
 python -m venv %ENV_DIR%
 CALL %ENV_DIR%\Scripts\activate.bat
+python -m pip install --upgrade pip
 ECHO Cloning repository
 REM git clone --recursive https://%ORIGIN_NAMR%@bitbucket.org/%ORIGIN_NAMR%/sphinxcontrib-shellcheck.git
 XCOPY C:\Users\%USERNAME%\sphinxcontrib-shellcheck %TMP_DIR%\sphinxcontrib-shellcheck /E
@@ -96,6 +97,7 @@ REM # Install package dependencies
 REM ###
 CD %REPO_DIR%
 pip install codecov
+pip install --upgrade -rrequirements_appveyor.txt
 pip freeze
 REM ###
 REM # Install shellcheck and bash binaries

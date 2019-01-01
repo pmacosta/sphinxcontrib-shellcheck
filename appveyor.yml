@@ -66,6 +66,7 @@ install:
   ###
   - CD %REPO_DIR%
   - pip install codecov
+  - pip install --upgrade -rrequirements_appveyor.txt
   - pip freeze
   ###
   # Install shellcheck and bash binaries
