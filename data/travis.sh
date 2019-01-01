@@ -130,14 +130,12 @@ echo "PYLINT_PLUGINS_DIR=${PYLINT_PLUGINS_DIR}"
 ###
 if [ "${TRAVIS_OS_NAME}" == "linux" ]; then
     sudo apt-get update;
-    if ! apt list --installed 2> /dev/null | grep -q -E "^aspell" >& /dev/null; then
-        sudo apt-get install -qq -y aspell;
-    fi
 fi
 if [ "${TRAVIS_OS_NAME}" == "linux" ]; then
-    if ! apt list --installed 2> /dev/null | grep -q -E "^shellcheck" >& /dev/null; then
-        sudo apt-get install -qq -y shellcheck;
-    fi
+    sudo apt-get install -qq -y aspell;
+fi
+if [ "${TRAVIS_OS_NAME}" == "linux" ]; then
+    sudo apt-get install -qq -y shellcheck;
 fi
 
 # <<< VERBATIM
@@ -187,10 +185,11 @@ cat "${COV_FILE}"
 ###
 # Run tests
 ###
+cd "${EXTRA_DIR}"/tests || exit 1
 ${SBIN_DIR}/cprint.sh line cyan "Testing project code compliance"
 ${SBIN_DIR}/check_files_compliance.py -tps -d "${SOURCE_DIR}" -m "${EXTRA_DIR}"
 ${SBIN_DIR}/cprint.sh line cyan "Testing Pylint compliance"
-cd "${EXTRA_DIR}" || exit 1
+cd "${REPO_DIR}" || exit 1
 make lint REPO_DIR=${REPO_DIR} SOURCE_DIR=${SOURCE_DIR} EXTRA_DIR=${EXTRA_DIR}
 cd "${EXTRA_DIR}"/tests || exit 1
 if ${PYTESTCMD} --collect-only --doctest-glob="*.rst" "${EXTRA_DIR}"/docs &> /dev/null; then
