@@ -38,8 +38,8 @@ install:
   - activate %INTERP%
   - ps: wget https://bootstrap.pypa.io/get-pip.py -OutFile get-pip.py
   - python get-pip.py
-  - pip install --upgrade pip wheel
-  - pip install --upgrade --ignore-installed setuptools
+  - python -m pip install --upgrade pip wheel
+  - python -m pip install --upgrade --ignore-installed setuptools
   - which python
   - which pip
   - python -c "import os, pip; print(os.path.dirname(os.path.realpath(pip.__path__[0])))" > python_site_packages_dir.txt
@@ -103,8 +103,8 @@ build_script:
   - ECHO PKG_VERSION=%PKG_VERSION%
   # Change directory away from repository, otherwise pip does not install package
   - CD %PYTHON_SITE_PACKAGES%
-  - pip install --no-cache-dir --upgrade codecov %REPO_DIR%\dist\%PKG_NAME%-%PKG_VERSION%.zip
-  - pip freeze
+  - python -m pip install --no-cache-dir --upgrade codecov %REPO_DIR%\dist\%PKG_NAME%-%PKG_VERSION%.zip
+  - python -m pip freeze
   # Write coverage configuration file
   - ECHO [report] >> %COV_FILE%
   - ECHO show_missing = True >> %COV_FILE%
