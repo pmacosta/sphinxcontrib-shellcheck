@@ -21,16 +21,16 @@
 |
 
 .. image::
-    https://travis-ci.org/pmacosta/shellcheck-contrib.svg?branch=master
+    https://travis-ci.org/pmacosta/sphinxcontrib-shellcheck.svg?branch=master
 
 .. image::
     https://ci.appveyor.com/api/projects/status/
-    7dpk342kxs8kcg5t/branch/master?svg=true
+    y95r5t9tix34pk55?svg=true
     :alt: Windows continuous integration
 
 .. image::
-    https://codecov.io/github/pmacosta/shellcheck-contrib/coverage.svg?branch=master
-    :target: https://codecov.io/github/pmacosta/shellcheck-contrib?branch=master
+    https://codecov.io/gh/pmacosta/sphinxcontrib-shellcheck/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/pmacosta/sphinxcontrib-shellcheck
     :alt: Continuous integration coverage
 
 |
