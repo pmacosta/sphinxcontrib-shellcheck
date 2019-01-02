@@ -32,6 +32,16 @@ install:
   - SET /p PKG_NAME=<pkg_name.txt
   - python -c "import os; print(os.path.basename(os.getcwd()).split('-')[0])" > pkg_name_alt.txt
   - SET /p PKG_NAME_ALT=<pkg_name_alt.txt
+  - SET PATH=C:\\Miniconda-x64;C:\\Miniconda-x64\\Scripts;%PATH%
+  - conda update -y conda
+  - conda create -y --name %INTERP% python=%PYVER%
+  - activate %INTERP%
+  - ps: wget https://bootstrap.pypa.io/get-pip.py -OutFile get-pip.py
+  - python get-pip.py
+  - pip install --upgrade pip wheel
+  - pip install --upgrade --ignore-installed setuptools
+  - which python
+  - which pip
   - python -c "import os, pip; print(os.path.dirname(os.path.realpath(pip.__path__[0])))" > python_site_packages_dir.txt
   - SET /p PYTHON_SITE_PACKAGES=<python_site_packages_dir.txt
   - SET REPO_DIR=%CD%
