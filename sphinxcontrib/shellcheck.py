@@ -143,6 +143,9 @@ class LintShellBuilder(Builder):
     """Validate shell code in documents."""
 
     name = ""
+    epilog = __(
+        "Look for any errors in the above output or in " "%(outdir)s/output.txt"
+    )
 
     def __init__(self, app):  # noqa
         super(LintShellBuilder, self).__init__(app)
@@ -313,7 +316,6 @@ class LintShellBuilder(Builder):
         """Check shell nodes."""
         self.docname = docname
         self._tabwidth = doctree.settings.tab_width
-        ret_code = 0
         for node, indent in self._shell_nodes(doctree):
             errors = self._lint_block(node, indent)
             if errors:
@@ -322,8 +324,7 @@ class LintShellBuilder(Builder):
                 for error in errors:
                     LOGGER.info(error)
                     self.write_entry(error)
-                ret_code = 1
-        self.app.statuscode = ret_code
+        self.app.statuscode = 0
 
     def write_entry(self, error):
         """Write error to file."""
@@ -351,13 +352,13 @@ class ShellcheckBuilder(LintShellBuilder):
             self._dialects = set(_tostr(item) for item in self._dialects)
             assert all(item in ["sh", "bash", "dash", "ksh"] for item in self._dialects)
         except:
-            raise InvalidShellcheckBuilderConfig("Invalid dialect")
+            raise InvalidShellcheckBuilderConfig(__("Invalid dialect"))
         if not which(self._exe):
-            raise InvalidShellcheckBuilderConfig("Shellcheck executable not found")
+            raise InvalidShellcheckBuilderConfig(__("Shellcheck executable not found"))
         if len(self._prompt) != 1:
-            raise InvalidShellcheckBuilderConfig("Invalid shellcheck prompt")
+            raise InvalidShellcheckBuilderConfig(__("Invalid shellcheck prompt"))
         if self._debug not in (0, 1):
-            raise InvalidShellcheckBuilderConfig("Invalid shellcheck debug flag")
+            raise InvalidShellcheckBuilderConfig(__("Invalid shellcheck debug flag"))
         self._debug = self._debug == 1
 
     @property
@@ -405,7 +406,7 @@ class TmpFile(object):  # pragma: no cover
             and (not isinstance(fpointer, types.FunctionType))
             and (not isinstance(fpointer, types.LambdaType))
         ):
-            raise RuntimeError("Argument `fpointer` is not valid")
+            raise RuntimeError(__("Argument `fpointer` is not valid"))
         self._fname = None
         self._fpointer = fpointer
         self._args = args
