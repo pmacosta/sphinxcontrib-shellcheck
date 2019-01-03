@@ -67,8 +67,6 @@ SET PATH=C:\\Miniconda-x64;C:\\Miniconda-x64\\Scripts;%PATH%
 conda update -y conda
 conda create -y --name %INTERP% python=%PYVER%
 activate %INTERP%
-ps: wget https://bootstrap.pypa.io/get-pip.py -OutFile get-pip.py
-python get-pip.py
 python -m pip install --upgrade pip wheel
 python -m pip install --upgrade --ignore-installed setuptools
 which python
