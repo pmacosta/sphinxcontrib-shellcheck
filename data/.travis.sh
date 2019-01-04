@@ -1,7 +1,7 @@
 #!/bin/bash
 # shellcheck disable=SC1090,SC1091,SC1094,SC2086,SC2155
-# travis.sh
-# Copyright (c) 2018 Pablo Acosta-Serafini
+# .travis.sh
+# Copyright (c) 2018-2019 Pablo Acosta-Serafini
 # See LICENSE for details
 # yamllint disable rule:document-start
 # yamllint disable rule:line-length

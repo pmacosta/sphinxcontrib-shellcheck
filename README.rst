@@ -157,7 +157,7 @@ License
 
 The MIT License (MIT)
 
-Copyright (c) 2018, Pablo Acosta-Serafini
+Copyright (c) 2018-2019, Pablo Acosta-Serafini
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
