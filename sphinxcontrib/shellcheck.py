@@ -23,15 +23,7 @@ try:
 except ImportError:  # pragma: no cover
     # Implementation from Python 3.3
     def which(cmd, mode=os.F_OK | os.X_OK, path=None):
-        """Given a command, mode, and a PATH string, return the path which
-        conforms to the given mode on the PATH, or None if there is no such
-        file.
-
-        `mode` defaults to os.F_OK | os.X_OK. `path` defaults to the result
-        of os.environ.get("PATH"), or can be overridden with a custom search
-        path.
-
-        """
+        """Mimic CLI which function, copied from Python 3.3 implementation."""
         # pylint: disable=C0113,W0622
         # Check that a given file can be accessed with the correct mode.
         # Additionally check that `file` is not a directory, as on Windows
