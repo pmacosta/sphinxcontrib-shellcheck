@@ -54,7 +54,8 @@ under Linux (Debian, Ubuntu), and Microsoft Windows
 Installation
 ############
 
-The extension is on `PyPI <https://pypi.org>`_, so:
+The extension is on `PyPI <https://pypi.org/project/sphinxcontrib-shellcheck>`_,
+so:
 
 .. code:: console
 
