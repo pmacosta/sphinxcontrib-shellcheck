@@ -190,7 +190,7 @@ if __name__ == "__main__":
     PARSER.add_argument(
         "-d",
         "--source-dir",
-        help="source files directory (default ../pmisc)",
+        help="source files directory (default ../sphinxcontrib)",
         nargs=1,
         default=PKG_DIR,
     )
