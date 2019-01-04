@@ -3,19 +3,19 @@
 .. See LICENSE for details
 
 .. image:: https://badge.fury.io/py/sphinxcontrib-shellcheck.svg
-    :target: https://pypi.org/project/shellcheck-contrib
+    :target: https://pypi.org/project/sphinxcontrib-shellcheck
     :alt: PyPI version
 
 .. image:: https://img.shields.io/pypi/l/sphinxcontrib-shellcheck.svg
-    :target: https://pypi.org/project/shellcheck-contrib
+    :target: https://pypi.org/project/sphinxcontrib-shellcheck
     :alt: License
 
 .. image:: https://img.shields.io/pypi/pyversions/sphinxcontrib-shellcheck.svg
-    :target: https://pypi.org/project/shellcheck-contrib
+    :target: https://pypi.org/project/sphinxcontrib-shellcheck
     :alt: Python versions supported
 
 .. image:: https://img.shields.io/pypi/format/sphinxcontrib-shellcheck.svg
-    :target: https://pypi.org/project/shellcheck-contrib
+    :target: https://pypi.org/project/sphinxcontrib-shellcheck
     :alt: Format
 
 |
