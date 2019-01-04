@@ -2,19 +2,19 @@
 .. Copyright (c) 2018-2019 Pablo Acosta-Serafini
 .. See LICENSE for details
 
-.. image:: https://badge.fury.io/py/shellcheck-contrib.svg
+.. image:: https://badge.fury.io/py/sphinxcontrib-shellcheck.svg
     :target: https://pypi.org/project/shellcheck-contrib
     :alt: PyPI version
 
-.. image:: https://img.shields.io/pypi/l/shellcheck-contrib.svg
+.. image:: https://img.shields.io/pypi/l/sphinxcontrib-shellcheck.svg
     :target: https://pypi.org/project/shellcheck-contrib
     :alt: License
 
-.. image:: https://img.shields.io/pypi/pyversions/shellcheck-contrib.svg
+.. image:: https://img.shields.io/pypi/pyversions/sphinxcontrib-shellcheck.svg
     :target: https://pypi.org/project/shellcheck-contrib
     :alt: Python versions supported
 
-.. image:: https://img.shields.io/pypi/format/shellcheck-contrib.svg
+.. image:: https://img.shields.io/pypi/format/sphinxcontrib-shellcheck.svg
     :target: https://pypi.org/project/shellcheck-contrib
     :alt: Format
 
