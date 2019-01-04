@@ -5,4 +5,4 @@
 Changelog
 =========
 
-* 1.0.0 [TBD] Initial commit
+* 1.0.0 [January 4, 2019] Initial commit
