@@ -36,14 +36,10 @@ clean: FORCE
 	@rm -rf $(PKG_DIR)/sphinxcontrib_shellcheck.egg-info
 	@rm -rf $(PKG_DIR)/.eggs
 	@rm -rf $(PKG_DIR)/.cache
-	@rm -rf $(PKG_DIR)/docs/_build
 	@rm -rf $(PKG_DIR)/tests/support/_build
 
-distro: docs clean sdist wheel
+distro: clean sdist wheel
 	@rm -rf build sphinxcontrib-shellcheck.egg-info
-
-docs: FORCE
-	@cd $(PKG_DIR)/docs && make linkcheck && make
 
 default:
 	@echo "No default action"
