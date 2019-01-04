@@ -89,9 +89,9 @@ if INSTALL_MODE_IS_TEST:
         (
             os.path.join(SHARE_DIR, "data"),
             [
-                os.path.join(PWD, "data", "travis.sh"),
+                os.path.join(PWD, "data", ".travis.sh"),
                 os.path.join(PWD, "data", "whitelist.en.pws"),
-                os.path.join(PWD, "data", "wintest.bat"),
+                os.path.join(PWD, "data", "appveyor.bat"),
             ],
         ),
         (
