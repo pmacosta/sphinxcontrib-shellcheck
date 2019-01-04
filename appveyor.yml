@@ -1,5 +1,5 @@
-# wintest.bat
-# Copyright (c) 2018 Pablo Acosta-Serafini
+# appveyor.bat
+# Copyright (c) 2018-2019 Pablo Acosta-Serafini
 # See LICENSE for details
 # yamllint disable rule:document-start
 # yamllint disable rule:line-length
@@ -31,7 +31,7 @@ install:
   - SET REPO_DIR=%CD%
   - SET RESULTS_DIR=%REPO_DIR%\results
   ###
-  # Install shellcheck binary
+  # Install shellcheck and bash binaries
   ###
   - CD %REPO_DIR%
   - curl --output shellcheck-stable.zip https://storage.googleapis.com/shellcheck/shellcheck-stable.zip
@@ -39,7 +39,7 @@ install:
   - MOVE shellcheck-stable.exe shellcheck.exe
   - SET PATH=%REPO_DIR%;%PATH%
   ###
-  # Create output directories
+  # Create directories for reports and artifacts
   ###
   - IF NOT EXIST "%RESULTS_DIR%\artifacts" mkdir %RESULTS_DIR%\artifacts
 
@@ -47,7 +47,6 @@ build_script:
   - python -m pip install -r%REPO_DIR%\data\requirements.txt
 
 test_script:
-  ###
   - CD %REPO_DIR%
   - SET PYTHONPATH=%CD%/sphinxcontrib;%PYTHONPATH%
   - pytest -s -x -vv tests\test_shellcheck.py
