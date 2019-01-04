@@ -5,4 +5,4 @@
 Changelog
 =========
 
-* 1.0.4 [January 4, 2019] Initial public release
+* 1.0.5 [January 4, 2019] Initial public release

@@ -15,7 +15,7 @@ from setuptools import setup, find_packages
 # Global variables
 ###
 PKG_NAME = "sphinxcontrib-shellcheck"
-VERSION_INFO = (1, 0, 4, "final", 0)
+VERSION_INFO = (1, 0, 5, "final", 0)
 INSTALL_MODE_IS_TEST = os.environ.get("SHELLCHECK_TEST_ENV", "")
 VERSION_QUERY = os.environ.get("SHELLCHECK_CI_ENV", "")
 
@@ -154,10 +154,11 @@ if not VERSION_QUERY:
             "Programming Language :: Python :: 3.7",
             "Development Status :: " + DEVSTAT,
             "Natural Language :: English",
-            "Environment :: Web Environment",
+            "Environment :: Console",
             "Intended Audience :: Developers",
             "License :: OSI Approved :: MIT License",
             "Operating System :: OS Independent",
             "Framework :: Sphinx :: Extension",
+            "Topic :: Software Development :: Documentation",
         ],
     )
