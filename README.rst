@@ -40,15 +40,15 @@ sphinxcontrib-shellcheck
 ########################
 
 The shellcheck Sphinx builder is an extension that uses the `shellcheck
-<https://github.com/koalaman/shellcheck>`_ utility to line shell code in the
+<https://github.com/koalaman/shellcheck>`_ utility to lint shell code in the
 documentation.
 
 ###########
 Interpreter
 ###########
 
-The extension has been developed and tested with Python 3.5, 3.6 and 3.7 under
-Linux (Debian, Ubuntu), and Microsoft Windows
+The extension has been developed and tested with Python 2.7, 3.5, 3.6 and 3.7
+under Linux (Debian, Ubuntu), and Microsoft Windows
 
 ############
 Installation
@@ -116,6 +116,8 @@ Then with the extension installed:
    Line 11, column 11 [2164]: Use cd ... || exit in case cd fails.
    Line 13, column 17 [2154]: myvar is referenced but not assigned.
    build succeeded.
+
+   Look for any errors in the above output or in _build/shellcheck/output.txt
 
 #######################
 Configuration variables
