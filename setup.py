@@ -5,6 +5,7 @@
 
 # Standard library imports
 from __future__ import print_function
+import io
 import os
 
 # PyPI imports
@@ -14,7 +15,7 @@ from setuptools import setup, find_packages
 # Global variables
 ###
 PKG_NAME = "sphinxcontrib-shellcheck"
-VERSION_INFO = (1, 0, 0, "final", 0)
+VERSION_INFO = (1, 0, 1, "final", 0)
 INSTALL_MODE_IS_TEST = os.environ.get("SHELLCHECK_TEST_ENV", "")
 VERSION_QUERY = os.environ.get("SHELLCHECK_CI_ENV", "")
 
@@ -30,6 +31,17 @@ def _make_version(major, minor, micro, level, serial):
     if level != "final":
         version += "{0}{1:d}".format(level_dict[level], serial)
     return version
+
+
+def _read(*filenames, **kwargs):
+    """Read plain text file(s)."""
+    encoding = kwargs.get("encoding", "utf-8")
+    sep = kwargs.get("sep", "\n")
+    buf = []
+    for filename in filenames:
+        with io.open(filename, encoding=encoding) as fobj:
+            buf.append(fobj.read())
+    return sep.join(buf)
 
 
 __version__ = _make_version(*VERSION_INFO)
@@ -109,6 +121,10 @@ else:
     DATA_FILES = []
     EXTRA_REQS = []
 
+PKG_DIR = os.path.abspath(os.path.dirname(__file__))
+LONG_DESCRIPTION = _read(
+    os.path.join(PKG_DIR, "README.rst"), os.path.join(PKG_DIR, "CHANGELOG.rst")
+)
 
 ###
 # Processing
@@ -122,7 +138,8 @@ if not VERSION_QUERY:
         author="Pablo Acosta-Serafini",
         author_email="pmasdev@gmail.com",
         description="Sphinx extension to lint shell code blocks",
-        long_description="Sphinx extension to lint shell code blocks",
+        long_description=LONG_DESCRIPTION,
+        long_description_content_type="text/x-rst",
         install_requires=["decorator", "docutils", "sphinx", "six"] + EXTRA_REQS,
         tests_require=TEST_REQS,
         data_files=DATA_FILES,
@@ -131,6 +148,10 @@ if not VERSION_QUERY:
         platforms="any",
         namespace_packages=["sphinxcontrib"],
         classifiers=[
+            "Programming Language :: Python :: 2.7",
+            "Programming Language :: Python :: 3.5",
+            "Programming Language :: Python :: 3.6",
+            "Programming Language :: Python :: 3.7",
             "Programming Language :: Python",
             "Development Status :: " + DEVSTAT,
             "Natural Language :: English",
@@ -138,6 +159,6 @@ if not VERSION_QUERY:
             "Intended Audience :: Developers",
             "License :: OSI Approved :: MIT License",
             "Operating System :: OS Independent",
-            "Topic :: Software Development :: Libraries :: Python Modules",
+            "Framework :: Sphinx :: Extension",
         ],
     )
