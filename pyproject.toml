@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "sphinxcontrib-shellcheck"
+version = "1.0.5"
+description = "Sphinx extension to lint shell code blocks"
+readme = "README.rst"
+authors = ["Pablo Acosta-Serafini <pmasdev@gmail.com>"]
+license = "MIT"
+homepage = "https://pypi.org/project/sphinxcontrib-shellcheck"
+repository = "https://github.com/pmacosta/sphinxcontrib-shellcheck"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Natural Language :: English",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Framework :: Sphinx :: Extension",
+    "Topic :: Software Development :: Documentation",
+]
+include = [
+    "AUTHORS.rst",
+    "CHANGELOG.rst",
+]
+packages = [{ include = "sphinxcontrib"}]
+
+[tool.poetry.dependencies]
+python = "^2.7 || >=3.5"
+decorator = ">=4.3.0"
+docutils = ">=0.14"
+sphinx = ">=1.8.3"
+six = ">=1.12.0"
+
+[tool.poetry.dev-dependencies]
+coverage = ">=4.5.2"
+pylint = ">=2.2.2"
+pytest = ">=4.1.0"
+pytest-cov = ">=2.6.0"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
