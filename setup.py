@@ -86,7 +86,7 @@ if INSTALL_MODE_IS_TEST:
         ),
         (
             os.path.join(SHARE_DIR, "tests"),
-            [os.path.join(PWD, "tests", "test_shellcheck.py")],
+            [os.path.join(PWD, "tests", "test_sphinxcontrib.py")],
         ),
         (
             os.path.join(SHARE_DIR, "tests", "support"),
