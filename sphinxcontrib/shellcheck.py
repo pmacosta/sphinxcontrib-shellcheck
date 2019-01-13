@@ -103,12 +103,9 @@ else:  # pragma: no cover
 # Functions
 ###
 def _errors(stdout):
+    keys = ("line", "column", "code", "message")
     for error in json.loads(_tostr(stdout)):
-        code = error["code"]
-        desc = error["message"]
-        line = error["line"]
-        col = error["column"]
-        yield line, col, code, desc
+        yield tuple(error[item] for item in keys)
 
 
 def _get_indent(line):
@@ -116,11 +113,11 @@ def _get_indent(line):
 
 
 def _tostr(line):  # pragma: no cover
-    if isinstance(line, str):
-        return line
-    if sys.hexversion > 0x03000000:
-        return line.decode()
-    return line.encode()
+    return (
+        line
+        if isinstance(line, str)
+        else (line.decode() if sys.hexversion > 0x03000000 else line.encode())
+    )
 
 
 ###
@@ -166,23 +163,13 @@ class LintShellBuilder(Builder):
         )
 
     def _get_linter_stdout(self, lines):
-        if self._debug:  # pragma: no cover
-            LOGGER.info("<<< lines (_get_linter_stdout)")
-            LOGGER.info(lines)
-            LOGGER.info(">>>")
+        self._debug_log("<<< lines (_get_linter_stdout)", lines, ">>>")
         with TmpFile(fpointer=lambda x: x.write(lines.encode("ascii"))) as fname:
-            if self._debug:  # pragma: no cover
-                with open(fname, "r") as fhandle:
-                    check_lines = fhandle.readlines()
-                LOGGER.info("Auto-generated shell file")
-                LOGGER.info("".join(check_lines))
-            obj = subprocess.Popen(
+            self._debug_log("Auto-generated shell file", self._read_script(fname))
+            stdout, _ = subprocess.Popen(
                 self.cmd(fname), stdout=subprocess.PIPE, stderr=subprocess.PIPE
-            )
-            stdout, _ = obj.communicate()
-            if self._debug:  # pragma: no cover
-                LOGGER.info("STDOUT")
-                LOGGER.info(_tostr(stdout))
+            ).communicate()
+            self._debug_log("STDOUT", _tostr(stdout))
         return stdout
 
     def _lint_block(self, node, indent):
@@ -193,10 +180,7 @@ class LintShellBuilder(Builder):
         value = node.astext()
         code_lines = _tostr(value).split("\n")
         lmin = max(len(code_line) for code_line in code_lines)
-        if self._debug:  # pragma: no cover
-            LOGGER.info("<<< Node code (_lint_block)")
-            LOGGER.info(code_lines)
-            LOGGER.info(">>>")
+        self._debug_log("<<< Node code (_lint_block)", code_lines, ">>>")
         for code_line in code_lines:
             cmd_line = code_line.strip().startswith(self.prompt)
             if cmd_line or cont_line:
@@ -210,40 +194,52 @@ class LintShellBuilder(Builder):
         self._line_offset = node.line
         self._col_offset = _get_indent(lines.split("\n")[0]) + indent + 1
         lines = shebang + textwrap.dedent(lines)
-        if self._debug:  # pragma: no cover
-            LOGGER.info("<<< lines (_lint_block)")
-            LOGGER.info(lines)
-            LOGGER.info(">>>")
+        self._debug_log("<<< lines (_lint_block)", lines, ">>>")
         self._output = []
         self.parse_linter_output(self._get_linter_stdout(lines))
         return self._output
 
+    def _lint_errors(self, doctree):
+        for node, indent in self._shell_nodes_with_errors(doctree):
+            errors = self._lint_block(node, indent)
+            if errors:
+                yield errors
+
+    def _debug_log(self, *lines):  # pragma: no cover
+        if self._debug:
+            for line in lines:
+                LOGGER.info(line)
+
     def _shell_nodes(self, doctree):
-        regexp = re.compile("(.*):docstring of (.*)")
         for node in doctree.traverse():
             if self._is_shell_node(node):
-                self.dialect = node.attributes.get("language").lower()
-                self.source, func_abs_name = (
-                    regexp.match(node.source).groups()
-                    if ":docstring of " in node.source
-                    else (node.source, None)
-                )
-                self.source = os.path.abspath(self.source.strip())
-                if self._debug:  # pragma: no cover
-                    LOGGER.info("Analyzing file " + self.source)
-                    LOGGER.info("<<< Node code")
-                    LOGGER.info(_tostr(node.astext()))
-                    LOGGER.info(">>>")
-                if func_abs_name:
-                    tokens = func_abs_name.split(".")
-                    func_path, func_name = ".".join(tokens[:-1]), tokens[-1]
-                    func_obj = __import__(func_path).__dict__[func_name]
-                    node.line = func_obj.__code__.co_firstlineno + node.line + 1
-                self._read_source_file()
-                indent = self._get_block_indent(node)
-                if self._debug:  # pragma: no cover
-                    LOGGER.info("Indent: " + str(indent))
-                yield node, indent
+                yield node
+
+    def _shell_nodes_with_errors(self, doctree):
+        regexp = re.compile("(.*):docstring of (.*)")
+        for node in self._shell_nodes(doctree):
+            self.dialect = node.attributes.get("language").lower()
+            self.source, func_abs_name = (
+                regexp.match(node.source).groups()
+                if ":docstring of " in node.source
+                else (node.source, None)
+            )
+            self.source = os.path.abspath(self.source.strip())
+            self._debug_log(
+                "Analyzing file " + self.source,
+                "<<< Node code",
+                _tostr(node.astext()),
+                ">>>",
+            )
+            if func_abs_name:
+                tokens = func_abs_name.split(".")
+                func_path, func_name = ".".join(tokens[:-1]), tokens[-1]
+                func_obj = __import__(func_path).__dict__[func_name]
+                node.line = func_obj.__code__.co_firstlineno + node.line + 1
+            self._read_source_file()
+            indent = self._get_block_indent(node)
+            self._debug_log("Indent: " + str(indent))
+            yield node, indent
 
     def _read_source_file(self):
         self._srclines = []
@@ -253,20 +249,25 @@ class LintShellBuilder(Builder):
                 node.rawsource = line
                 self._srclines.append(_tostr(node.rawsource.expandtabs(self._tabwidth)))
 
+    def _read_script(self, fname):  # pragma: no cover
+        lines = []
+        if self._debug:
+            with open(fname, "r") as fhandle:
+                lines = fhandle.readlines()
+        return "".join(lines)
+
     def add_error(self, line, col, code, desc):
         """Add shell error to list of errors."""
-        info = [
+        info = (
             self.source,
             line + self._line_offset,
             col + self._col_offset,
             code,
             desc,
-        ]
-        if self._debug:  # pragma: no cover
-            LOGGER.info("info: " + str(info))
+        )
+        self._debug_log("info: " + str(info))
         if info not in self._nodes:
-            if self._debug:  # pragma: no cover
-                LOGGER.info("Adding info")
+            self._debug_log("Adding info")
             self._nodes.append(info)
             self._output.append("Line {0}, column {1} [{2}]: {3}".format(*info[1:]))
 
@@ -308,14 +309,12 @@ class LintShellBuilder(Builder):
         """Check shell nodes."""
         self.docname = docname
         self._tabwidth = doctree.settings.tab_width
-        for node, indent in self._shell_nodes(doctree):
-            errors = self._lint_block(node, indent)
-            if errors:
-                LOGGER.info(self.source)
-                self.write_entry(self.source)
-                for error in errors:
-                    LOGGER.info(error)
-                    self.write_entry(error)
+        for errors in self._lint_errors(doctree):
+            LOGGER.info(self.source)
+            self.write_entry(self.source)
+            for error in errors:
+                LOGGER.info(error)
+                self.write_entry(error)
         self.app.statuscode = 0
 
     def write_entry(self, error):
