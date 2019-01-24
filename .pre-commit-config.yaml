@@ -1,0 +1,44 @@
+# yamllint disable rule:document-start
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v1.2.3
+  hooks:
+  - id: check-added-large-files
+  - id: check-ast
+  - id: check-case-conflict
+  - id: check-docstring-first
+  - id: check-executables-have-shebangs
+  - id: check-json
+  - id: check-merge-conflict
+  - id: check-symlinks
+  - id: check-vcs-permalinks
+  - id: check-xml
+  - id: check-yaml
+  - id: debug-statements
+  - id: detect-private-key
+  - id: end-of-file-fixer
+  - id: mixed-line-ending
+  - id: trailing-whitespace
+- repo: https://github.com/ambv/black
+  rev: stable
+  hooks:
+  - id: black
+    language_version: python3.7
+- repo: https://github.com/pmacosta/pre-commit-hooks
+  rev: v1.2.0
+  hooks:
+  - id: identity
+    args: [--author-file=./AUTHORS.rst]
+  - id: pydocstyle_wrapper
+    args: [--config=./.pydocstyle]
+  - id: spelling
+    args: [--lang=en, --personal=./data/whitelist.en.pws, --exclude=./data/exclude-spelling]
+- repo: local
+  hooks:
+  - id: pylint
+    name: pylint
+    entry: python -m pylint.__main__
+    language: system
+    types: [python]
+    args: [--reports=n, --score=n, --rcfile=./.pylintrc]
+    additional_dependencies: ['pylint']

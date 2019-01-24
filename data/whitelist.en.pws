@@ -72,6 +72,7 @@ os
 OSError
 pdir
 permalinks
+personal_ws-1.1 en 106 utf-8
 Popen
 pragma
 PWD
@@ -99,7 +100,6 @@ sphinxcontrib
 startswith
 stderr
 stdout
-STDOUT
 str
 subprocess
 symlinks
