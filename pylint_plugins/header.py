@@ -57,17 +57,17 @@ def check_header(node, comment="#"):
 
 def content_lines(stream, comment="#"):
     """Return non-empty lines of a package."""
-    skip_lines = ["#!/bin/bash", "#!/usr/bin/env bash", "#!/usr/bin/env python"]
+    shebang_line_regexp = re.compile(r"^#!.*[ \\/](bash|python)$")
     encoding_dribble = "\xef\xbb\xbf"
     encoded = False
-    cregexp = re.compile(r".*{0} -\*- coding: utf-8 -\*-\s*".format(comment))
+    cregexp = re.compile(r"^{0} -\*- coding: utf-8 -\*-\s*".format(comment))
     for num, line in enumerate(stream):
         line = _tostr(line).rstrip()
         if (not num) and line.startswith(encoding_dribble):
             line = line[len(encoding_dribble) :]
         coding_line = (num == 0) and (cregexp.match(line) is not None)
         encoded = coding_line if not encoded else encoded
-        shebang_line = (num == int(encoded)) and (line in skip_lines)
+        shebang_line = (num == int(encoded)) and shebang_line_regexp.match(line)
         if line and (not coding_line) and (not shebang_line):
             yield num + 1, line
 
@@ -93,7 +93,7 @@ class HeaderChecker(BaseChecker):
             "Header does not meet code standard",
             NON_COMPLIANT_HEADER,
             (
-                "Headers must have the name of th efile in the first usable line, "
+                "Headers must have the name of the file in the first usable line, "
                 "and an up-to-date copyright notice"
             ),
         )
