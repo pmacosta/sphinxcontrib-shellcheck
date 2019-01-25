@@ -12,7 +12,10 @@ import os
 import sys
 
 # Intra-package imports
-PYLINT_PLUGINS_DIR = os.environ["PYLINT_PLUGINS_DIR"]
+PKG_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PYLINT_PLUGINS_DIR = os.environ.get(
+    "PYLINT_PLUGINS_DIR", os.path.join(PKG_DIR, "pylint_plugins")
+)
 if PYLINT_PLUGINS_DIR:
     sys.path.append(PYLINT_PLUGINS_DIR)
 import aspell

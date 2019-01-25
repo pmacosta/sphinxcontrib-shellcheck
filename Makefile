@@ -6,7 +6,11 @@ PKG_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 REPO_DIR ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 SOURCE_DIR ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))/sphinxcontrib
 EXTRA_DIR ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-PYLINT_CMD := pylint --rcfile=$(EXTRA_DIR)/.pylintrc -f colorized -r no
+PYLINT_CMD := pylint \
+	--rcfile=$(EXTRA_DIR)/.pylintrc \
+	--load-plugins=aspell,header,pylint_codes \
+	-f colorized \
+	-r no
 
 asort:
 	@echo "Sorting Aspell whitelist"
@@ -48,10 +52,10 @@ FORCE:
 
 lint:
 	@echo "Running Pylint on package files"
-	@$(PYLINT_CMD) $(REPO_DIR)/*.py
-	@$(PYLINT_CMD) $(SOURCE_DIR)/shellcheck.py
-	@$(PYLINT_CMD) $(EXTRA_DIR)/tests/*.py
-	@$(PYLINT_CMD) $(EXTRA_DIR)/tests/support/*.py
+	@PYTHONPATH="$(PYTHONPATH):$(PYLINT_PLUGINS_DIR)" $(PYLINT_CMD) $(REPO_DIR)/*.py
+	@PYTHONPATH="$(PYTHONPATH):$(PYLINT_PLUGINS_DIR)" $(PYLINT_CMD) $(SOURCE_DIR)/shellcheck.py
+	@PYTHONPATH="$(PYTHONPATH):$(PYLINT_PLUGINS_DIR)" $(PYLINT_CMD) $(EXTRA_DIR)/tests/*.py
+	@PYTHONPATH="$(PYTHONPATH):$(PYLINT_PLUGINS_DIR)" $(PYLINT_CMD) $(EXTRA_DIR)/tests/support/*.py
 sdist:
 	@echo "Creating source distribution"
 	@cd $(PKG_DIR) && python setup.py sdist --formats=gztar,zip
