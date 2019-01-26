@@ -84,7 +84,7 @@ REM test_script:
 REM >>> VERBATIM
 CD %REPO_DIR%
 SET PYTHONPATH=%CD%/sphinxcontrib;%PYTHONPATH%
-pytest -s -x -vv tests\test_shellcheck.py
+pytest -s -x -vv tests\test_sphinxcontrib.py
 
 REM <<< VERBATIM
 REM on_failure:

@@ -49,7 +49,7 @@ build_script:
 test_script:
   - CD %REPO_DIR%
   - SET PYTHONPATH=%CD%/sphinxcontrib;%PYTHONPATH%
-  - pytest -s -x -vv tests\test_shellcheck.py
+  - pytest -s -x -vv tests\test_sphinxcontrib.py
 
 on_failure:
   - 7z a %RESULTS_DIR%\artifacts_%INTERP%.zip %RESULTS_DIR%\artifacts\*.*
