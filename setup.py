@@ -75,7 +75,6 @@ if INSTALL_MODE_IS_TEST:
         (
             os.path.join(SHARE_DIR, "bin"),
             [
-                os.path.join(PWD, "bin", "check_files_compliance.py"),
                 os.path.join(PWD, "bin", "cprint.sh"),
                 os.path.join(PWD, "bin", "functions.sh"),
                 os.path.join(PWD, "bin", "make-coveragerc.sh"),
@@ -110,7 +109,6 @@ if INSTALL_MODE_IS_TEST:
             os.path.join(SHARE_DIR, "pylint_plugins"),
             [
                 os.path.join(PWD, "pylint_plugins", "aspell.py"),
-                os.path.join(PWD, "pylint_plugins", "check-spelling.sh"),
                 os.path.join(PWD, "pylint_plugins", "header.py"),
                 os.path.join(PWD, "pylint_plugins", "pylint_codes.py"),
             ],

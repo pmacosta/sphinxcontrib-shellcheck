@@ -6,11 +6,16 @@ PKG_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 REPO_DIR ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 SOURCE_DIR ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))/sphinxcontrib
 EXTRA_DIR ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+### Custom pylint plugins configuration
+PYLINT_PLUGINS_DIR := $(shell if [ -d $(REPO_DIR)/pylint_plugins ]; then echo "$(REPO_DIR)/pylint_plugins"; fi)
+PYLINT_PLUGINS_LIST := $(shell if [ -d $(REPO_DIR)/pylint_plugins ]; then cd $(REPO_DIR)/pylint_plugins && ls -m *.py | sed 's|.*/||g' | sed 's|, |,|g' | sed 's|\.py||g'; fi)
+PYLINT_CLI_APPEND := $(shell if [ -d $(REPO_DIR)/pylint_plugins ]; then echo "--load-plugins=$(PYLINT_PLUGINS_LIST)"; fi)
 PYLINT_CMD := pylint \
 	--rcfile=$(EXTRA_DIR)/.pylintrc \
-	--load-plugins=aspell,header,pylint_codes \
+	$(PYLINT_CLI_APPEND) \
 	-f colorized \
 	-r no
+###
 
 asort:
 	@echo "Sorting Aspell whitelist"
