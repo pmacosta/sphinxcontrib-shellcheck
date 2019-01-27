@@ -96,5 +96,5 @@ class PylintCodesChecker(BaseChecker):
 
 
 def register(linter):
-    """Regiester checker."""
+    """Register checker."""
     linter.register_checker(PylintCodesChecker(linter))
