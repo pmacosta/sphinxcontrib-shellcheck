@@ -25,7 +25,7 @@ repos:
   - id: black
     language_version: python3.7
 - repo: https://github.com/pmacosta/pre-commit-hooks
-  rev: v1.2.0
+  rev: v1.3.0
   hooks:
   - id: identity
     args: [--author-file=./AUTHORS.rst]
@@ -33,6 +33,7 @@ repos:
     args: [--config=./.pydocstyle]
   - id: spelling
     args: [--lang=en, --personal=./data/whitelist.en.pws, --exclude=./data/exclude-spelling]
+  - id: header
 - repo: local
   hooks:
   - id: pylint
