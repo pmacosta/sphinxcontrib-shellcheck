@@ -66,6 +66,7 @@ if INSTALL_MODE_IS_TEST:
                 os.path.join(PWD, "AUTHORS.rst"),
                 os.path.join(PWD, "CHANGELOG.rst"),
                 os.path.join(PWD, "LICENSE"),
+                os.path.join(PWD, "Makefile"),
                 os.path.join(PWD, "MANIFEST.in"),
                 os.path.join(PWD, "README.rst"),
                 os.path.join(PWD, "tox.ini"),
