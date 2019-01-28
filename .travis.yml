@@ -129,7 +129,7 @@ script:
   ###
   - cd "${EXTRA_DIR}"/tests || exit 1
   - ${SBIN_DIR}/cprint.sh line cyan "Testing project code compliance"
-  - ${SBIN_DIR}/check_files_compliance.py -tps -d "${SOURCE_DIR}" -m "${EXTRA_DIR}"
+  - make --makefile=${EXTRA_DIR}/Makefile lint REPO_DIR=${REPO_DIR} SOURCE_DIR=${SOURCE_DIR} EXTRA_DIR=${EXTRA_DIR}
   - ${SBIN_DIR}/cprint.sh line cyan "Testing Pylint compliance"
   - cd "${REPO_DIR}" || exit 1
   - make lint REPO_DIR=${REPO_DIR} SOURCE_DIR=${SOURCE_DIR} EXTRA_DIR=${EXTRA_DIR}
