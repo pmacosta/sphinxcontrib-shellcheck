@@ -4,16 +4,19 @@
 include AUTHORS.rst
 include CHANGELOG.rst
 include LICENSE
+include Makefile
 include MANIFEST.in
 include README.rst
 include setup.py
 recursive-include sphinxcontrib *.py
 # Test
+include .headerrc
 include .pylintrc
 include .pydocstyle
 include tox.ini
 recursive-include bin *
 recursive-include data *
 recursive-include pylint_plugins *
+include pylint_plugins/.headerrc
 recursive-include tests *
 recursive-include tests/support *

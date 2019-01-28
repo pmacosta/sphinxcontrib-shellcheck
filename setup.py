@@ -71,6 +71,7 @@ if INSTALL_MODE_IS_TEST:
                 os.path.join(PWD, "README.rst"),
                 os.path.join(PWD, "tox.ini"),
                 os.path.join(PWD, ".pylintrc"),
+                os.path.join(PWD, ".headerrc"),
             ],
         ),
         (
@@ -112,6 +113,7 @@ if INSTALL_MODE_IS_TEST:
                 os.path.join(PWD, "pylint_plugins", "aspell.py"),
                 os.path.join(PWD, "pylint_plugins", "header.py"),
                 os.path.join(PWD, "pylint_plugins", "pylint_codes.py"),
+                os.path.join(PWD, "pylint_plugins", ".headerrc"),
             ],
         ),
     ]

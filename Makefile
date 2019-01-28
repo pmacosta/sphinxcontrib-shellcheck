@@ -13,8 +13,9 @@ PYLINT_CLI_APPEND := $(shell if [ -d $(REPO_DIR)/pylint_plugins ]; then echo "--
 PYLINT_CMD := pylint \
 	--rcfile=$(EXTRA_DIR)/.pylintrc \
 	$(PYLINT_CLI_APPEND) \
-	-f colorized \
-	-r no
+	--output-format=colorized \
+	--reports=no \
+	--score=no
 ###
 
 asort:
