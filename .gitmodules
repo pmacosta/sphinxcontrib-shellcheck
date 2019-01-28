@@ -1,0 +1,3 @@
+[submodule "pylint_plugins"]
+	path = pylint_plugins
+	url = https://github.com/pmacosta/pylint_plugins.git
