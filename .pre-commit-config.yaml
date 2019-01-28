@@ -1,7 +1,7 @@
 # yamllint disable rule:document-start
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v1.2.3
+  rev: v2.1.0
   hooks:
   - id: check-added-large-files
   - id: check-ast
@@ -20,20 +20,21 @@ repos:
   - id: mixed-line-ending
   - id: trailing-whitespace
 - repo: https://github.com/ambv/black
-  rev: stable
+  rev: 18.9b0
   hooks:
   - id: black
     language_version: python3.7
 - repo: https://github.com/pmacosta/pre-commit-hooks
-  rev: v1.3.0
+  rev: v1.4.0
   hooks:
+  - id: header
   - id: identity
     args: [--author-file=./AUTHORS.rst]
+  - id: pylint_codes
   - id: pydocstyle_wrapper
     args: [--config=./.pydocstyle]
   - id: spelling
     args: [--lang=en, --personal=./data/whitelist.en.pws, --exclude=./data/exclude-spelling]
-  - id: header
 - repo: local
   hooks:
   - id: pylint
