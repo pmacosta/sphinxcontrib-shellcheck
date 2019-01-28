@@ -131,8 +131,6 @@ script:
   - ${SBIN_DIR}/cprint.sh line cyan "Testing project code compliance"
   - make --makefile=${EXTRA_DIR}/Makefile lint REPO_DIR=${REPO_DIR} SOURCE_DIR=${SOURCE_DIR} EXTRA_DIR=${EXTRA_DIR}
   - ${SBIN_DIR}/cprint.sh line cyan "Testing Pylint compliance"
-  - cd "${REPO_DIR}" || exit 1
-  - make lint REPO_DIR=${REPO_DIR} SOURCE_DIR=${SOURCE_DIR} EXTRA_DIR=${EXTRA_DIR}
   - cd "${EXTRA_DIR}"/tests || exit 1
   - if ${PYTESTCMD} --collect-only --doctest-glob="*.rst" "${EXTRA_DIR}"/docs &> /dev/null; then
         ${SBIN_DIR}/cprint.sh line cyan "Testing reStructuredText files";
