@@ -42,11 +42,9 @@ jobs:
   - script: python --version
     displayName: Verify python version
   - bash: |
-      export PIPCMD=pip
-      echo "##vso[task.setvariable variable=PIPCMD]$PIPCMD"
       export INTERP=$(python -c 'from __future__ import print_function; import sys; info=sys.version_info; print("py{}{}".format(info.major, info.minor))')
       export PKG_NAME=$(basename $(Build.Repository.Name))
-      export PYTHON_SITE_PACKAGES=$(${PIPCMD} show pip | grep "Location" | sed -r "s/^.*Location\W (.*)/\1/g")
+      export PYTHON_SITE_PACKAGES=$(pip show pip | grep "Location" | sed -r "s/^.*Location\W (.*)/\1/g")
       export REPO_DIR=$(Build.SourcesDirectory)
       export EXTRA_DIR=$(python -c "from __future__ import print_function; import sys; print(sys.prefix)")/share/${PKG_NAME}
       export SBIN_DIR=${EXTRA_DIR}/bin
@@ -57,7 +55,6 @@ jobs:
       export COV_FILE=${SOURCE_DIR}/.coveragerc_ci_${INTERP}
       export AFILE=${EXTRA_DIR}/artifacts_${INTERP}.tar.gz
       export PYLINT_PLUGINS_DIR=${EXTRA_DIR}/pylint_plugins
-      echo "##vso[task.setvariable variable=PIPCMD]$PIPCMD"
       echo "##vso[task.setvariable variable=PYTHONCMD]$PYTHONCMD"
       echo "##vso[task.setvariable variable=PYTESTCMD]$PYTESTCMD"
       echo "##vso[task.setvariable variable=INTERP]$INTERP"
@@ -75,7 +72,6 @@ jobs:
       echo "##vso[task.setvariable variable=PYLINT_PLUGINS_DIR]$PYLINT_PLUGINS_DIR"
     displayName: Set up environment
   - script: |
-      echo PIPCMD=$(PIPCMD)
       echo INTERP=$(INTERP)
       echo PKG_NAME=$(PKG_NAME)
       echo PYTHON_SITE_PACKAGES=$(PYTHON_SITE_PACKAGES)
@@ -122,10 +118,6 @@ jobs:
     displayName: Create directories
   - bash: |
       cat "${REPO_DIR}"/MANIFEST.in
-      python setup.py sdist
-      cd "${REPO_DIR}" || exit 1
-      export PKG_VERSION=$(SHELLCHECK_CI_ENV=1 python -c "import os, sys; sys.path.append(os.path.realpath('.'));import setup; print(setup.__version__)")
-      echo "PKG_VERSION=${PKG_VERSION}"
-      cd "${PYTHON_SITE_PACKAGES}" || exit 1
-      pip install "${REPO_DIR}/dist/${PKG_NAME}-${PKG_VERSION}.zip"
+      python setup.py sdist --formats=zip
+      pip install "${REPO_DIR}/dist/*.zip"
     displayName: Install package
