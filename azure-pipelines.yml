@@ -86,8 +86,6 @@ jobs:
       echo AFILE=$(AFILE)
       echo PYLINT_PLUGINS_DIR=$(PYLINT_PLUGINS_DIR)
     displayName: Print environment
-  - bash: ls $(REPO_DIR)
-    displayName: List repository contents
   - bash:
       sudo apt-get install hunspell shellcheck
     condition: eq( variables['Agent.OS'], 'Linux' )
@@ -122,7 +120,7 @@ jobs:
       SHELLCHECK_TEST_ENV=1 python setup.py sdist --formats=zip
       export PKG_VERSION=$(SHELLCHECK_CI_ENV=1 python -c "import os, sys; sys.path.append(os.path.realpath('.'));import setup; print(setup.__version__)")
       echo "PKG_VERSION=${PKG_VERSION}"
-      pip install "$(REPO_DIR)/dist/$(PKG_NAME)-${PKG_VERSION}.zip"
+      pip install --upgrade "$(REPO_DIR)/dist/$(PKG_NAME)-${PKG_VERSION}.zip"
     displayName: Install package
   - bash: |
       $(SBIN_DIR)/make-coveragerc.sh 'ci' "$(INTERP)" "$(SOURCE_DIR)" "$(EXTRA_DIR)"
