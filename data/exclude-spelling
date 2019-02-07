@@ -1,4 +1,5 @@
 .gitignore
 .pre-commit-config.yaml
+azure-pipelines.yml
 data/exclude-spelling
 data/whitelist.en.pws

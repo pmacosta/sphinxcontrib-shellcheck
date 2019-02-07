@@ -1,0 +1,125 @@
+# azure-pipelines.yml
+# Copyright (c) 2018 Pablo Acosta-Serafini
+# See LICENSE for details
+# yamllint disable rule:document-start
+# yamllint disable rule:line-length
+
+trigger:
+- master
+
+jobs:
+
+- job: 'Test'
+  strategy:
+    matrix:
+      linux_python27:
+        imageName: 'ubuntu-16.04'
+        python.version: '2.7'
+      linux_python37:
+        imageName: 'ubuntu-16.04'
+        python.version: '3.7'
+      mac_python27:
+        imageName: 'macos-10.13'
+        python.version: '2.7'
+      mac_python37:
+        imageName: 'macos-10.13'
+        python.version: '3.7'
+      windows_python27:
+        imageName: 'vs2017-win2016'
+        python.version: '2.7'
+      windows_python37:
+        imageName: 'vs2017-win2016'
+        python.version: '3.7'
+
+  pool:
+    vmImage: $(imageName)
+
+  steps:
+  - bash: |
+      export PIPCMD=pip
+      echo "##vso[task.setvariable variable=PIPCMD]$PIPCMD"
+      export INTERP=$(python -c 'from __future__ import print_function; import sys; info=sys.version_info; print("py{}{}".format(info.major, info.minor))')
+      export PKG_NAME=$(basename $(Build.Repository.Name))
+      export PYTHON_SITE_PACKAGES=$(${PIPCMD} show pip | grep "Location" | sed -r "s/^.*Location\W (.*)/\1/g")
+      export REPO_DIR=$(Build.SourcesDirectory)
+      export EXTRA_DIR=$(python -c "from __future__ import print_function; import sys; print(sys.prefix)")/share/${PKG_NAME}
+      export SBIN_DIR=${EXTRA_DIR}/bin
+      export RESULTS_DIR=${REPO_DIR}/results
+      export SOURCE_DIR=${PYTHON_SITE_PACKAGES}/$(echo "${PKG_NAME}" | sed -r "s/(.*)-.*/\1/g")
+      export TRACER_DIR=${EXTRA_DIR}/docs/support
+      export PYTHONPATH=${PYTHONPATH}:${PYTHON_SITE_PACKAGES}:${PYTHON_SITE_PACKAGES}/$(echo "${PKG_NAME}" | sed -r "s/(.*)-.*/\1/g"):${EXTRA_DIR}:${EXTRA_DIR}/tests:${EXTRA_DIR}/docs:${EXTRA_DIR}/docs/support
+      export COV_FILE=${SOURCE_DIR}/.coveragerc_ci_${INTERP}
+      export AFILE=${EXTRA_DIR}/artifacts_${INTERP}.tar.gz
+      export PYLINT_PLUGINS_DIR=${EXTRA_DIR}/pylint_plugins
+      echo "##vso[task.setvariable variable=PIPCMD]$PIPCMD"
+      echo "##vso[task.setvariable variable=PYTHONCMD]$PYTHONCMD"
+      echo "##vso[task.setvariable variable=PYTESTCMD]$PYTESTCMD"
+      echo "##vso[task.setvariable variable=INTERP]$INTERP"
+      echo "##vso[task.setvariable variable=PKG_NAME]$PKG_NAME"
+      echo "##vso[task.setvariable variable=PYTHON_SITE_PACKAGES]$PYTHON_SITE_PACKAGES"
+      echo "##vso[task.setvariable variable=REPO_DIR]$REPO_DIR"
+      echo "##vso[task.setvariable variable=EXTRA_DIR]$EXTRA_DIR"
+      echo "##vso[task.setvariable variable=SBIN_DIR]$SBIN_DIR"
+      echo "##vso[task.setvariable variable=RESULTS_DIR]$RESULTS_DIR"
+      echo "##vso[task.setvariable variable=SOURCE_DIR]$SOURCE_DIR"
+      echo "##vso[task.setvariable variable=TRACER_DIR]$TRACER_DIR"
+      echo "##vso[task.setvariable variable=PYTHONPATH]$PYTHONPATH"
+      echo "##vso[task.setvariable variable=COV_FILE]$COV_FILE"
+      echo "##vso[task.setvariable variable=AFILE]$AFILE"
+      echo "##vso[task.setvariable variable=PYLINT_PLUGINS_DIR]$PYLINT_PLUGINS_DIR"
+    displayName: Set up environment
+  - script: |
+      echo PIPCMD=$(PIPCMD)
+      echo INTERP=$(INTERP)
+      echo PKG_NAME=$(PKG_NAME)
+      echo PYTHON_SITE_PACKAGES=$(PYTHON_SITE_PACKAGES)
+      echo REPO_DIR=$(REPO_DIR)
+      echo EXTRA_DIR=$(EXTRA_DIR)
+      echo SBIN_DIR=$(SBIN_DIR)
+      echo RESULTS_DIR=$(RESULTS_DIR)
+      echo SOURCE_DIR=$(SOURCE_DIR)
+      echo TRACER_DIR=$(TRACER_DIR)
+      echo PYTHONPATH=$(PYTHONPATH)
+      echo COV_FILE=$(COV_FILE)
+      echo AFILE=$(AFILE)
+      echo PYLINT_PLUGINS_DIR=$(PYLINT_PLUGINS_DIR)
+    displayName: Print environment
+  - bash:
+      sudo apt-get install hunspell shellcheck
+    condition: eq( variables['Agent.OS'], 'Linux' )
+    displayName: Install hunspell and shellcheck (Linux)
+  - bash:
+      HOMEBREW_NO_AUTO_UPDATE=1 brew install hunspell shellcheck
+    condition: eq( variables['Agent.OS'], 'Darwin' )
+    displayName: Install hunspell and shellcheck (macOS)
+  - powershell: |
+      # hunspell
+      Invoke-WebRequest -OutFile .\hunspell.zip -Uri "https://cfhcable.dl.sourceforge.net/project/ezwinports/hunspell-1.3.2-3-w32-bin.zip" -Headers @{"Upgrade-Insecure-Requests"="1"; "DNT"="1"; "User-Agent"="Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"; "Accept"="text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"; "Referer"="https://sourceforge.net/projects/ezwinports/files/hunspell-1.3.2-3-w32-bin.zip/download"; "Accept-Encoding"="gzip, deflate, br"; "Accept-Language"="en-US,en;q=0.9"; "Cookie"="_ga=GA1.2.960330120.1549548167; _gid=GA1.2.253466023.1549548167; _scp=1549548167671.1888783760; _scs=1549548167673.1210103215; __gads=ID=13f7ab9f14784468:T=1549548167:S=ALNI_MatktSjb46-gGUtEr9aCuvgPeSgLQ"}
+      7z e .\hunspell.zip -o~\hunspell
+      # shellcheck
+      iex (new-object net.webclient).downloadstring('https://get.scoop.sh')
+      scoop install shellcheck
+      # Update path
+      Write-Host "##vso[task.setvariable variable=PATH;]${env:PATH};~\hunspell;~\hunspell\bin;~\scoop\shims;~\scoop\apps\shellcheck\current";
+    condition: eq( variables['Agent.OS'], 'Windows_NT' )
+    displayName: Install hunspell and shellcheck (Windows)
+  - script: shellcheck --version
+    displayName: Verify shellcheck in path
+  - script: hunspell --version
+    displayName: Verify hunspell in path
+  - script: python -m pip install codecov
+    displayName: Install codecov plugin
+  - bash: |
+      mkdir -p "${RESULTS_DIR}"/testresults
+      mkdir -p "${RESULTS_DIR}"/codecoverage
+      mkdir -p "${RESULTS_DIR}"/artifacts
+    displayName: Create directories
+  - bash: |
+      cat "${REPO_DIR}"/MANIFEST.in
+      python setup.py sdist
+      cd "${REPO_DIR}" || exit 1
+      export PKG_VERSION=$(SHELLCHECK_CI_ENV=1 python -c "import os, sys; sys.path.append(os.path.realpath('.'));import setup; print(setup.__version__)")
+      echo "PKG_VERSION=${PKG_VERSION}"
+      cd "${PYTHON_SITE_PACKAGES}" || exit 1
+      python -m pip install "${REPO_DIR}/dist/${PKG_NAME}-${PKG_VERSION}.zip"
+    displayName: Install package
