@@ -1,7 +1,8 @@
 # shellcheck.py
 # Copyright (c) 2018-2019 Pablo Acosta-Serafini
 # See LICENSE for details
-# pylint: disable=C0103,C0111,E0602,E1129,R0205,R0902,R0903,R0912,R0914,W0107
+# pylint: disable=C0103,C0111,C0411,E0401,E0602,E1129
+# pylint: disable=R0205,R0902,R0903,R0912,R0914,W0107
 
 # Standard library import
 from __future__ import print_function
