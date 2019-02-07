@@ -39,6 +39,8 @@ jobs:
     inputs:
       versionSpec: '$(python.version)'
       architecture: 'x64'
+  - script: python --version
+    displayName: Verify python version
   - bash: |
       export PIPCMD=pip
       echo "##vso[task.setvariable variable=PIPCMD]$PIPCMD"
@@ -111,7 +113,7 @@ jobs:
     displayName: Verify shellcheck in path
   - script: hunspell --version
     displayName: Verify hunspell in path
-  - script: python -m pip install codecov
+  - script: pip install codecov
     displayName: Install codecov plugin
   - bash: |
       mkdir -p "${RESULTS_DIR}"/testresults
@@ -125,5 +127,5 @@ jobs:
       export PKG_VERSION=$(SHELLCHECK_CI_ENV=1 python -c "import os, sys; sys.path.append(os.path.realpath('.'));import setup; print(setup.__version__)")
       echo "PKG_VERSION=${PKG_VERSION}"
       cd "${PYTHON_SITE_PACKAGES}" || exit 1
-      python -m pip install "${REPO_DIR}/dist/${PKG_NAME}-${PKG_VERSION}.zip"
+      pip install "${REPO_DIR}/dist/${PKG_NAME}-${PKG_VERSION}.zip"
     displayName: Install package
