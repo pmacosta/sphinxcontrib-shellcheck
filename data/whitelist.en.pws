@@ -1,7 +1,9 @@
-personal_ws-1.1 en 125 utf-8
+personal_ws-1.1 en 144 utf-8
 abc
+abspath
 abstractmethod
 api
+appveyor
 argparse
 args
 aspell
@@ -9,6 +11,8 @@ ast
 astext
 BaseChecker
 basename
+buf
+C0111
 CHANGELOG
 cmd
 codecs
@@ -25,6 +29,8 @@ dedent
 del
 desc
 DEVSTAT
+dict
+dirname
 docname
 docnames
 docstring
@@ -43,8 +49,10 @@ fpointer
 FunctionType
 gitignore
 HeaderChecker
+headerrc
 hexversion
 ini
+io
 IRawChecker
 isinstance
 json
@@ -66,16 +74,20 @@ mkstemp
 msgs
 myfile
 mymodule
+namespace
 noqa
 num
 os
 OSError
+OSI
 pdir
 permalinks
 personal_ws-1.1 en 106 utf-8
+plugins
 Popen
 pragma
 PWD
+pws
 py
 pydocstyle
 pylint
@@ -89,13 +101,17 @@ README
 Regiester
 repo
 repos
+REQS
 rst
 rstrip
 RuntimeError
+sep
 Serafini
+setp
 setuptools
 shellcheck
 ShellcheckBuilder
+spellcheck
 sphinxcontrib
 startswith
 stderr
@@ -110,11 +126,14 @@ textwrap
 TmpFile
 tostr
 tox
+travis
 txt
 typ
 url
 utf
 vcs
+W0122
+whitelist
 whitespace
 writelines
 xbb

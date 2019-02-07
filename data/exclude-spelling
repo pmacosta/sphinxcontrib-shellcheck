@@ -1,2 +1,4 @@
 .gitignore
+.pre-commit-config.yaml
+data/exclude-spelling
 data/whitelist.en.pws

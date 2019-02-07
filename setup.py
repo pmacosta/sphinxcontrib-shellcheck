@@ -54,7 +54,7 @@ else:
     assert VERSION_INFO[3] == "final"
     DEVSTAT = "5 - Production/Stable"
 
-# Actual directory is os.join(sys.prefix, 'share', PKG_NAME)
+# Actual directory is os.join(sys.prefix, "share", PKG_NAME)
 PWD = os.path.dirname(os.path.abspath(__file__))
 SHARE_DIR = os.path.join("share", PKG_NAME)
 TEST_REQS = ["coverage", "pylint", "pytest>=3.6", "pytest-cov"]
@@ -110,7 +110,7 @@ if INSTALL_MODE_IS_TEST:
         (
             os.path.join(SHARE_DIR, "pylint_plugins"),
             [
-                os.path.join(PWD, "pylint_plugins", "aspell.py"),
+                os.path.join(PWD, "pylint_plugins", "spellcheck.py"),
                 os.path.join(PWD, "pylint_plugins", "header.py"),
                 os.path.join(PWD, "pylint_plugins", "pylint_codes.py"),
                 os.path.join(PWD, "pylint_plugins", ".headerrc"),
