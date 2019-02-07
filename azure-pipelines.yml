@@ -86,6 +86,8 @@ jobs:
       echo AFILE=$(AFILE)
       echo PYLINT_PLUGINS_DIR=$(PYLINT_PLUGINS_DIR)
     displayName: Print environment
+  - bash: ls "$(REPO_DIR)"
+    displayName: List repository contents
   - bash:
       sudo apt-get install hunspell shellcheck
     condition: eq( variables['Agent.OS'], 'Linux' )
@@ -110,35 +112,35 @@ jobs:
   - script: hunspell --version
     displayName: Verify hunspell in path
   - bash: |
-      mkdir -p "${RESULTS_DIR}"/testresults
-      mkdir -p "${RESULTS_DIR}"/codecoverage
-      mkdir -p "${RESULTS_DIR}"/artifacts
+      mkdir -p "$(RESULTS_DIR)"/testresults
+      mkdir -p "$(RESULTS_DIR)"/codecoverage
+      mkdir -p "$(RESULTS_DIR)"/artifacts
     displayName: Create directories
   - bash: |
-      cd "${REPO_DIR}" || exit 1
-      cat "${REPO_DIR}"/MANIFEST.in
+      cd "$(REPO_DIR)" || exit 1
+      cat "$(REPO_DIR)"/MANIFEST.in
       SHELLCHECK_TEST_ENV=1 python setup.py sdist --formats=zip
       export PKG_VERSION=$(SHELLCHECK_CI_ENV=1 python -c "import os, sys; sys.path.append(os.path.realpath('.'));import setup; print(setup.__version__)")
       echo "PKG_VERSION=${PKG_VERSION}"
-      pip install "${REPO_DIR}/dist/${PKG_NAME}-${PKG_VERSION}.zip"
+      pip install "$(REPO_DIR)/dist/$(PKG_NAME)-${PKG_VERSION}.zip"
     displayName: Install package
   - bash: |
-      ${SBIN_DIR}/make-coveragerc.sh 'ci' "${INTERP}" "${SOURCE_DIR}" "${EXTRA_DIR}"
+      ${SBIN_DIR}/make-coveragerc.sh 'ci' "$(INTERP)" "$(SOURCE_DIR)" "$(EXTRA_DIR)"
       cat "${COV_FILE}"
     displayName: Create coverage config file
   - bash: |
       # Auto-detect installed plugins
-      export PYLINT_PLUGINS_DIR=$(if [ -d "${EXTRA_DIR}/pylint_plugins" ]; then echo "${EXTRA_DIR}/pylint_plugins"; fi)
-      export PYLINT_PLUGINS_LIST=$(if [ -d "${EXTRA_DIR}/pylint_plugins" ]; then cd "${EXTRA_DIR}/pylint_plugins" && ls -m *.py | sed 's|.*/||g' | sed 's|, |,|g' | sed 's|\.py||g'; fi)
-      export PYLINT_CLI_APPEND=$(if [ -d "${EXTRA_DIR}/pylint_plugins" ]; then echo "--load-plugins=${PYLINT_PLUGINS_LIST}"; fi)
-      export PYLINT_CMD="pylint --rcfile=${EXTRA_DIR}/.pylintrc ${PYLINT_CLI_APPEND} --output-format=colorized --reports=no --score=no"
+      export PYLINT_PLUGINS_DIR=$(if [ -d "$(EXTRA_DIR)/pylint_plugins" ]; then echo "$(EXTRA_DIR)/pylint_plugins"; fi)
+      export PYLINT_PLUGINS_LIST=$(if [ -d "$(EXTRA_DIR)/pylint_plugins" ]; then cd "$(EXTRA_DIR)/pylint_plugins" && ls -m *.py | sed 's|.*/||g' | sed 's|, |,|g' | sed 's|\.py||g'; fi)
+      export PYLINT_CLI_APPEND=$(if [ -d "$(EXTRA_DIR)/pylint_plugins" ]; then echo "--load-plugins=${PYLINT_PLUGINS_LIST}"; fi)
+      export PYLINT_CMD="pylint --rcfile=$(EXTRA_DIR)/.pylintrc ${PYLINT_CLI_APPEND} --output-format=colorized --reports=no --score=no"
       echo PYLINT_PLUGINS_DIR="${PYLINT_PLUGINS_DIR}"
       echo PYLINT_PLUGINS_LIST="${PYLINT_PLUGINS_LIST}"
       echo PYLINT_CLI_APPEND="${PYLINT_CLI_APPEND}"
       echo PYLINT_CMD="${PYLINT_CMD}"
       # Check
-      if [ -f "${REPO_DIR}/*.py" ]; then PYTHONPATH="${PYTHONPATH}:${PYLINT_PLUGINS_DIR}" ${PYLINT_CMD} ${REPO_DIR}/*.py; fi
-      if [ -f "${SOURCE_DIR}/*.py" ]; then PYTHONPATH="${PYTHONPATH}:${PYLINT_PLUGINS_DIR}" ${PYLINT_CMD} ${SOURCE_DIR}/*.py; fi
-      if [ -f "${EXTRA_DIR}/tests/*.py" ]; then PYTHONPATH="${PYTHONPATH}:${PYLINT_PLUGINS_DIR}" ${PYLINT_CMD} ${EXTRA_DIR}/tests/*.py; fi
-      if [ -f "${EXTRA_DIR}/tests/support/*.py" ]; then PYTHONPATH="${PYTHONPATH}:${PYLINT_PLUGINS_DIR}" ${PYLINT_CMD} ${EXTRA_DIR}/tests/support/*.py; fi
+      if [ -f "$(REPO_DIR)/*.py" ]; then PYTHONPATH="$(PYTHONPATH):${PYLINT_PLUGINS_DIR}" ${PYLINT_CMD} $(REPO_DIR)/*.py; fi
+      if [ -f "$(SOURCE_DIR)/*.py" ]; then PYTHONPATH="$(PYTHONPATH):${PYLINT_PLUGINS_DIR}" ${PYLINT_CMD} $(SOURCE_DIR)/*.py; fi
+      if [ -f "$(EXTRA_DIR)/tests/*.py" ]; then PYTHONPATH="$(PYTHONPATH):${PYLINT_PLUGINS_DIR}" ${PYLINT_CMD} $(EXTRA_DIR)/tests/*.py; fi
+      if [ -f "$(EXTRA_DIR)/tests/support/*.py" ]; then PYTHONPATH="$(PYTHONPATH):${PYLINT_PLUGINS_DIR}" ${PYLINT_CMD} $(EXTRA_DIR)/tests/support/*.py; fi
     displayName: Check code standards compliance
