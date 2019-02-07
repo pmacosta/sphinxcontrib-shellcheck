@@ -109,8 +109,6 @@ jobs:
     displayName: Verify shellcheck in path
   - script: hunspell --version
     displayName: Verify hunspell in path
-  - script: pip install codecov
-    displayName: Install codecov plugin
   - bash: |
       mkdir -p "${RESULTS_DIR}"/testresults
       mkdir -p "${RESULTS_DIR}"/codecoverage
