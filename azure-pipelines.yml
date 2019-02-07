@@ -86,7 +86,7 @@ jobs:
       echo AFILE=$(AFILE)
       echo PYLINT_PLUGINS_DIR=$(PYLINT_PLUGINS_DIR)
     displayName: Print environment
-  - bash: ls "$(REPO_DIR)"
+  - bash: ls $(REPO_DIR)
     displayName: List repository contents
   - bash:
       sudo apt-get install hunspell shellcheck
@@ -112,9 +112,9 @@ jobs:
   - script: hunspell --version
     displayName: Verify hunspell in path
   - bash: |
-      mkdir -p "$(RESULTS_DIR)"/testresults
-      mkdir -p "$(RESULTS_DIR)"/codecoverage
-      mkdir -p "$(RESULTS_DIR)"/artifacts
+      mkdir -p $(RESULTS_DIR)/testresults
+      mkdir -p $(RESULTS_DIR)/codecoverage
+      mkdir -p $(RESULTS_DIR)/artifacts
     displayName: Create directories
   - bash: |
       cd "$(REPO_DIR)" || exit 1
@@ -125,8 +125,8 @@ jobs:
       pip install "$(REPO_DIR)/dist/$(PKG_NAME)-${PKG_VERSION}.zip"
     displayName: Install package
   - bash: |
-      ${SBIN_DIR}/make-coveragerc.sh 'ci' "$(INTERP)" "$(SOURCE_DIR)" "$(EXTRA_DIR)"
-      cat "${COV_FILE}"
+      $(SBIN_DIR)/make-coveragerc.sh 'ci' "$(INTERP)" "$(SOURCE_DIR)" "$(EXTRA_DIR)"
+      cat "$(COV_FILE)"
     displayName: Create coverage config file
   - bash: |
       # Auto-detect installed plugins
