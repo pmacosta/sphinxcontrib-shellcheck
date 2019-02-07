@@ -116,15 +116,17 @@ jobs:
     displayName: Create directories
   - bash: |
       cd "$(REPO_DIR)" || exit 1
-      cat "$(REPO_DIR)"/MANIFEST.in
-      SHELLCHECK_TEST_ENV=1 python setup.py sdist --formats=zip
+      cat MANIFEST.in
+      export SHELLCHECK_TEST_ENV=1
+      python setup.py sdist --formats=zip
       export PKG_VERSION=$(SHELLCHECK_CI_ENV=1 python -c "import os, sys; sys.path.append(os.path.realpath('.'));import setup; print(setup.__version__)")
       echo "PKG_VERSION=${PKG_VERSION}"
       cd "$(PYTHON_SITE_PACKAGES)" || exit 1
       pip install --upgrade "$(REPO_DIR)/dist/$(PKG_NAME)-${PKG_VERSION}.zip"
     displayName: Install package
   - bash: |
-      $(SBIN_DIR)/make-coveragerc.sh 'ci' "$(INTERP)" "$(SOURCE_DIR)" "$(EXTRA_DIR)"
+      cd "$(SBIN_DIR)" || exit 1
+      make-coveragerc.sh 'ci' "$(INTERP)" "$(SOURCE_DIR)" "$(EXTRA_DIR)"
       cat "$(COV_FILE)"
     displayName: Create coverage config file
   - bash: |
