@@ -120,6 +120,7 @@ jobs:
       SHELLCHECK_TEST_ENV=1 python setup.py sdist --formats=zip
       export PKG_VERSION=$(SHELLCHECK_CI_ENV=1 python -c "import os, sys; sys.path.append(os.path.realpath('.'));import setup; print(setup.__version__)")
       echo "PKG_VERSION=${PKG_VERSION}"
+      cd "$(PYTHON_SITE_PACKAGES)" || exit 1
       pip install --upgrade "$(REPO_DIR)/dist/$(PKG_NAME)-${PKG_VERSION}.zip"
     displayName: Install package
   - bash: |
