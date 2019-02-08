@@ -91,7 +91,7 @@ jobs:
       echo PYLINT_PLUGINS_DIR=$(PYLINT_PLUGINS_DIR)
     displayName: Print environment
   - script: |
-      pip install --upgrade pip
+      python -m pip install --upgrade pip
     displayName: Upgrade pip
   - bash:
       sudo apt-get install hunspell shellcheck
@@ -132,8 +132,7 @@ jobs:
       pip install --upgrade "$(REPO_DIR)/dist/$(PKG_NAME)-${PKG_VERSION}.zip"
     displayName: Install package
   - bash: |
-      cd "$(SBIN_DIR)" || exit 1
-      make-coveragerc.sh 'ci' "$(INTERP)" "$(SOURCE_DIR)" "$(EXTRA_DIR)"
+      $(SBIN_DIR)/make-coveragerc.sh 'ci' "$(INTERP)" "$(SOURCE_DIR)" "$(EXTRA_DIR)"
       cat "$(COV_FILE)"
     displayName: Create coverage config file
   - bash: |
