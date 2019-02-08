@@ -42,6 +42,10 @@ jobs:
   - script: python --version
     displayName: Verify python version
   - bash: |
+      git submodule init
+      git submodule update
+    displayName: Populate submodules
+  - bash: |
       export INTERP=$(python -c 'from __future__ import print_function; import sys; info=sys.version_info; print("py{}{}".format(info.major, info.minor))')
       export PKG_NAME=$(basename $(Build.Repository.Name))
       export PYTHON_SITE_PACKAGES=$(pip show pip | grep "Location" | sed -r "s/^.*Location\W (.*)/\1/g")
@@ -86,6 +90,9 @@ jobs:
       echo AFILE=$(AFILE)
       echo PYLINT_PLUGINS_DIR=$(PYLINT_PLUGINS_DIR)
     displayName: Print environment
+  - script: |
+      pip install --upgrade pip
+    displayName: Upgrade pip
   - bash:
       sudo apt-get install hunspell shellcheck
     condition: eq( variables['Agent.OS'], 'Linux' )

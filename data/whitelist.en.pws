@@ -1,4 +1,4 @@
-personal_ws-1.1 en 212 utf-8
+personal_ws-1.1 en 215 utf-8
 0x03000000
 abc
 ABCMeta
@@ -109,6 +109,7 @@ lstrip
 metaclass
 mkstemp
 msgs
+mydir
 myfile
 mymodule
 myvar
@@ -138,6 +139,7 @@ pylint
 pylintrc
 PyPI
 pytest
+pyw
 R0205
 R0902
 R0903
@@ -152,6 +154,7 @@ regexp
 Regiester
 repo
 repos
+repr
 REQS
 ret
 rst
