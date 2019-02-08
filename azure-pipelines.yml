@@ -48,21 +48,23 @@ jobs:
   - bash: |
       export INTERP=$(python -c 'from __future__ import print_function; import sys; info=sys.version_info; print("py{}{}".format(info.major, info.minor))')
       export PKG_NAME=$(basename $(Build.Repository.Name))
-      export PYTHON_SITE_PACKAGES=$(pip show pip | grep "Location" | sed -r "s/^.*Location\W (.*)/\1/g")
+      export PKG_NAME_ALT=$(echo "${PKG_NAME}" | sed -r "s/(.*)-.*/\1/g")
+      export PKG_VERSION=$(SHELLCHECK_CI_ENV=1 python -c "import os, sys; sys.path.append(os.path.realpath('.'));import setup; print(setup.__version__)")
+      export PYTHON_SITE_PACKAGES=$(python -c "from __future__ import print_function;import os,pip;y=pip.__file__.split(os.sep);print(os.sep.join(y[:y.index('pip')]))")
       export REPO_DIR=$(Build.SourcesDirectory)
       export EXTRA_DIR=$(python -c "from __future__ import print_function; import sys; print(sys.prefix)")/share/${PKG_NAME}
       export SBIN_DIR=${EXTRA_DIR}/bin
       export RESULTS_DIR=${REPO_DIR}/results
-      export SOURCE_DIR=${PYTHON_SITE_PACKAGES}/$(echo "${PKG_NAME}" | sed -r "s/(.*)-.*/\1/g")
+      export SOURCE_DIR=${PYTHON_SITE_PACKAGES}/${PKG_NAME_ALT}
       export TRACER_DIR=${EXTRA_DIR}/docs/support
-      export PYTHONPATH=${PYTHONPATH}:${PYTHON_SITE_PACKAGES}:${PYTHON_SITE_PACKAGES}/$(echo "${PKG_NAME}" | sed -r "s/(.*)-.*/\1/g"):${EXTRA_DIR}:${EXTRA_DIR}/tests:${EXTRA_DIR}/docs:${EXTRA_DIR}/docs/support
+      export PYTHONPATH=${PYTHONPATH}:${PYTHON_SITE_PACKAGES}:${PYTHON_SITE_PACKAGES}/${PGK_NAME_ALT}:${EXTRA_DIR}:${EXTRA_DIR}/tests:${EXTRA_DIR}/docs:${EXTRA_DIR}/docs/support
       export COV_FILE=${SOURCE_DIR}/.coveragerc_ci_${INTERP}
       export AFILE=${EXTRA_DIR}/artifacts_${INTERP}.tar.gz
       export PYLINT_PLUGINS_DIR=${EXTRA_DIR}/pylint_plugins
-      echo "##vso[task.setvariable variable=PYTHONCMD]$PYTHONCMD"
-      echo "##vso[task.setvariable variable=PYTESTCMD]$PYTESTCMD"
       echo "##vso[task.setvariable variable=INTERP]$INTERP"
       echo "##vso[task.setvariable variable=PKG_NAME]$PKG_NAME"
+      echo "##vso[task.setvariable variable=PKG_NAME_ALT]$PKG_NAME_ALT"
+      echo "##vso[task.setvariable variable=PKG_VERSION]$PKG_VERSION"
       echo "##vso[task.setvariable variable=PYTHON_SITE_PACKAGES]$PYTHON_SITE_PACKAGES"
       echo "##vso[task.setvariable variable=REPO_DIR]$REPO_DIR"
       echo "##vso[task.setvariable variable=EXTRA_DIR]$EXTRA_DIR"
@@ -78,6 +80,8 @@ jobs:
   - script: |
       echo INTERP=$(INTERP)
       echo PKG_NAME=$(PKG_NAME)
+      echo PKG_NAME_ALT=$(PKG_NAME_ALT)
+      echo PKG_VERSION=$(PKG_VERSION)
       echo PYTHON_SITE_PACKAGES=$(PYTHON_SITE_PACKAGES)
       echo REPO_DIR=$(REPO_DIR)
       echo EXTRA_DIR=$(EXTRA_DIR)
@@ -122,12 +126,10 @@ jobs:
       mkdir -p $(RESULTS_DIR)/artifacts
     displayName: Create directories
   - bash: |
-      cd "$(REPO_DIR)" || exit 1
-      cat MANIFEST.in
+      cat $(REPO_DIR)/MANIFEST.in
       export SHELLCHECK_TEST_ENV=1
+      cd "$(REPO_DIR)" || exit 1
       python setup.py sdist --formats=zip
-      export PKG_VERSION=$(SHELLCHECK_CI_ENV=1 python -c "import os, sys; sys.path.append(os.path.realpath('.'));import setup; print(setup.__version__)")
-      echo "PKG_VERSION=${PKG_VERSION}"
       cd "$(PYTHON_SITE_PACKAGES)" || exit 1
       pip install --upgrade "$(REPO_DIR)/dist/$(PKG_NAME)-${PKG_VERSION}.zip"
     displayName: Install package
