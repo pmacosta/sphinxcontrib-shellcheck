@@ -95,9 +95,13 @@ jobs:
       echo COV_FILE=$(COV_FILE)
       echo AFILE=$(AFILE)
       echo PYLINT_PLUGINS_DIR=$(PYLINT_PLUGINS_DIR)
+      echo SHELLCHECK_TEST_ENV=$(SHELLCHECK_TEST_ENV)
     displayName: Print environment
   - bash: |
-      python -m pip install --upgrade pip || exit 0
+      if ! python -m pip install --upgrade pip; then
+        curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+        python get-pip.py
+      fi
       pip --version
     displayName: Upgrade pip
   - bash:
@@ -134,6 +138,22 @@ jobs:
       pip install --upgrade "$(REPO_DIR)/dist/$(PKG_NAME)-${PKG_VERSION}.zip"
     displayName: Install package
   - bash: |
+      echo REPO_DIR=$(REPO_DIR)
+      ls $(REPO_DIR)
+      echo SOURCE_DIR=$(SOURCE_DIR)
+      ls $(SOURCE_DIR)
+      echo EXTRA_DIR=$(EXTRA_DIR)
+      ls $(EXTRA_DIR)
+      if [ -d $(EXTRA_DIR)/tests ]; then
+        echo EXTRA_DIR/tests=$(EXTRA_DIR)/tests
+        ls $(EXTRA_DIR)/tests
+      fi
+      if [ -d $(EXTRA_DIR)/tests/support ]; then
+        echo EXTRA_DIR/tests=$(EXTRA_DIR)/tests/support
+        ls $(EXTRA_DIR)/tests/support
+      fi
+    displayName: List relevant directories
+  - bash: |
       $(SBIN_DIR)/make-coveragerc.sh 'ci' "$(INTERP)" "$(SOURCE_DIR)" "$(EXTRA_DIR)"
       cat "$(COV_FILE)"
     displayName: Create coverage config file
@@ -148,8 +168,33 @@ jobs:
       echo PYLINT_CLI_APPEND="${PYLINT_CLI_APPEND}"
       echo PYLINT_CMD="${PYLINT_CMD}"
       # Check
-      if [ -f "$(REPO_DIR)/*.py" ]; then PYTHONPATH="$(PYTHONPATH):${PYLINT_PLUGINS_DIR}" ${PYLINT_CMD} $(REPO_DIR)/*.py; fi
-      if [ -f "$(SOURCE_DIR)/*.py" ]; then PYTHONPATH="$(PYTHONPATH):${PYLINT_PLUGINS_DIR}" ${PYLINT_CMD} $(SOURCE_DIR)/*.py; fi
-      if [ -f "$(EXTRA_DIR)/tests/*.py" ]; then PYTHONPATH="$(PYTHONPATH):${PYLINT_PLUGINS_DIR}" ${PYLINT_CMD} $(EXTRA_DIR)/tests/*.py; fi
-      if [ -f "$(EXTRA_DIR)/tests/support/*.py" ]; then PYTHONPATH="$(PYTHONPATH):${PYLINT_PLUGINS_DIR}" ${PYLINT_CMD} $(EXTRA_DIR)/tests/support/*.py; fi
+      if [ -f "$(REPO_DIR)/*.py" ]; then
+        echo Checking base directory
+        PYTHONPATH="$(PYTHONPATH):${PYLINT_PLUGINS_DIR}" ${PYLINT_CMD} $(REPO_DIR)/*.py
+      fi
+      if [ -f "$(SOURCE_DIR)/*.py" ]; then
+        echo Checking source directory
+        PYTHONPATH="$(PYTHONPATH):${PYLINT_PLUGINS_DIR}" ${PYLINT_CMD} $(SOURCE_DIR)/*.py
+      fi
+      if [ -f "$(EXTRA_DIR)/tests/*.py" ]; then
+        echo Checking tests base directory
+        PYTHONPATH="$(PYTHONPATH):${PYLINT_PLUGINS_DIR}" ${PYLINT_CMD} $(EXTRA_DIR)/tests/*.py
+      fi
+      if [ -f "$(EXTRA_DIR)/tests/support/*.py" ]; then
+        echo Checking tests support directory
+        PYTHONPATH="$(PYTHONPATH):${PYLINT_PLUGINS_DIR}" ${PYLINT_CMD} $(EXTRA_DIR)/tests/support/*.py
+      fi
     displayName: Check code standards compliance
+  - bash: |
+      cd $(EXTRA_DIR)/tests || exit 1
+      if pytest --collect-only --doctest-glob="*.rst" $(EXTRA_DIR)/docs &> /dev/null; then
+          pytest --doctest-glob="*.rst" $(EXTRA_DIR)/docs
+      fi
+      if pytest --collect-only --doctest-modules $(SOURCE_DIR) &> /dev/null; then
+          pytest --doctest-modules $(SOURCE_DIR)
+      fi
+      pytest --cov-config $(COV_FILE) --cov $(SOURCE_DIR) --cov-report xml
+      if [ -f $(SBIN_DIR)/build_docs.py ]; then
+          $(SBIN_DIR)/build_docs.py -r -t -d $(SOURCE_DIR)
+      fi
+    displayName: Unit tests
