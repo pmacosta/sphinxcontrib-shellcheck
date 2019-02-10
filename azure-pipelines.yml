@@ -57,7 +57,7 @@ jobs:
       export RESULTS_DIR=${REPO_DIR}/results
       export SOURCE_DIR=${PYTHON_SITE_PACKAGES}/${PKG_NAME_ALT}
       export TRACER_DIR=${EXTRA_DIR}/docs/support
-      export PYTHONPATH=${PYTHONPATH}:${PYTHON_SITE_PACKAGES}:${PYTHON_SITE_PACKAGES}/${PGK_NAME_ALT}:${EXTRA_DIR}:${EXTRA_DIR}/tests:${EXTRA_DIR}/docs:${EXTRA_DIR}/docs/support
+      export PYTHONPATH=${PYTHONPATH}:${PYTHON_SITE_PACKAGES}:${PYTHON_SITE_PACKAGES}/${PKG_NAME_ALT}:${EXTRA_DIR}:${EXTRA_DIR}/tests:${EXTRA_DIR}/docs:${EXTRA_DIR}/docs/support
       export COV_FILE=${SOURCE_DIR}/.coveragerc_ci_${INTERP}
       export AFILE=${EXTRA_DIR}/artifacts_${INTERP}.tar.gz
       export PYLINT_PLUGINS_DIR=${EXTRA_DIR}/pylint_plugins
@@ -168,21 +168,21 @@ jobs:
       echo PYLINT_CLI_APPEND="${PYLINT_CLI_APPEND}"
       echo PYLINT_CMD="${PYLINT_CMD}"
       # Check
-      if [ -f "$(REPO_DIR)/*.py" ]; then
+      if [ -f $(REPO_DIR)/*.py ]; then
         echo Checking base directory
         PYTHONPATH="$(PYTHONPATH):${PYLINT_PLUGINS_DIR}" ${PYLINT_CMD} $(REPO_DIR)/*.py
       fi
-      if [ -f "$(SOURCE_DIR)/*.py" ]; then
+      if [ -f $(SOURCE_DIR)/*.py ]; then
         echo Checking source directory
         PYTHONPATH="$(PYTHONPATH):${PYLINT_PLUGINS_DIR}" ${PYLINT_CMD} $(SOURCE_DIR)/*.py
       fi
-      if [ -f "$(EXTRA_DIR)/tests/*.py" ]; then
+      if [ -f $(EXTRA_DIR)/tests/*.py ]; then
         echo Checking tests base directory
         PYTHONPATH="$(PYTHONPATH):${PYLINT_PLUGINS_DIR}" ${PYLINT_CMD} $(EXTRA_DIR)/tests/*.py
       fi
-      if [ -f "$(EXTRA_DIR)/tests/support/*.py" ]; then
+      if [ -f $(EXTRA_DIR)/tests/support/*.py ]; then
         echo Checking tests support directory
-        PYTHONPATH="$(PYTHONPATH):${PYLINT_PLUGINS_DIR}" ${PYLINT_CMD} $(EXTRA_DIR)/tests/support/*.py
+        PYTHONPATH=$(PYTHONPATH):${PYLINT_PLUGINS_DIR} ${PYLINT_CMD} $(EXTRA_DIR)/tests/support/*.py
       fi
     displayName: Check code standards compliance
   - bash: |
