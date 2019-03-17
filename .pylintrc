@@ -1,5 +1,5 @@
 # pylintrc
-# Copyright (c) 2018-2019 Pablo Acosta-Serafini
+# Copyright (c) 2013-2019 Pablo Acosta-Serafini
 # See LICENSE for details
 
 [MASTER]
@@ -20,7 +20,7 @@ persistent=yes
 
 # List of plugins (as comma separated values of python modules names) to load,
 # usually to register additional checkers.
-#load-plugins=
+# load-plugins=
 
 
 [MESSAGES CONTROL]
@@ -40,13 +40,14 @@ persistent=yes
 # no Warning level messages displayed, use"--disable=all --enable=classes
 # --disable=W"
 # C0302 Too many lines in module
+# C0304 Final newline missing
 # C0330 Wrong continued indentation
 # E0012 Bad option value
 # I0011 Warning locally suppressed using disable
 # R0801 Similar lines in X files
 # W0511 TODO:
 # W0142 Used * or ** magic
-disable=C0302,C0330,E0012,I0011,R0801,W0511,W0142
+disable=C0302,C0304,C0330,E0012,I0011,R0801,W0511,W0142
 
 [REPORTS]
 
@@ -264,3 +265,9 @@ int-import-graph=
 # Exceptions that will emit a warning when being caught. Defaults to
 # "Exception"
 overgeneral-exceptions=Exception
+
+[SPELLCHECK]
+whitelist=../data/whitelist.en.pws
+
+[HEADER]
+header-ref=../.headerrc

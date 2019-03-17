@@ -2,20 +2,23 @@
 # Copyright (c) 2018-2019 Pablo Acosta-Serafini
 # See LICENSE for details
 
+PKG_NAME := sphinxcontrib
 PKG_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 REPO_DIR ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-SOURCE_DIR ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))/sphinxcontrib
+SOURCE_DIR ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))/$(PKG_NAME)
 EXTRA_DIR ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+SBIN_DIR := $(EXTRA_DIR)/bin
 ### Custom pylint plugins configuration
-PYLINT_PLUGINS_DIR := $(shell if [ -d $(REPO_DIR)/pylint_plugins ]; then echo "$(REPO_DIR)/pylint_plugins"; fi)
-PYLINT_PLUGINS_LIST := $(shell if [ -d $(REPO_DIR)/pylint_plugins ]; then cd $(REPO_DIR)/pylint_plugins && ls -m *.py | sed 's|.*/||g' | sed 's|, |,|g' | sed 's|\.py||g'; fi)
-PYLINT_CLI_APPEND := $(shell if [ -d $(REPO_DIR)/pylint_plugins ]; then echo "--load-plugins=$(PYLINT_PLUGINS_LIST)"; fi)
+PYLINT_PLUGINS_DIR := $(shell if [ -d $(EXTRA_DIR)/pylint_plugins ]; then echo "$(EXTRA_DIR)/pylint_plugins"; fi)
+PYLINT_PLUGINS_LIST := $(shell if [ -d $(EXTRA_DIR)/pylint_plugins ]; then cd $(EXTRA_DIR)/pylint_plugins && ls -m *.py | sed 's|.*/||g' | sed 's|, |,|g' | sed 's|\.py||g'; fi)
+PYLINT_CLI_APPEND := $(shell if [ -d $(EXTRA_DIR)/pylint_plugins ]; then echo "--load-plugins=$(PYLINT_PLUGINS_LIST)"; fi)
 PYLINT_CMD := pylint \
 	--rcfile=$(EXTRA_DIR)/.pylintrc \
 	$(PYLINT_CLI_APPEND) \
 	--output-format=colorized \
 	--reports=no \
 	--score=no
+LINT_FILES := $(shell $(SBIN_DIR)/get-pylint-files.sh $(PKG_NAME) $(REPO_DIR) $(SOURCE_DIR) $(EXTRA_DIR))
 ###
 
 asort:
@@ -27,11 +30,8 @@ bdist:
 	@$(PKG_DIR)/bin/make-pkg.sh
 
 black:
-	black \
-		$(REPO_DIR) \
-		$(SOURCE_DIR)/shellcheck.py \
-		$(EXTRA_DIR)/tests \
-		$(EXTRA_DIR)/tests/support
+	@echo "Running Black on package files"
+	@black $(LINT_FILES)
 
 clean: FORCE
 	@echo "Cleaning package"
@@ -56,12 +56,17 @@ default:
 
 FORCE:
 
-lint:
+lint: pylint pydocstyle
+
+pydocstyle:
+	@echo "Running Pydocstyle on package files"
+	@pydocstyle --config=$(EXTRA_DIR)/.pydocstyle $(LINT_FILES)
+
+pylint:
 	@echo "Running Pylint on package files"
-	@PYTHONPATH="$(PYTHONPATH):$(PYLINT_PLUGINS_DIR)" $(PYLINT_CMD) $(REPO_DIR)/*.py
-	@PYTHONPATH="$(PYTHONPATH):$(PYLINT_PLUGINS_DIR)" $(PYLINT_CMD) $(SOURCE_DIR)/shellcheck.py
-	@PYTHONPATH="$(PYTHONPATH):$(PYLINT_PLUGINS_DIR)" $(PYLINT_CMD) $(EXTRA_DIR)/tests/*.py
-	@PYTHONPATH="$(PYTHONPATH):$(PYLINT_PLUGINS_DIR)" $(PYLINT_CMD) $(EXTRA_DIR)/tests/support/*.py
+	@echo "PYLINT_CMD: $(PYLINT_CMD)"
+	@PYTHONPATH="$(PYLINT_PLUGINS_DIR):$(PYTHONPATH)" $(PYLINT_CMD) $(LINT_FILES)
+
 sdist:
 	@echo "Creating source distribution"
 	@cd $(PKG_DIR) && python setup.py sdist --formats=gztar,zip

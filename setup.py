@@ -57,7 +57,7 @@ else:
 # Actual directory is os.join(sys.prefix, "share", PKG_NAME)
 PWD = os.path.dirname(os.path.abspath(__file__))
 SHARE_DIR = os.path.join("share", PKG_NAME)
-TEST_REQS = ["coverage", "pylint", "pytest>=3.6", "pytest-cov"]
+TEST_REQS = ["coverage", "pylint", "pytest>=3.6", "pytest-cov", "pydocstyle"]
 if INSTALL_MODE_IS_TEST:
     DATA_FILES = [
         (
@@ -70,8 +70,9 @@ if INSTALL_MODE_IS_TEST:
                 os.path.join(PWD, "MANIFEST.in"),
                 os.path.join(PWD, "README.rst"),
                 os.path.join(PWD, "tox.ini"),
-                os.path.join(PWD, ".pylintrc"),
                 os.path.join(PWD, ".headerrc"),
+                os.path.join(PWD, ".pydocstyle"),
+                os.path.join(PWD, ".pylintrc"),
             ],
         ),
         (
@@ -79,6 +80,7 @@ if INSTALL_MODE_IS_TEST:
             [
                 os.path.join(PWD, "bin", "cprint.sh"),
                 os.path.join(PWD, "bin", "functions.sh"),
+                os.path.join(PWD, "bin", "get-pylint-files.sh"),
                 os.path.join(PWD, "bin", "make-coveragerc.sh"),
                 os.path.join(PWD, "bin", "make-pkg.sh"),
                 os.path.join(PWD, "bin", "print-env.sh"),
@@ -102,9 +104,8 @@ if INSTALL_MODE_IS_TEST:
         (
             os.path.join(SHARE_DIR, "data"),
             [
-                os.path.join(PWD, "data", ".travis.sh"),
+                os.path.join(PWD, "data", "exclude-spelling"),
                 os.path.join(PWD, "data", "whitelist.en.pws"),
-                os.path.join(PWD, "data", "appveyor.bat"),
             ],
         ),
         (
@@ -114,6 +115,13 @@ if INSTALL_MODE_IS_TEST:
                 os.path.join(PWD, "pylint_plugins", "pylint_codes.py"),
                 os.path.join(PWD, "pylint_plugins", "spellcheck.py"),
                 os.path.join(PWD, "pylint_plugins", ".headerrc"),
+            ],
+        ),
+        (
+            os.path.join(SHARE_DIR, "pylint_plugins", "dicts"),
+            [
+                os.path.join(PWD, "pylint_plugins", "dicts", "en_US.aff"),
+                os.path.join(PWD, "pylint_plugins", "dicts", "en_US.dic"),
             ],
         ),
     ]

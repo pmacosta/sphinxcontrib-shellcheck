@@ -60,7 +60,7 @@ def run_sphinx(extra_argv=None):
 ###
 # Test functions
 ###
-def test_shellcheck_error():
+def test_shellcheck_error():  # noqa: D202
     """Test main sphinx extension."""
 
     def validate(opt):
