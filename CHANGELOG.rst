@@ -5,6 +5,7 @@
 Changelog
 =========
 
-* 1.0.6 [January 4, 2019] Updated package management and testing framework
+* 1.0.6 [March 17, 2019] Added check of shellcheck minimum version. Updated
+  package management and testing framework
 
 * 1.0.5 [January 4, 2019] Initial public release

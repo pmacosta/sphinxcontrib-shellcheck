@@ -79,12 +79,14 @@ if INSTALL_MODE_IS_TEST:
             os.path.join(SHARE_DIR, "bin"),
             [
                 os.path.join(PWD, "bin", "cprint.sh"),
+                os.path.join(PWD, "bin", "coveragerc_manager.py"),
+                os.path.join(PWD, "bin", "fix_windows_symlinks.py"),
                 os.path.join(PWD, "bin", "functions.sh"),
+                os.path.join(PWD, "bin", "get_pylint_files.py"),
                 os.path.join(PWD, "bin", "get-pylint-files.sh"),
-                os.path.join(PWD, "bin", "make-coveragerc.sh"),
                 os.path.join(PWD, "bin", "make-pkg.sh"),
                 os.path.join(PWD, "bin", "print-env.sh"),
-                os.path.join(PWD, "bin", "zip-artifacts.sh"),
+                os.path.join(PWD, "bin", "winnorm_path.py"),
             ],
         ),
         (
@@ -105,6 +107,7 @@ if INSTALL_MODE_IS_TEST:
             os.path.join(SHARE_DIR, "data"),
             [
                 os.path.join(PWD, "data", "exclude-spelling"),
+                os.path.join(PWD, "data", "exclude-linting"),
                 os.path.join(PWD, "data", "whitelist.en.pws"),
             ],
         ),

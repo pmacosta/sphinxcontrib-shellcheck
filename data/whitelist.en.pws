@@ -1,4 +1,4 @@
-personal_ws-1.1 en 328 utf-8
+personal_ws-1.1 en 362 utf-8
 0x03000000
 abc
 ABCMeta
@@ -8,8 +8,11 @@ aff
 api
 app
 appveyor
+arg
 argparse
 args
+ArgumentParser
+ArgumentTypeError
 argv
 ascii
 asort
@@ -36,11 +39,17 @@ cd
 changedir
 Changelog
 CHANGELOG
+ci
+cli
 CLI
 cmd
+cmp
+codecoverage
 codecs
+compat
 conf
 config
+conftest
 contextmanager
 cov
 coveragepy
@@ -55,6 +64,7 @@ dedent
 defpath
 del
 desc
+dest
 detailmenu
 DEVSTAT
 dic
@@ -64,7 +74,9 @@ dir
 dir1
 dir2
 dirname
+dirpath
 distro
+distutil
 doc2path
 docname
 docnames
@@ -103,11 +115,13 @@ favicon
 fdesc
 fhandle
 fi
+filecmp
 firstlineno
 fmt
 fn
 fname
 fnames
+fnmatch
 fobj
 fpointer
 func
@@ -115,12 +129,14 @@ FunctionType
 getLogger
 gitignore
 gztar
+hasattr
 HeaderChecker
 headerrc
 hexversion
 howto
 htaccess
 html
+htmlcov
 htmlhelp
 ico
 ImportError
@@ -129,10 +145,12 @@ indices
 ini
 init
 inline
+interp
 InvalidShellcheckBuilderConfig
 io
 IRawChecker
 isdir
+isf
 isinstance
 json
 ksh
@@ -146,9 +164,11 @@ lineno
 linenos
 linesep
 linter
+linting
 LintShell
 LintShellBuilder
 LintShellNotFound
+listdir
 lmin
 lstrip
 mathjax
@@ -163,10 +183,12 @@ myfile
 mymodule
 myvar
 namespace
+nargs
 ncx
 noqa
 normcase
 normdir
+normpath
 num
 online
 opensearch
@@ -190,6 +212,7 @@ pipefail
 pkl
 plugins
 Pmisc
+pobj
 pointsize
 Popen
 posargs
@@ -242,6 +265,7 @@ rstrip
 rtd
 RuntimeError
 SBIN
+sdict
 sdir
 sdist
 sectionauthor
@@ -261,6 +285,7 @@ sourcelink
 spellcheck
 sphinxcontrib
 SphinxError
+splitext
 src
 srcdoc
 srclines
@@ -271,11 +296,14 @@ stdout
 str
 strftime
 subprocess
+symlink
+Symlink
 symlinks
 sys
 tabwidth
 tagname
 tb
+tdir
 tempfile
 testenv
 tex
@@ -300,6 +328,7 @@ travis
 txt
 typ
 uid
+UnicodeDecodeError
 uri
 url
 urls
@@ -307,16 +336,20 @@ utf
 util
 utils
 vcs
+ver
 viewcode
+vmin
 W0107
 W0122
 W0212
 W0622
 warnfunc
 wb
+websupport
 whitelist
 whitespace
 win32
+winnorm
 writelines
 xbb
 xbf
@@ -327,3 +360,4 @@ xml
 xonsh
 yaml
 yamllint
+zA

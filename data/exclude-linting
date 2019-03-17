@@ -1,0 +1,2 @@
+{EXTRA_DIR}/pylint_plugins/*.py
+{SOURCE_DIR}/websupport/*.py

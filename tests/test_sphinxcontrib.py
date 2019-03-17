@@ -1,7 +1,7 @@
 # test_sphinxcontrib.py
 # Copyright (c) 2018-2019 Pablo Acosta-Serafini
 # See LICENSE for details
-# pylint: disable=C0111,E0401,E0611,E1101,R1702,W0212
+# pylint: disable=C0111,E0401,E0611,E1101,R1702,W0212,W0703
 
 # Standard library import
 from __future__ import print_function
@@ -12,7 +12,7 @@ import re
 import sphinx.cmd.build
 
 # Intra-package imports
-from shellcheck import which
+from shellcheck import _tostr, which
 
 ###
 # Global variables
@@ -24,6 +24,11 @@ CONF_FNAME = os.path.join(SDIR, "conf.py")
 ###
 # Helper functions
 ###
+def _get_ex_msg(obj):
+    """Get exception message."""
+    return obj.value.args[0] if hasattr(obj, "value") else obj.args[0]
+
+
 def run_sphinx(extra_argv=None):
     extra_argv = [] if extra_argv is None else extra_argv
     sdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "support")
@@ -48,7 +53,12 @@ def run_sphinx(extra_argv=None):
         ]
     )
     argv[0] = re.sub(r"(-script\.pyw?|\.exe)?$", "", argv[0])
-    ret_code = sphinx.cmd.build.main(argv[1:])
+    try:
+        ret_code = sphinx.cmd.build.main(argv[1:])
+    except Exception as obj:
+        lines = _tostr(_get_ex_msg(obj))
+        ret_code = 1
+        return ret_code, lines
     fname = os.path.join(dir2, "output.txt")
     lines = []
     if os.path.exists(fname):
@@ -76,6 +86,8 @@ def test_shellcheck_error():  # noqa: D202
 def test_shellcheck():
     """Test main sphinx extension."""
     ret_code, act_lines = run_sphinx()
+    if ret_code:
+        print("act_lines:" + os.linesep + os.linesep.join(act_lines))
     assert ret_code == 0
     act_lines = [act_line.rstrip() for act_line in act_lines]
     # For version 0.3.3

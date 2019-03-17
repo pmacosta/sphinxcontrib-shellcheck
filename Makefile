@@ -64,7 +64,6 @@ pydocstyle:
 
 pylint:
 	@echo "Running Pylint on package files"
-	@echo "PYLINT_CMD: $(PYLINT_CMD)"
 	@PYTHONPATH="$(PYLINT_PLUGINS_DIR):$(PYTHONPATH)" $(PYLINT_CMD) $(LINT_FILES)
 
 sdist:

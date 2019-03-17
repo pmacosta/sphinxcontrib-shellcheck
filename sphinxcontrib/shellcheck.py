@@ -2,7 +2,7 @@
 # Copyright (c) 2018-2019 Pablo Acosta-Serafini
 # See LICENSE for details
 # pylint: disable=C0103,C0111,C0411,E0401,E0602,E1129
-# pylint: disable=R0205,R0902,R0903,R0912,R0914,W0107
+# pylint: disable=R0205,R0902,R0903,R0912,R0914,R0916,W0107
 
 # Standard library import
 from __future__ import print_function
@@ -103,8 +103,39 @@ else:  # pragma: no cover
 ###
 # Functions
 ###
+def _check_version(vmin=(0, 4, 4)):
+    """
+    Verify minimum shellcheck version.
+
+    Done without using distutil functions to avoid unnecessary dependencies
+    """
+    stdout, _ = subprocess.Popen(
+        ["shellcheck", "--version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    ).communicate()
+    ret = False
+    for line in _tostr(stdout).strip().split(os.linesep):  # pragma: no cover
+        line = line.strip()
+        if line.startswith("version:"):
+            version = " ".join(line.split()[1:])
+            tokens = version.split(".")
+            if len(tokens) < 3:  # pragma: no cover
+                break
+            v0 = int(tokens[0])
+            v1 = int(tokens[1])
+            v2 = int(tokens[2])
+            if (
+                (v0 > vmin[0])
+                or ((v0 == vmin[0]) and (v1 > vmin[1]))
+                or ((v0 == vmin[0]) and (v1 == vmin[1]) and (v2 >= vmin[2]))
+            ):  # pragma: no cover
+                ret = True
+            break
+    return ret
+
+
 def _errors(stdout):
     keys = ("line", "column", "code", "message")
+    stdout = _tostr(stdout).strip()
     for error in json.loads(_tostr(stdout)):
         yield tuple(error[item] for item in keys)
 
@@ -345,8 +376,11 @@ class ShellcheckBuilder(LintShellBuilder):
             assert all(item in ["sh", "bash", "dash", "ksh"] for item in self._dialects)
         except:
             raise InvalidShellcheckBuilderConfig(__("Invalid dialect"))
-        if not which(self._exe):
-            raise InvalidShellcheckBuilderConfig(__("Shellcheck executable not found"))
+        exe_found = which(self._exe)
+        if (not exe_found) or (exe_found and (not _check_version())):
+            raise InvalidShellcheckBuilderConfig(
+                __("Shellcheck executable not found or not new enough")
+            )
         if len(self._prompt) != 1:
             raise InvalidShellcheckBuilderConfig(__("Invalid shellcheck prompt"))
         if self._debug not in (0, 1):
@@ -442,4 +476,4 @@ def setup(app):
     app.add_config_value("shellcheck_dialects", ["sh", "bash", "dash", "ksh"], "env")
     app.add_config_value("shellcheck_executable", "shellcheck", "env")
     app.add_config_value("shellcheck_prompt", "$", "env")
-    app.add_config_value("shellcheck_debug", int(0), "env")
+    app.add_config_value("shellcheck_debug", int(1), "env")
