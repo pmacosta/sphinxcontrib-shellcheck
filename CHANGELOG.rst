@@ -5,4 +5,6 @@
 Changelog
 =========
 
+* 1.0.6 [January 4, 2019] Updated package management and testing framework
+
 * 1.0.5 [January 4, 2019] Initial public release

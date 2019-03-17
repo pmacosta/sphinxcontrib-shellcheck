@@ -1,4 +1,4 @@
-personal_ws-1.1 en 327 utf-8
+personal_ws-1.1 en 328 utf-8
 0x03000000
 abc
 ABCMeta
@@ -34,6 +34,7 @@ C0113
 C0411
 cd
 changedir
+Changelog
 CHANGELOG
 CLI
 cmd
