@@ -35,6 +35,7 @@ black:
 
 clean: FORCE
 	@echo "Cleaning package"
+	@rm -rf $(PKG_DIR)/.tox
 	@find $(PKG_DIR) -name '*.pyc' -delete
 	@find $(PKG_DIR) -name '__pycache__' -delete
 	@find $(PKG_DIR) -name '.coverage*' -delete
@@ -68,7 +69,7 @@ pylint:
 
 sdist:
 	@echo "Creating source distribution"
-	@cd $(PKG_DIR) && python setup.py sdist --formats=gztar,zip
+	@cd $(PKG_DIR) && python setup.py sdist --formats=zip
 	@$(PKG_DIR)/bin/list-authors.sh
 
 sterile: clean
