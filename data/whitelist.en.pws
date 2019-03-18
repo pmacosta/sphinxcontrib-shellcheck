@@ -1,4 +1,4 @@
-personal_ws-1.1 en 362 utf-8
+personal_ws-1.1 en 373 utf-8
 0x03000000
 abc
 ABCMeta
@@ -60,6 +60,7 @@ css
 curdir
 D101
 datetime
+Debian
 dedent
 defpath
 del
@@ -127,6 +128,7 @@ fpointer
 func
 FunctionType
 getLogger
+github
 gitignore
 gztar
 hasattr
@@ -163,6 +165,7 @@ letterpaper
 lineno
 linenos
 linesep
+linted
 linter
 linting
 LintShell
@@ -171,6 +174,7 @@ LintShellNotFound
 listdir
 lmin
 lstrip
+macOS
 mathjax
 metaclass
 mkstemp
@@ -181,6 +185,9 @@ msgs
 mydir
 myfile
 mymodule
+myname
+myrepo
+MYREPO
 myvar
 namespace
 nargs
@@ -198,6 +205,7 @@ os
 OSError
 OSI
 outdir
+overriden
 pagerefs
 papersize
 passenv
@@ -212,6 +220,7 @@ pipefail
 pkl
 plugins
 Pmisc
+po
 pobj
 pointsize
 Popen
@@ -258,6 +267,7 @@ repr
 REQS
 reST
 restructuredtext
+reStructuredText
 ret
 rf
 rst
@@ -327,6 +337,7 @@ toxworkdir
 travis
 txt
 typ
+Ubuntu
 uid
 UnicodeDecodeError
 uri

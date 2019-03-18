@@ -20,18 +20,16 @@
 
 |
 
-.. image::
-    https://travis-ci.org/pmacosta/sphinxcontrib-shellcheck.svg?branch=master
 
 .. image::
-    https://ci.appveyor.com/api/projects/status/
-    y95r5t9tix34pk55?svg=true
-    :alt: Windows continuous integration
+    https://dev.azure.com/pmasdev/sphinxcontrib-shellcheck/_apis/build/status/pmacosta.sphinxcontrib-shellcheck?branchName=master
+    :target: https://dev.azure.com/pmasdev/sphinxcontrib-shellcheck/_build?definitionId=3&_a=summary
+    :alt: Continuous integration test status
 
 .. image::
-    https://codecov.io/gh/pmacosta/sphinxcontrib-shellcheck/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/pmacosta/sphinxcontrib-shellcheck
-    :alt: Continuous integration coverage
+    https://img.shields.io/azure-devops/coverage/pmasdev/sphinxcontrib-shellcheck/2.svg
+    :target: https://dev.azure.com/pmasdev/sphinxcontrib-shellcheck/_build?definitionId=6&_a=summary
+    :alt: Continuous integration test coverage
 
 |
 
@@ -48,7 +46,7 @@ Interpreter
 ###########
 
 The extension has been developed and tested with Python 2.7, 3.5, 3.6 and 3.7
-under Linux (Debian, Ubuntu), and Microsoft Windows
+under Linux (Debian, Ubuntu), Apple macOS and Microsoft Windows
 
 ############
 Installation
@@ -83,9 +81,9 @@ content:
 .. code:: rst
 
    Follow these instructions:
-   
+
        .. code-block:: bash
-   
+
            $ github_user=myname
            $ git clone \
                  https://github.com/"${github_user}"/ \
