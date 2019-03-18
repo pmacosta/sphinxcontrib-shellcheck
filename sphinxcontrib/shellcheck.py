@@ -476,4 +476,4 @@ def setup(app):
     app.add_config_value("shellcheck_dialects", ["sh", "bash", "dash", "ksh"], "env")
     app.add_config_value("shellcheck_executable", "shellcheck", "env")
     app.add_config_value("shellcheck_prompt", "$", "env")
-    app.add_config_value("shellcheck_debug", int(1), "env")
+    app.add_config_value("shellcheck_debug", int(0), "env")

@@ -5,6 +5,8 @@
 Changelog
 =========
 
+* 1.0.9 [March 18, 2019] Changed debug parameter default status
+
 * 1.0.8 [March 17, 2019] Package management update
 
 * 1.0.7 [March 17, 2019] Package management update
