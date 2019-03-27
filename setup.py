@@ -94,13 +94,23 @@ if INSTALL_MODE_IS_TEST:
             [os.path.join(PWD, "tests", "test_sphinxcontrib.py")],
         ),
         (
-            os.path.join(SHARE_DIR, "tests", "support"),
+            os.path.join(SHARE_DIR, "tests", "support1"),
             [
-                os.path.join(PWD, "tests", "support", "README.rst"),
-                os.path.join(PWD, "tests", "support", "api.rst"),
-                os.path.join(PWD, "tests", "support", "conf.py"),
-                os.path.join(PWD, "tests", "support", "index.rst"),
-                os.path.join(PWD, "tests", "support", "mymodule.py"),
+                os.path.join(PWD, "tests", "support1", "README.rst"),
+                os.path.join(PWD, "tests", "support1", "api.rst"),
+                os.path.join(PWD, "tests", "support1", "conf.py"),
+                os.path.join(PWD, "tests", "support1", "index.rst"),
+                os.path.join(PWD, "tests", "support1", "mymodule1.py"),
+            ],
+        ),
+        (
+            os.path.join(SHARE_DIR, "tests", "support2"),
+            [
+                os.path.join(PWD, "tests", "support2", "README.rst"),
+                os.path.join(PWD, "tests", "support2", "api.rst"),
+                os.path.join(PWD, "tests", "support2", "conf.py"),
+                os.path.join(PWD, "tests", "support2", "index.rst"),
+                os.path.join(PWD, "tests", "support2", "mymodule2.py"),
             ],
         ),
         (

@@ -47,7 +47,8 @@ clean: FORCE
 	@rm -rf $(PKG_DIR)/sphinxcontrib_shellcheck.egg-info
 	@rm -rf $(PKG_DIR)/.eggs
 	@rm -rf $(PKG_DIR)/.cache
-	@rm -rf $(PKG_DIR)/tests/support/_build
+	@rm -rf $(PKG_DIR)/tests/support1/_build
+	@rm -rf $(PKG_DIR)/tests/support2/_build
 
 distro: clean sdist wheel
 	@rm -rf build sphinxcontrib-shellcheck.egg-info

@@ -1,4 +1,4 @@
-# mymodule.py
+# mymodule2.py
 # Copyright (c) 2018-2019 Pablo Acosta-Serafini
 # See LICENSE for details
 # pylint: disable=C0111
@@ -27,7 +27,7 @@ def func2():
     .. code-block:: bash
 
         $ echo " WORLD!"
-        $ source myfile.sh
+        $ # source myfile.sh
 
     """
     return 2

@@ -185,9 +185,13 @@ jobs:
         echo "EXTRA_DIR/tests=${EXTRA_DIR}/tests"
         ls "${EXTRA_DIR}/tests"
       fi
-      if [ -d "${EXTRA_DIR}/tests/support" ]; then
-        echo "EXTRA_DIR/tests=${EXTRA_DIR}/tests/support"
-        ls "${EXTRA_DIR}/tests/support"
+      if [ -d "${EXTRA_DIR}/tests/support1" ]; then
+        echo "EXTRA_DIR/tests=${EXTRA_DIR}/tests/support1"
+        ls "${EXTRA_DIR}/tests/support1"
+      fi
+      if [ -d "${EXTRA_DIR}/tests/support2" ]; then
+        echo "EXTRA_DIR/tests=${EXTRA_DIR}/tests/support2"
+        ls "${EXTRA_DIR}/tests/support2"
       fi
       if [ -d "${EXTRA_DIR}/docs" ]; then
         echo "EXTRA_DIR/docs=${EXTRA_DIR}/docs"

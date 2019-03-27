@@ -4,4 +4,5 @@
 azure-pipelines.yml
 data/exclude-spelling
 data/whitelist.en.pws
-tests/support/conf.py
+tests/support1/conf.py
+tests/support2/conf.py

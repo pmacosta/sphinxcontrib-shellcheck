@@ -6,5 +6,5 @@
 API
 ###
 
-.. autofunction:: mymodule.func1
-.. autofunction:: mymodule.func2
+.. autofunction:: mymodule2.func1
+.. autofunction:: mymodule2.func2

@@ -335,15 +335,13 @@ class LintShellBuilder(Builder):
         """Check shell nodes."""
         self.docname = docname
         self._tabwidth = doctree.settings.tab_width
-        statuscode = 0
         for errors in self._lint_errors(doctree):
-            statuscode = 1
+            self.app.statuscode = 1
             LOGGER.info(self.source)
             self.write_entry(self.source)
             for error in errors:
                 LOGGER.info(error)
                 self.write_entry(error)
-        self.app.statuscode = statuscode
 
     def write_entry(self, error):
         """Write error to file."""

@@ -17,7 +17,7 @@ from shellcheck import _tostr, which
 ###
 # Global variables
 ###
-SDIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "support")
+SDIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "support1")
 CONF_FNAME = os.path.join(SDIR, "conf.py")
 
 
@@ -29,9 +29,9 @@ def _get_ex_msg(obj):
     return obj.value.args[0] if hasattr(obj, "value") else obj.args[0]
 
 
-def run_sphinx(extra_argv=None):
+def run_sphinx(extra_argv=None, dirnum="1"):
     extra_argv = [] if extra_argv is None else extra_argv
-    sdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "support")
+    sdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "support" + dirnum)
     dir1 = os.path.join(sdir, "_build", "doctrees")
     dir2 = os.path.join(sdir, "_build", "shellcheck")
     exe = which("sphinx-build")
@@ -74,7 +74,7 @@ def test_shellcheck_error():  # noqa: D202
     """Test main sphinx extension."""
 
     def validate(opt):
-        ret = run_sphinx(["-D", opt])
+        ret = run_sphinx(["-D", opt], "1")
         assert ret == (2, [])
 
     validate("shellcheck_dialects=bash,xonsh")
@@ -88,7 +88,7 @@ def test_shellcheck():
     ret_code, act_lines = run_sphinx()
     if ret_code:
         print("act_lines:" + os.linesep + os.linesep.join(act_lines))
-    assert ret_code == 0
+    assert ret_code == 1
     act_lines = [act_line.rstrip() for act_line in act_lines]
     # For version 0.3.3
     ref_lines_1 = [
@@ -98,7 +98,7 @@ def test_shellcheck():
             "Use 'cd ... || exit' or 'cd ... || return' in case cd fails."
         ),
         "README.rst: Line 34, column 17 [2154]: myvar is referenced but not assigned.",
-        "api.rst: " + os.path.join(SDIR, "mymodule.py"),
+        "api.rst: " + os.path.join(SDIR, "mymodule1.py"),
         (
             "api.rst: Line 30, column 11 [1091]: Not following: "
             "myfile.sh was not specified as input (see shellcheck -x)."
@@ -109,7 +109,7 @@ def test_shellcheck():
         "README.rst: " + os.path.join(SDIR, "README.rst"),
         "README.rst: Line 32, column 11 [2164]: Use cd ... || exit in case cd fails.",
         "README.rst: Line 34, column 17 [2154]: myvar is referenced but not assigned.",
-        "api.rst: " + os.path.join(SDIR, "mymodule.py"),
+        "api.rst: " + os.path.join(SDIR, "mymodule1.py"),
         (
             "api.rst: Line 30, column 11 [1091]: Not following: "
             "myfile.sh was not specified as input (see shellcheck -x)."
@@ -123,7 +123,7 @@ def test_shellcheck():
             "Use 'cd ... || exit' or 'cd ... || return' in case cd fails."
         ),
         "README.rst: Line 34, column 17 [2154]: myvar is referenced but not assigned.",
-        "api.rst: " + os.path.join(SDIR, "mymodule.py"),
+        "api.rst: " + os.path.join(SDIR, "mymodule1.py"),
         (
             "api.rst: Line 30, column 18 [1091]: Not following: "
             "myfile.sh was not specified as input (see shellcheck -x)."
@@ -167,3 +167,6 @@ def test_shellcheck():
                                 )
             print("---")
     assert flag
+    ret_code, act_lines = run_sphinx(None, "2")
+    assert not ret_code
+    assert not act_lines
