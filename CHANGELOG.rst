@@ -5,6 +5,8 @@
 Changelog
 =========
 
+* 1.0.10 [March 27, 2019] Correctly set exit code when there are errors
+
 * 1.0.9 [March 18, 2019] Changed debug parameter default status
 
 * 1.0.8 [March 17, 2019] Package management update
