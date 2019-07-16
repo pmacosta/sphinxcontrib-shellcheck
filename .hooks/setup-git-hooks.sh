@@ -95,7 +95,7 @@ fi
 repo_dir=$(dirname "${sdir}")
 # Use pre-commit framework if possible
 if [ -f "${repo_dir}/.pre-commit-config.yaml" ]; then
-    if which pre-commit &> /dev/null; then
+    if command -v pre-commit &> /dev/null; then
         cd "${repo_dir}" || exit 1
         echo "Setting up pre-commit framework"
         pre-commit install
@@ -105,6 +105,7 @@ fi
 # Default to legacy shell-based framework
 echo "Setting up shell pre-commit hook"
 git_hooks_dir=${repo_dir}/.git/hooks
+mkdir -p "${git_hooks_dir}"
 hooks=(pre-commit)
 cd "${git_hooks_dir}" || exit 1
 for hook in ${hooks[*]}; do
