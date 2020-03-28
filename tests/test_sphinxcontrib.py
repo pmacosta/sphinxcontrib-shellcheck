@@ -1,5 +1,5 @@
 # test_sphinxcontrib.py
-# Copyright (c) 2018-2019 Pablo Acosta-Serafini
+# Copyright (c) 2018-2020 Pablo Acosta-Serafini
 # See LICENSE for details
 # pylint: disable=C0111,E0401,E0611,E1101,R1702,W0212,W0703
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 # make-pkg.sh
-# Copyright (c) 2018-2019 Pablo Acosta-Serafini
+# Copyright (c) 2018-2020 Pablo Acosta-Serafini
 # See LICENSE for details
 # shellcheck disable=SC1090,SC2046
 

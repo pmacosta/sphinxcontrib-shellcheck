@@ -1,6 +1,6 @@
 #!/bin/bash
 # get-pylint-files.sh
-# Copyright (c) 2013-2019 Pablo Acosta-Serafini
+# Copyright (c) 2013-2020 Pablo Acosta-Serafini
 # See LICENSE for details
 
 sdir=$(dirname "${BASH_SOURCE[0]}")

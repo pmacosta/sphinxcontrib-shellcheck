@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # get_pylint_files.py
-# Copyright (c) 2013-2019 Pablo Acosta-Serafini
+# Copyright (c) 2013-2020 Pablo Acosta-Serafini
 # See LICENSE for details
 # pylint: disable=C0111
 

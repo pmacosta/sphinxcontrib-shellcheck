@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # conf.py
-# Copyright (c) 2018-2019 Pablo Acosta-Serafini
+# Copyright (c) 2018-2020 Pablo Acosta-Serafini
 # See LICENSE for details
 # pylint: disable=C0103,C0111,C0325,E0611,F0401,R0913,R1710,R1714
 # pylint: disable=W0212,W0611,W0613,W0622
