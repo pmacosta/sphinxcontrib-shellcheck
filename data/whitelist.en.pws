@@ -1,4 +1,4 @@
-personal_ws-1.1 en 468 utf-8
+personal_ws-1.1 en 476 utf-8
 0x03000000
 abc
 ABCMeta
@@ -69,6 +69,9 @@ coveragerc
 cp
 cpath
 cprint
+cpus
+CPUs
+CPUS
 cregexp
 css
 ctype
@@ -272,6 +275,8 @@ personal_ws-1.1 en 106 utf-8
 PIL
 PIPCMD
 pipefail
+pkgdata
+pkgname
 pkl
 plugins
 pmasdev
@@ -304,6 +309,7 @@ pytest
 PYTESTCMD
 PYTHONCMD
 PYTHONPATH
+pyvers
 pyw
 qq
 quickstart
@@ -357,6 +363,7 @@ shellcontrib
 shutil
 sig
 SIGINT
+slength
 SmartyPants
 Solaris
 sourcelink
@@ -459,6 +466,7 @@ ws
 www
 xbb
 xbf
+xdist
 xef
 xhtml
 xm
