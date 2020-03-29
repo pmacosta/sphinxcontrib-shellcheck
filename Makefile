@@ -1,5 +1,5 @@
 # Makefile
-# Copyright (c) 2018-2019 Pablo Acosta-Serafini
+# Copyright (c) 2018-2020 Pablo Acosta-Serafini
 # See LICENSE for details
 
 PKG_NAME := sphinxcontrib
@@ -9,11 +9,12 @@ SOURCE_DIR ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))/$(PKG_NAME)
 EXTRA_DIR ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 SBIN_DIR := $(EXTRA_DIR)/bin
 ### Custom pylint plugins configuration
+NUM_CPUS := $(shell python -c "from __future__ import print_function; import multiprocessing; print(multiprocessing.cpu_count())")
 PYLINT_PLUGINS_DIR := $(shell if [ -d $(EXTRA_DIR)/pylint_plugins ]; then echo "$(EXTRA_DIR)/pylint_plugins"; fi)
-PYLINT_PLUGINS_LIST := $(shell if [ -d $(EXTRA_DIR)/pylint_plugins ]; then cd $(EXTRA_DIR)/pylint_plugins && ls -m *.py | sed 's|.*/||g' | sed 's|, |,|g' | sed 's|\.py||g'; fi)
-PYLINT_CLI_APPEND := $(shell if [ -d $(EXTRA_DIR)/pylint_plugins ]; then echo "--load-plugins=$(PYLINT_PLUGINS_LIST)"; fi)
+PYLINT_PLUGINS_LIST := $(shell PYLINT_PLUGINS_DIR=$(PYLINT_PLUGINS_DIR) python -c "from __future__ import print_function;import glob; import os; sdir = os.environ.get('PYLINT_PLUGINS_DIR', ''); print(','.join([os.path.basename(fname).replace('.py', '') for fname in glob.glob(os.path.join(sdir, '*.py')) if not os.path.basename(fname).startswith('common')]) if sdir else '')" )
 PYLINT_CMD := pylint \
 	--rcfile=$(EXTRA_DIR)/.pylintrc \
+	-j$(NUM_CPUS) \
 	$(PYLINT_CLI_APPEND) \
 	--output-format=colorized \
 	--reports=no \
@@ -70,7 +71,7 @@ pylint:
 
 sdist:
 	@echo "Creating source distribution"
-	@cd $(PKG_DIR) && python setup.py sdist --formats=zip
+	@cd $(PKG_DIR) && python3 setup.py sdist --formats=zip
 	@$(PKG_DIR)/bin/list-authors.sh
 
 sterile: clean
