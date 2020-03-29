@@ -1,11 +1,10 @@
 # shellcheck.py
-# Copyright (c) 2018-2019 Pablo Acosta-Serafini
+# Copyright (c) 2018-2020 Pablo Acosta-Serafini
 # See LICENSE for details
 # pylint: disable=C0103,C0111,C0411,E0401,E0602,E1129
 # pylint: disable=R0205,R0902,R0903,R0912,R0914,R0916,W0107
 
 # Standard library import
-from __future__ import print_function
 import abc
 import codecs
 import json
@@ -81,7 +80,6 @@ except ImportError:  # pragma: no cover
 # PyPI imports
 import decorator
 import docutils.nodes
-import six
 import sphinx.errors
 import sphinx.util.logging
 from sphinx.builders import Builder
@@ -153,8 +151,7 @@ class InvalidShellcheckBuilderConfig(sphinx.errors.SphinxError):  # noqa: D101
     category = __("ShellcheckBuilder failed")
 
 
-@six.add_metaclass(abc.ABCMeta)
-class LintShellBuilder(Builder):
+class LintShellBuilder(Builder, metaclass=abc.ABCMeta):
     """Validate shell code in documents."""
 
     name = ""
