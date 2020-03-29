@@ -1,4 +1,4 @@
-personal_ws-1.1 en 479 utf-8
+personal_ws-1.1 en 481 utf-8
 0x03000000
 abc
 ABCMeta
@@ -84,6 +84,7 @@ Debian
 dedent
 defpath
 del
+deps
 desc
 dest
 detailmenu
@@ -220,6 +221,7 @@ lstrip
 macOS
 MacOSX
 makedirs
+makefile
 Makefile
 mathjax
 MERCHANTABILITY
