@@ -4,4 +4,6 @@
 *.pyc
 dist/
 tests/support/_build/
+tests/support1/_build/
+tests/support2/_build/
 sphinxcontrib_shellcheck.egg-info/
