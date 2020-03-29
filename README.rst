@@ -1,5 +1,5 @@
 .. README.rst
-.. Copyright (c) 2018-2019 Pablo Acosta-Serafini
+.. Copyright (c) 2018-2020 Pablo Acosta-Serafini
 .. See LICENSE for details
 
 .. image:: https://badge.fury.io/py/sphinxcontrib-shellcheck.svg
@@ -45,7 +45,7 @@ documentation.
 Interpreter
 ###########
 
-The extension has been developed and tested with Python 2.7, 3.5, 3.6 and 3.7
+The extension has been developed and tested with Python 3.5, 3.6, 3.7, and 3.8
 under Linux (Debian, Ubuntu), Apple macOS and Microsoft Windows
 
 ############
@@ -66,9 +66,9 @@ Add the shellcheck extension to the extension list in your Sphinx
 .. code:: python
 
    extensions = [
-       ...
+       ...,
        "sphinxcontrib.shellcheck",
-       ...
+       ...,
    ]
 
 #####
@@ -139,7 +139,7 @@ These are the configurable variables of the extension:
   (:code:`0`). The default is :code:`0`. This configuration option is only
   useful while developing the extension.
 
-These configuration variables can be overriden via the Sphinx configuration file
+These configuration variables can be overridden via the Sphinx configuration file
 ``conf.py``, or via the ``-D`` option of the ``sphinx-build`` command. For
 example:
 
@@ -158,7 +158,7 @@ License
 
 The MIT License (MIT)
 
-Copyright (c) 2018-2019, Pablo Acosta-Serafini
+Copyright (c) 2018-2020, Pablo Acosta-Serafini
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
