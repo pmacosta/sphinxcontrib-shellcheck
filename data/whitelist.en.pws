@@ -1,4 +1,4 @@
-personal_ws-1.1 en 506 utf-8
+personal_ws-1.1 en 511 utf-8
 0x03000000
 abc
 ABCMeta
@@ -12,6 +12,7 @@ allownonascii
 aN
 api
 app
+applehelp
 appveyor
 arg
 argparse
@@ -91,6 +92,7 @@ deps
 desc
 dest
 detailmenu
+devhelp
 DEVSTAT
 dic
 dict
@@ -203,6 +205,7 @@ IRawChecker
 isdir
 isf
 isinstance
+jsmath
 json
 junitxml
 koalaman
@@ -330,6 +333,7 @@ pyver
 pyvers
 pyw
 qq
+qthelp
 quickstart
 R0205
 R0902
@@ -378,6 +382,7 @@ sectionauthor
 sed
 sep
 Serafini
+serializinghtml
 setenv
 setp
 setuptools
