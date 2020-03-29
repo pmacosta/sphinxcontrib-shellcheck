@@ -1,4 +1,4 @@
-personal_ws-1.1 en 477 utf-8
+personal_ws-1.1 en 479 utf-8
 0x03000000
 abc
 ABCMeta
@@ -310,6 +310,7 @@ pytest
 PYTESTCMD
 PYTHONCMD
 PYTHONPATH
+pyver
 pyvers
 pyw
 qq
@@ -345,6 +346,7 @@ rf
 rst
 rstrip
 rtd
+rtest
 RuntimeError
 SBIN
 sdict
