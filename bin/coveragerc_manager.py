@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coveragerc_manager.py
-# Copyright (c) 2018-2019 Pablo Acosta-Serafini
+# Copyright (c) 2013-2020 Pablo Acosta-Serafini
 # See LICENSE for details
 # pylint: disable=C0111,C0413,W0403
 
@@ -8,14 +8,21 @@
 from __future__ import print_function
 import datetime
 import os
+import platform
 import sys
+
+# Intra-package imports
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+import functions
 
 
 ###
 # Functions
 ###
 def _exclude_files(sdir=None):
-    isf = ["conftest.py", "websupport/*"]
+    ver = 3 if sys.hexversion < 0x03000000 else 2
+    isf = ["conftest.py", "pkgdata.py", "compat{0}.py".format(ver)]
+    isf += functions.get_coverage_exclude_files()
     if sdir:
         isf = [os.path.join(sdir, item) for item in isf]
     return sorted(isf)
@@ -41,7 +48,7 @@ def get_source_files(sdir, inc_init=False):
 
 
 def main(argv):
-    """Processing."""
+    """Generate configuration file."""
     # pylint: disable=R0912,R0914,R0915,W0702
     debug = True
     env = argv[0].strip('"').strip("'")
@@ -59,6 +66,9 @@ def main(argv):
         print("Tox mode")
         if len(argv[1:]) == 4:
             mode_flag, interp, _, site_pkg_dir, module = argv[1:] + [""]
+            if platform.system().lower() == "windows":
+                tokens = site_pkg_dir.split("/")
+                site_pkg_dir = "\\".join(tokens)
             print("   mode_flag: {0}".format(mode_flag))
             print("   interp: {0}".format(interp))
             print("   site_pkg_dir: {0}".format(site_pkg_dir))
