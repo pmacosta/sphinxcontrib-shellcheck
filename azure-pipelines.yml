@@ -1,5 +1,5 @@
 # azure-pipelines.yml
-# Copyright (c) 2018 Pablo Acosta-Serafini
+# Copyright (c) 2018-2020 Pablo Acosta-Serafini
 # See LICENSE for details
 # yamllint disable rule:document-start
 # yamllint disable rule:indentation
@@ -14,30 +14,30 @@ jobs:
 - job: 'Test'
   strategy:
     matrix:
-      linux_python27:
-        imageName: 'ubuntu-16.04'
-        python.version: '2.7'
       linux_python35:
-        imageName: 'ubuntu-16.04'
+        imageName: 'ubuntu-18.04'
         python.version: '3.5'
       linux_python36:
-        imageName: 'ubuntu-16.04'
+        imageName: 'ubuntu-18.04'
         python.version: '3.6'
       linux_python37:
-        imageName: 'ubuntu-16.04'
+        imageName: 'ubuntu-18.04'
         python.version: '3.7'
-      mac_python27:
-        imageName: 'macos-10.13'
-        python.version: '2.7'
+      linux_python38:
+        imageName: 'ubuntu-18.04'
+        python.version: '3.8'
       mac_python35:
-        imageName: 'macos-10.13'
+        imageName: 'macos-10.14'
         python.version: '3.5'
       mac_python36:
-        imageName: 'macos-10.13'
+        imageName: 'macos-10.14'
         python.version: '3.6'
       mac_python37:
-        imageName: 'macos-10.13'
+        imageName: 'macos-10.14'
         python.version: '3.7'
+      mac_python38:
+        imageName: 'macos-10.14'
+        python.version: '3.8'
       windows_python35:
         imageName: 'vs2017-win2016'
         python.version: '3.5'
@@ -47,6 +47,9 @@ jobs:
       windows_python37:
         imageName: 'vs2017-win2016'
         python.version: '3.7'
+      windows_python38:
+        imageName: 'vs2017-win2016'
+        python.version: '3.8'
 
   pool:
     vmImage: $(imageName)
