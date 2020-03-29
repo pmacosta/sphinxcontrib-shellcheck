@@ -1,4 +1,4 @@
-personal_ws-1.1 en 511 utf-8
+personal_ws-1.1 en 512 utf-8
 0x03000000
 abc
 ABCMeta
@@ -471,6 +471,7 @@ UnicodeDecodeError
 uri
 url
 urls
+usr
 utf
 util
 utils

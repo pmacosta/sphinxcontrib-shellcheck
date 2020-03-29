@@ -11,18 +11,19 @@ import os
 import platform
 import sys
 
-# Intra-package imports
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-import functions
-
-
 ###
 # Functions
 ###
 def _exclude_files(sdir=None):
-    ver = 3 if sys.hexversion < 0x03000000 else 2
-    isf = ["conftest.py", "pkgdata.py", "compat{0}.py".format(ver)]
-    isf += functions.get_coverage_exclude_files()
+    isf = ["conftest.py", "pkgdata.py"]
+    isf += [
+        "applehelp/*.py",
+        "devhelp/*.py",
+        "htmlhelp/*.py",
+        "jsmath/*.py",
+        "qthelp/*.py",
+        "serializinghtml/*.py",
+    ]
     if sdir:
         isf = [os.path.join(sdir, item) for item in isf]
     return sorted(isf)

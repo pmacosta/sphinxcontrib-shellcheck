@@ -81,7 +81,6 @@ if INSTALL_MODE_IS_TEST:
                 os.path.join(PWD, "bin", "cprint.sh"),
                 os.path.join(PWD, "bin", "coveragerc_manager.py"),
                 os.path.join(PWD, "bin", "fix_windows_symlinks.py"),
-                os.path.join(PWD, "bin", "functions.py"),
                 os.path.join(PWD, "bin", "functions.sh"),
                 os.path.join(PWD, "bin", "get_pylint_files.py"),
                 os.path.join(PWD, "bin", "get-pylint-files.sh"),
