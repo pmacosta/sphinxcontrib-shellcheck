@@ -1,5 +1,5 @@
 # setup.py
-# Copyright (c) 2018-2019 Pablo Acosta-Serafini
+# Copyright (c) 2018-2020 Pablo Acosta-Serafini
 # See LICENSE for details
 # pylint: disable=C0111,W0122
 
@@ -15,7 +15,7 @@ from setuptools import setup, find_packages
 # Global variables
 ###
 PKG_NAME = "sphinxcontrib-shellcheck"
-VERSION_INFO = (1, 0, 10, "final", 0)
+VERSION_INFO = (1, 1, 0, "final", 0)
 INSTALL_MODE_IS_TEST = os.environ.get("SHELLCHECK_TEST_ENV", "")
 VERSION_QUERY = os.environ.get("SHELLCHECK_CI_ENV", "")
 
@@ -81,6 +81,7 @@ if INSTALL_MODE_IS_TEST:
                 os.path.join(PWD, "bin", "cprint.sh"),
                 os.path.join(PWD, "bin", "coveragerc_manager.py"),
                 os.path.join(PWD, "bin", "fix_windows_symlinks.py"),
+                os.path.join(PWD, "bin", "functions.py"),
                 os.path.join(PWD, "bin", "functions.sh"),
                 os.path.join(PWD, "bin", "get_pylint_files.py"),
                 os.path.join(PWD, "bin", "get-pylint-files.sh"),
@@ -170,10 +171,10 @@ if not VERSION_QUERY:
         platforms="any",
         namespace_packages=["sphinxcontrib"],
         classifiers=[
-            "Programming Language :: Python :: 2.7",
             "Programming Language :: Python :: 3.5",
             "Programming Language :: Python :: 3.6",
             "Programming Language :: Python :: 3.7",
+            "Programming Language :: Python :: 3.8",
             "Development Status :: " + DEVSTAT,
             "Natural Language :: English",
             "Environment :: Console",
