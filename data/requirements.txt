@@ -1,9 +1,8 @@
-decorator
-docutils
-six
-sphinx
-coverage
-pylint
-pytest
-pytest-cov
-pydocstyle
+decorator>=4.4.0
+docutils>=0.14
+sphinx>=1.8.5
+coverage>=4.5.3
+pylint>=2.3.1
+pytest>=4.3.1
+pytest-cov>=2.6.1
+pydocstyle>=3.0.0
