@@ -1,7 +1,6 @@
-personal_ws-1.1 en 519 utf-8
+personal_ws-1.1 en 521 utf-8
 0x03000000
 abc
-FNAME
 ABCMeta
 abspath
 abstractmethod
@@ -160,6 +159,7 @@ firstlineno
 fmt
 fn
 fname
+FNAME
 fnames
 fnmatch
 fobj
@@ -233,6 +233,7 @@ listdir
 lmin
 ln
 logilab
+logoColor
 lstrip
 macOS
 MacOSX

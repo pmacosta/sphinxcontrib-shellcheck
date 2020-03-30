@@ -18,8 +18,15 @@
     :target: https://pypi.org/project/sphinxcontrib-shellcheck
     :alt: Format
 
-|
+.. image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
+   :target: https://github.com/pmacosta/sphinxcontrib-shellcheck
+   :alt: pre-commit
 
+.. image:: https://www.repostatus.org/badges/latest/active.svg
+   :alt: Project Status: Active – The project has reached a stable, usable state and is being actively developed.
+   :target: https://www.repostatus.org/#active
+
+|
 
 .. image::
     https://dev.azure.com/pmasdev/sphinxcontrib-shellcheck/_apis/build/status/pmacosta.sphinxcontrib-shellcheck?branchName=master
