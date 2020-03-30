@@ -82,6 +82,7 @@ jobs:
       export PYTHONPATH=${PYTHONPATH}:${SBIN_DIR}:${EXTRA_DIR}:${EXTRA_DIR}/tests:${EXTRA_DIR}/docs:${EXTRA_DIR}/docs/support
       export COV_FILE=${SOURCE_DIR}/.coveragerc_ci_${INTERP}
       export LANG="en_US.UTF-8"
+      export NUM_CPUS=$(python -c "from __future__ import print_function; import multiprocessing; print(multiprocessing.cpu_count())")
       export SHELLCHECK_TEST_ENV=1
       echo "##vso[task.setvariable variable=INTERP]$INTERP"
       echo "##vso[task.setvariable variable=PKG_NAME]$PKG_NAME"
@@ -99,6 +100,7 @@ jobs:
       echo "##vso[task.setvariable variable=PYTHONPATH]$PYTHONPATH"
       echo "##vso[task.setvariable variable=COV_FILE]$COV_FILE"
       echo "##vso[task.setvariable variable=LANG]$LANG"
+      echo "##vso[task.setvariable variable=NUM_CPUS]$NUM_CPUS"
       echo "##vso[task.setvariable variable=SHELLCHECK_TEST_ENV]$SHELLCHECK_TEST_ENV"
     displayName: Set up environment
   - bash: |
@@ -118,6 +120,7 @@ jobs:
       echo "PYTHONPATH=${PYTHONPATH}"
       echo "COV_FILE=${COV_FILE}"
       echo "LANG=${LANG}"
+      echo "NUM_CPUS=${NUM_CPUS}"
       echo "SHELLCHECK_TEST_ENV=${SHELLCHECK_TEST_ENV}"
     displayName: Print environment
   - bash: |
@@ -132,6 +135,7 @@ jobs:
       curl https://storage.googleapis.com/shellcheck/shellcheck-stable.linux.x86_64.tar.xz -o shellcheck.tar.xz
       tar xf shellcheck.tar.xz
       export PATH="${PWD}/shellcheck-stable:${PATH}"
+      pip install --upgrade cyhunspell
       echo "##vso[task.setvariable variable=PATH]$PATH"
     condition: eq( variables['Agent.OS'], 'Linux' )
     displayName: Install hunspell and shellcheck (Linux)
@@ -210,13 +214,14 @@ jobs:
       fi
     displayName: List relevant directories
   - bash: |
-      python "${SBIN_DIR}"/coveragerc_manager.py 'ci' 1 ${INTERP} ${PYTHON_SITE_PACKAGES}
+      export PSP_TMP="$("${SBIN_DIR}"/winnorm_path.py "${PYTHON_SITE_PACKAGES}")"
+      python "${SBIN_DIR}"/coveragerc_manager.py 'ci' 1 ${INTERP} ${PSP_TMP}
       cat "${COV_FILE}"
     displayName: Create coverage config file
   - bash: |
       # Auto-detect installed plugins
       export PYLINT_PLUGINS_DIR=$(python -c "from __future__ import print_function;import os;plugin_dir = os.path.join(os.environ.get('EXTRA_DIR', ''), 'pylint_plugins').replace(os.sep,'/');print(plugin_dir if os.path.isdir(plugin_dir) else '')")
-      export PYLINT_PLUGINS_LIST=$(python -c "from __future__ import print_function;import glob; import os; sdir = os.environ.get('PYLINT_PLUGINS_DIR', ''); print(','.join([os.path.basename(fname).replace('.py', '') for fname in glob.glob(os.path.join(sdir, '*.py'))]) if sdir else '')")
+      export PYLINT_PLUGINS_LIST=$(python -c "from __future__ import print_function;import glob; import os; sdir = os.environ.get('PYLINT_PLUGINS_DIR', ''); print(','.join([os.path.basename(fname).replace('.py', '') for fname in glob.glob(os.path.join(sdir, '*.py')) if not os.path.basename(fname).startswith('common')]) if sdir else '')")
       export PYLINT_CLI_APPEND=$(python -c "from __future__ import print_function; import os; svar=os.environ.get('PYLINT_PLUGINS_LIST', ''); print('--load-plugins='+svar if svar else '')")
       export PYTHONPATH="${PYTHONPATH}:${PYLINT_PLUGINS_DIR}"
       export PYTHONPATH="$("${SBIN_DIR}"/winnorm_path.py "${PYTHONPATH}")"
@@ -235,7 +240,7 @@ jobs:
       for fname in ${PKG_LINT_FILES}; do
         echo "${fname}"
       done
-      pylint --rcfile="${EXTRA_DIR}/.pylintrc" "${PYLINT_CLI_APPEND}" --output-format=colorized --reports=no --score=no ${PKG_LINT_FILES} || exit 1
+      pylint --rcfile="${EXTRA_DIR}/.pylintrc" -j"${NUM_CPUS}" "${PYLINT_CLI_APPEND}" --output-format=colorized --reports=no --score=no ${PKG_LINT_FILES} || exit 1
       pydocstyle --config="${EXTRA_DIR}/.pydocstyle" ${PKG_LINT_FILES} || exit 1
     displayName: Check code standards compliance
   - bash: |
@@ -244,13 +249,13 @@ jobs:
       export ARTIFACTS_DIR="$("${SBIN_DIR}"/winnorm_path.py "${ARTIFACTS_DIR}")"
       if pytest --collect-only --doctest-glob="*.rst" "${EXTRA_DIR}"/docs &> /dev/null; then
         echo "Testing reStructuredText files"
-        pytest --doctest-glob="*.rst" "${EXTRA_DIR}"/docs || exit 1
+        pytest -n "${NUM_CPUS}" --doctest-glob="*.rst" "${EXTRA_DIR}"/docs || exit 1
       fi
       if pytest --collect-only --doctest-modules "${SOURCE_DIR}" &> /dev/null; then
         echo "Testing docstrings"
-        pytest --doctest-modules "${SOURCE_DIR}" || exit 1
+        pytest -n "${NUM_CPUS}" --doctest-modules "${SOURCE_DIR}" || exit 1
       fi
-      pytest --junitxml="${RESULTS_DIR}"/testresults/test-results.xml --cov-config="${COV_FILE}" --cov="${SOURCE_DIR}" --cov-report=xml --cov-report=html
+      pytest -n "${NUM_CPUS}" --junitxml="${RESULTS_DIR}"/testresults/test-results.xml --cov-config="${COV_FILE}" --cov="${SOURCE_DIR}" --cov-report=xml --cov-report=html
     displayName: Unit tests
   - task: PublishTestResults@2
     condition: succeededOrFailed()
