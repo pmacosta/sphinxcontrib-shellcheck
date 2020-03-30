@@ -1,2 +1,8 @@
 {EXTRA_DIR}/pylint_plugins/*.py
 {SOURCE_DIR}/websupport/*.py
+{SOURCE_DIR}/applehelp/*.py
+{SOURCE_DIR}/devhelp/*.py
+{SOURCE_DIR}/htmlhelp/*.py
+{SOURCE_DIR}/jsmath/*.py
+{SOURCE_DIR}/qthelp/*.py
+{SOURCE_DIR}/serializinghtml/*.py
