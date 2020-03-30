@@ -124,6 +124,7 @@ if INSTALL_MODE_IS_TEST:
         (
             os.path.join(SHARE_DIR, "pylint_plugins"),
             [
+                os.path.join(PWD, "pylint_plugins", "common.py"),
                 os.path.join(PWD, "pylint_plugins", "header.py"),
                 os.path.join(PWD, "pylint_plugins", "pylint_codes.py"),
                 os.path.join(PWD, "pylint_plugins", "spellcheck.py"),
