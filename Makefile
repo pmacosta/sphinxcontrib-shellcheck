@@ -9,9 +9,9 @@ SOURCE_DIR ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))/$(PKG_NAME)
 EXTRA_DIR ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 SBIN_DIR := $(EXTRA_DIR)/bin
 ### Custom pylint plugins configuration
-NUM_CPUS := $(shell python -c "from __future__ import print_function; import multiprocessing; print(multiprocessing.cpu_count())")
+NUM_CPUS := $(shell python3 -c "from __future__ import print_function; import multiprocessing; print(multiprocessing.cpu_count())")
 PYLINT_PLUGINS_DIR := $(shell if [ -d $(EXTRA_DIR)/pylint_plugins ]; then echo "$(EXTRA_DIR)/pylint_plugins"; fi)
-PYLINT_PLUGINS_LIST := $(shell PYLINT_PLUGINS_DIR=$(PYLINT_PLUGINS_DIR) python -c "from __future__ import print_function;import glob; import os; sdir = os.environ.get('PYLINT_PLUGINS_DIR', ''); print(','.join([os.path.basename(fname).replace('.py', '') for fname in glob.glob(os.path.join(sdir, '*.py')) if not os.path.basename(fname).startswith('common')]) if sdir else '')" )
+PYLINT_PLUGINS_LIST := $(shell PYLINT_PLUGINS_DIR=$(PYLINT_PLUGINS_DIR) python3 -c "from __future__ import print_function;import glob; import os; sdir = os.environ.get('PYLINT_PLUGINS_DIR', ''); print(','.join([os.path.basename(fname).replace('.py', '') for fname in glob.glob(os.path.join(sdir, '*.py')) if not os.path.basename(fname).startswith('common')]) if sdir else '')" )
 PYLINT_CMD := pylint \
 	--rcfile=$(EXTRA_DIR)/.pylintrc \
 	-j$(NUM_CPUS) \
