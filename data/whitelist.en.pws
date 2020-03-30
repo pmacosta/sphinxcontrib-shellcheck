@@ -1,4 +1,4 @@
-personal_ws-1.1 en 513 utf-8
+personal_ws-1.1 en 519 utf-8
 0x03000000
 abc
 ABCMeta
@@ -64,6 +64,7 @@ codecs
 compat
 conda
 conf
+CONF
 config
 conftest
 contextmanager
@@ -317,6 +318,7 @@ pwd
 PWD
 pws
 py
+PY
 pyc
 pycache
 pydocstyle
@@ -358,6 +360,7 @@ regexp
 Regiester
 repl
 repo
+REPO
 repos
 repr
 reqs
@@ -377,6 +380,7 @@ RuntimeError
 SBIN
 sdict
 sdir
+SDIR
 sdist
 sectionauthor
 sed
@@ -411,6 +415,7 @@ startswith
 statuscode
 stderr
 stdout
+STDOUT
 str
 strcat
 strftime
@@ -453,6 +458,7 @@ toctree
 toplevel
 tostr
 tox
+Tox
 toxinidir
 toxworkdir
 tpep
