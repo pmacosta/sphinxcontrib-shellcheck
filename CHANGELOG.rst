@@ -5,6 +5,8 @@
 Changelog
 =========
 
+* 1.1.2 [March 29, 2020] Fixed documentation link
+
 * 1.1.1 [March 29, 2020] Fixed distribution bugs
 
 * 1.1.0 [March 29, 2020] Dropped support for Python 2.7. Added support for

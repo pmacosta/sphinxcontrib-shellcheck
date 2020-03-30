@@ -15,7 +15,7 @@ from setuptools import setup, find_packages
 # Global variables
 ###
 PKG_NAME = "sphinxcontrib-shellcheck"
-VERSION_INFO = (1, 1, 1, "final", 0)
+VERSION_INFO = (1, 1, 2, "final", 0)
 INSTALL_MODE_IS_TEST = os.environ.get("SHELLCHECK_TEST_ENV", "")
 VERSION_QUERY = os.environ.get("SHELLCHECK_CI_ENV", "")
 
@@ -163,7 +163,7 @@ if not VERSION_QUERY:
     setup(
         name=PKG_NAME,
         version=__version__,
-        url="http://shellcheck.readthedocs.io",
+        url="https://github.com/pmacosta/sphinxcontrib-shellcheck",
         license="MIT",
         author="Pablo Acosta-Serafini",
         author_email="pmasdev@gmail.com",
