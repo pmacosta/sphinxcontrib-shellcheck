@@ -5,6 +5,11 @@
 Changelog
 =========
 
+* 1.1.1 [March 29, 2020] Fixed distribution bugs
+
+* 1.1.0 [March 29, 2020] Dropped support for Python 2.7. Added support for
+  Python 3.8. Fixed continuous integration bugs.
+
 * 1.0.10 [March 27, 2019] Correctly set exit code when there are errors
 
 * 1.0.9 [March 18, 2019] Changed debug parameter default status
