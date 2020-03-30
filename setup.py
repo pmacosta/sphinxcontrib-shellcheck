@@ -57,7 +57,14 @@ else:
 # Actual directory is os.join(sys.prefix, "share", PKG_NAME)
 PWD = os.path.dirname(os.path.abspath(__file__))
 SHARE_DIR = os.path.join("share", PKG_NAME)
-TEST_REQS = ["coverage", "pylint", "pytest>=3.6", "pytest-cov", "pydocstyle"]
+TEST_REQS = [
+    "coverage",
+    "pylint",
+    "pytest>=3.6",
+    "pytest-cov",
+    "pytest-xdist",
+    "pydocstyle",
+]
 if INSTALL_MODE_IS_TEST:
     DATA_FILES = [
         (
